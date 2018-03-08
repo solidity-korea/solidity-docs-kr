@@ -34,7 +34,7 @@ crowdfunding, blind auctions, multi-signature wallets and more.
 Notice for Korean
 ------------
 
-아직 번역이 진행중입니다. 누구나 참여하실 수 있으며 해당 [repo](https://github.com/solidity-korea/solidity-docs-kr) 에 편하게 Pull Request 주셔서 참여하실 수 있습니다.
+아직 번역이 진행중입니다. 누구나 참여하실 수 있으며 해당 `solidity-korea/solidity-docs-kr repo <https://github.com/solidity-korea/solidity-docs-kr>`_ 에 편하게 Pull Request 주셔서 참여하실 수 있습니다.
 
 Translations
 ------------
