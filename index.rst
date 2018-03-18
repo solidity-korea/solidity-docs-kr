@@ -56,14 +56,14 @@ This documentation is translated into several languages by community volunteers,
 
 * `Gitter Chat <https://gitter.im/ethereum/solidity/>`_
 
-Available Solidity Integrations
+Solidity 통합 도구들
 -------------------------------
 
 * `Remix <https://remix.ethereum.org/>`_
-    Browser-based IDE with integrated compiler and Solidity runtime environment without server-side components.
+    별도의 서버없이 컴파일러와 런타임 환경을 제공하는 브라우저 기반의 IDE
 
 * `IntelliJ IDEA plugin <https://plugins.jetbrains.com/plugin/9475-intellij-solidity>`_
-    Solidity plugin for IntelliJ IDEA (and all other JetBrains IDEs)
+    IntelliJ IDEA 를 위한 Solidity 플러그인 (기타 모든 JetBrains IDE 포함)
 
 * `Visual Studio Extension <https://visualstudiogallery.msdn.microsoft.com/96221853-33c4-4531-bdd5-d2ea5acc4799/>`_
     Solidity plugin for Microsoft Visual Studio that includes the Solidity compiler.
