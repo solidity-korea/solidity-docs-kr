@@ -66,37 +66,37 @@ Solidity 통합 도구들
     IntelliJ IDEA 를 위한 Solidity 플러그인 (기타 모든 JetBrains IDE 포함)
 
 * `Visual Studio Extension <https://visualstudiogallery.msdn.microsoft.com/96221853-33c4-4531-bdd5-d2ea5acc4799/>`_
-    Solidity plugin for Microsoft Visual Studio that includes the Solidity compiler.
+    Solidity 컴파일러가 포함된 Microsoft Visual Studio 플러그인
 
 * `Package for SublimeText — Solidity language syntax <https://packagecontrol.io/packages/Ethereum/>`_
-    Solidity syntax highlighting for SublimeText editor.
+    Sublime Text 를 위한 Solidity 문법 강조기
 
 * `Etheratom <https://github.com/0mkara/etheratom>`_
-    Plugin for the Atom editor that features syntax highlighting, compilation and a runtime environment (Backend node & VM compatible).
+    문법 강조, 편집, 실행 환경 (백엔드 노드 및 VM 과 호환 가능한) 을 제공하는 Atom editor 플러그인
 
 * `Atom Solidity Linter <https://atom.io/packages/linter-solidity>`_
-    Plugin for the Atom editor that provides Solidity linting.
+    Solidity linting 을 제공하는 Atom editor 플러그인
 
 * `Atom Solium Linter <https://atom.io/packages/linter-solium>`_
-    Configurable Solidty linter for Atom using Solium as a base.
+    Solium 기반으로, 사용자 설정이 가능한 Atom editor 용 Solidity linter
 
 * `Solium <https://github.com/duaraghav8/Solium/>`_
-    Linter to identify and fix style and security issues in Solidity.
-    
+    Solidity 에서 코드 스타일이나 보안 이슈를 수정하고 확인하기 위한 linter
+
 * `Solhint <https://github.com/protofire/solhint>`_
-    Solidity linter that provides security, style guide and best practice rules for smart contract validation.
+    Smart Contract 검증을 위한 Solidity linter. 보안 사항 및 스타일 가이드, 최적의 관례 사항(역주: for-loop 에서 index 변수명을 i 로 축약하는 것 등)을 제공함.
 
 * `Visual Studio Code extension <http://juan.blanco.ws/solidity-contracts-in-visual-studio-code/>`_
-    Solidity plugin for Microsoft Visual Studio Code that includes syntax highlighting and the Solidity compiler.
+    문법 강조 기능과 컴파일러를 제공하는 Microsoft Visual Studio Code 플러그인
 
 * `Emacs Solidity <https://github.com/ethereum/emacs-solidity/>`_
-    Plugin for the Emacs editor providing syntax highlighting and compilation error reporting.
+    문법 강조 기능과 편집 에러 알림을 제공하는 Emacs editor 플러그인
 
 * `Vim Solidity <https://github.com/tomlion/vim-solidity/>`_
-    Plugin for the Vim editor providing syntax highlighting.
+    문법 강조 기능을 제공하는 Vim editor 플러그인
 
 * `Vim Syntastic <https://github.com/scrooloose/syntastic>`_
-    Plugin for the Vim editor providing compile checking.
+    컴파일 확인이 가능한 Vim editor 플러그인
 
 Discontinued:
 
