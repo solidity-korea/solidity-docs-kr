@@ -56,79 +56,80 @@ This documentation is translated into several languages by community volunteers,
 
 * `Gitter Chat <https://gitter.im/ethereum/solidity/>`_
 
-Available Solidity Integrations
+Solidity 통합 도구들
 -------------------------------
 
 * `Remix <https://remix.ethereum.org/>`_
-    Browser-based IDE with integrated compiler and Solidity runtime environment without server-side components.
+    별도의 서버없이 컴파일러와 런타임 환경을 제공하는 브라우저 기반의 IDE
 
 * `IntelliJ IDEA plugin <https://plugins.jetbrains.com/plugin/9475-intellij-solidity>`_
-    Solidity plugin for IntelliJ IDEA (and all other JetBrains IDEs)
+    IntelliJ IDEA 를 위한 Solidity 플러그인 (기타 모든 JetBrains IDE 포함)
 
 * `Visual Studio Extension <https://visualstudiogallery.msdn.microsoft.com/96221853-33c4-4531-bdd5-d2ea5acc4799/>`_
-    Solidity plugin for Microsoft Visual Studio that includes the Solidity compiler.
+    Solidity 컴파일러가 포함된 Microsoft Visual Studio 플러그인
 
 * `Package for SublimeText — Solidity language syntax <https://packagecontrol.io/packages/Ethereum/>`_
-    Solidity syntax highlighting for SublimeText editor.
+    Sublime Text 를 위한 Solidity 문법 강조기
 
 * `Etheratom <https://github.com/0mkara/etheratom>`_
-    Plugin for the Atom editor that features syntax highlighting, compilation and a runtime environment (Backend node & VM compatible).
+    문법 강조, 편집, 실행 환경 (백엔드 노드 및 VM 과 호환 가능한) 을 제공하는 Atom editor 플러그인
 
 * `Atom Solidity Linter <https://atom.io/packages/linter-solidity>`_
-    Plugin for the Atom editor that provides Solidity linting.
+    Solidity linting 을 제공하는 Atom editor 플러그인
 
 * `Atom Solium Linter <https://atom.io/packages/linter-solium>`_
-    Configurable Solidty linter for Atom using Solium as a base.
+    Solium 기반으로, 사용자 설정이 가능한 Atom editor 용 Solidity linter
 
 * `Solium <https://github.com/duaraghav8/Solium/>`_
-    Linter to identify and fix style and security issues in Solidity.
-    
+    Solidity 에서 코드 스타일이나 보안 이슈를 수정하고 확인하기 위한 linter
+
 * `Solhint <https://github.com/protofire/solhint>`_
-    Solidity linter that provides security, style guide and best practice rules for smart contract validation.
+    Smart Contract 검증을 위한 Solidity linter. 보안 사항 및 스타일 가이드, 최적의 관례 사항(역주: for-loop 에서 index 변수명을 i 로 축약하는 것 등)을 제공함.
 
 * `Visual Studio Code extension <http://juan.blanco.ws/solidity-contracts-in-visual-studio-code/>`_
-    Solidity plugin for Microsoft Visual Studio Code that includes syntax highlighting and the Solidity compiler.
+    문법 강조 기능과 컴파일러를 제공하는 Microsoft Visual Studio Code 플러그인
 
 * `Emacs Solidity <https://github.com/ethereum/emacs-solidity/>`_
-    Plugin for the Emacs editor providing syntax highlighting and compilation error reporting.
+    문법 강조 기능과 편집 에러 알림을 제공하는 Emacs editor 플러그인
 
 * `Vim Solidity <https://github.com/tomlion/vim-solidity/>`_
-    Plugin for the Vim editor providing syntax highlighting.
+    문법 강조 기능을 제공하는 Vim editor 플러그인
 
 * `Vim Syntastic <https://github.com/scrooloose/syntastic>`_
-    Plugin for the Vim editor providing compile checking.
+    컴파일 확인이 가능한 Vim editor 플러그인
 
-Discontinued:
+지원이 중지된 도구들:
 
 * `Mix IDE <https://github.com/ethereum/mix/>`_
-    Qt based IDE for designing, debugging and testing solidity smart contracts.
+    스마트 컨트랙에 대해 디자인, 디버깅, 테스팅이 가능한 Qt 기반의 IDE
 
-* `Ethereum Studio <https://live.ether.camp/>`_		
+* `Ethereum Studio <https://live.ether.camp/>`_
+    완벽한 Ethereum 환경에 대한 shell 액세스를 제공하는 특수(특화된) 웹 IDE.
     Specialized web IDE that also provides shell access to a complete Ethereum environment.
 
-Solidity Tools
+Solidity 도구들
 --------------
 
 * `Dapp <https://dapp.readthedocs.io>`_
-    Build tool, package manager, and deployment assistant for Solidity.
+    Solidity 를 위한 빌드 도구, 패키지 매니저, 배포 도우미 도구
 
 * `Solidity REPL <https://github.com/raineorshine/solidity-repl>`_
-    Try Solidity instantly with a command-line Solidity console.
+    커맨드 라인 기반으로 Solidity 를 바로 사용해볼 수 있는 도구
 
 * `solgraph <https://github.com/raineorshine/solgraph>`_
-    Visualize Solidity control flow and highlight potential security vulnerabilities.
+    Solidity 흐름을 시각화 하고, 잠재적인 보안 위협을 강조해주는 도구
 
 * `evmdis <https://github.com/Arachnid/evmdis>`_
-    EVM Disassembler that performs static analysis on the bytecode to provide a higher level of abstraction than raw EVM operations.
+    Raw EVM operations 보다 높은 추상화를 제공하기 위해 바이트 코드에 직접 정적 분석을 수행하는 EVM Disassembler
 
 * `Doxity <https://github.com/DigixGlobal/doxity>`_
-    Documentation Generator for Solidity.
+    Solidity 를 위한 문서 생성기
 
-Third-Party Solidity Parsers and Grammars
+서드파티 Solidity 파서와 문법
 -----------------------------------------
 
 * `solidity-parser <https://github.com/ConsenSys/solidity-parser>`_
-    Solidity parser for JavaScript
+    Javascript 를 위한 Solidity 파서
 
 * `Solidity Grammar for ANTLR 4 <https://github.com/federicobond/solidity-antlr4>`_
     Solidity grammar for the ANTLR 4 parser generator
@@ -136,21 +137,17 @@ Third-Party Solidity Parsers and Grammars
 Language Documentation
 ----------------------
 
-On the next pages, we will first see a :ref:`simple smart contract <simple-smart-contract>` written
-in Solidity followed by the basics about :ref:`blockchains <blockchain-basics>`
-and the :ref:`Ethereum Virtual Machine <the-ethereum-virtual-machine>`.
+다음 페이지들 부터, Solidity 로 작성된 :ref:`간단한 smart contract <simple-smart-contract>` 과 :ref:`blockchains <blockchain-basics>`의 기초, 그리고 :ref:`Ethereum Virtual Machine <the-ethereum-virtual-machine>`. 에 대해서 알아보도록 하겠습니다.
 
-The next section will explain several *features* of Solidity by giving
-useful :ref:`example contracts <voting>`
-Remember that you can always try out the contracts
-`in your browser <https://remix.ethereum.org>`_!
+다음 섹션은 Solidity 에서 제공하는 몇가지 유용한 *기능*을 살펴보겠습니다. :ref:`example contracts <voting>`
+또한 지금 사용하시는 `브라우저 <https://remix.ethereum.org>`_! 에서도 저희 코드를 실행시켜볼 수 있다는 것을 잊지마세요!
 
-The last and most extensive section will cover all aspects of Solidity in depth.
+마지막 섹션에서는 Solidity 의 모든 측면에 대해서 심도 있게 다룹니다.
 
-If you still have questions, you can try searching or asking on the
-`Ethereum Stackexchange <https://ethereum.stackexchange.com/>`_
-site, or come to our `gitter channel <https://gitter.im/ethereum/solidity/>`_.
-Ideas for improving Solidity or this documentation are always welcome!
+이외에 질문이 있으시다면, `Ethereum Stackexchange <https://ethereum.stackexchange.com/>`_ 에서 검색이나 직접 질문하실 수 있으며 `gitter 채널 <https://gitter.im/ethereum/solidity/>`_ 에서도 가능합니다.
+
+Solidity 나 이 문서에 대해 발전을 위한 아이디어는 항상 환영합니다. :)
+
 
 Contents
 ========
