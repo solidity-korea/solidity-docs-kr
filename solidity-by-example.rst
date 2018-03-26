@@ -1,78 +1,69 @@
 ###################
-Solidity by Example
+예제를 통한 솔리디티
 ###################
 
-.. index:: voting, ballot
+.. 색인:: voting, ballot
 
 .. _voting:
 
 ******
-Voting
+투표 스마트계약
 ******
 
-The following contract is quite complex, but showcases
-a lot of Solidity's features. It implements a voting
-contract. Of course, the main problems of electronic
-voting is how to assign voting rights to the correct
-persons and how to prevent manipulation. We will not
-solve all problems here, but at least we will show
-how delegated voting can be done so that vote counting
-is **automatic and completely transparent** at the
-same time.
+다음 계약은 확실히 복잡합니다. 그러나 다음 예시들은 솔리디티의
+다양한 특징을 포함합니다. 이 예시는 투표계약을 구현합니다.
+물론, 전자 투표가 당면한 핵심 문제는 올바른 사람에게 투표권을
+부여하는 방법과 조작을 방지하는 방법입니다. 우리는 이 예시에서 
+모든 문제를 해결하지는 않지만, 최소한 위임투표가 어떻게 
+동시에 **자동적이며 완전 투명하게** 이루어지는지 보여줄 것입니다.
 
-The idea is to create one contract per ballot,
-providing a short name for each option.
-Then the creator of the contract who serves as
-chairperson will give the right to vote to each
-address individually.
 
-The persons behind the addresses can then choose
-to either vote themselves or to delegate their
-vote to a person they trust.
+이 아이디어는 발의안 당 하나의 계약을 작성하여 각 옵션마다
+짧은 이름을 붙입니다. 스마트계약에서 의장 역할을 수행하는 계약 작성자는 각 주소에 개별적인 투표권한을 부여할 것입니다.
+그러면 의장으로 봉사하는 계약 작성자는 각 주소에 개별적으로 투표권을 부여합니다.
 
-At the end of the voting time, ``winningProposal()``
-will return the proposal with the largest number
-of votes.
+주소가 있는 사람들은 자신을 투표하거나 긴뢰할 수 있는 사람에게 투표를 위임할 수 있습니다.
+
+투표시간이 끝나면, ``winningProposal()`` 이 가장 큰 숫자의 결과를 반환합니다.
 
 ::
 
     pragma solidity ^0.4.16;
 
-    /// @title Voting with delegation.
+    /// @title 대표단과 투표.
     contract Ballot {
-        // This declares a new complex type which will
-        // be used for variables later.
-        // It will represent a single voter.
+        // 이것은 나중에 변수에 사용될 새로운
+        // 복합 유형을 선언합니다.
+        // 그것은 단일 유권자를 대표할 것입니다.
         struct Voter {
-            uint weight; // weight is accumulated by delegation
-            bool voted;  // if true, that person already voted
-            address delegate; // person delegated to
-            uint vote;   // index of the voted proposal
+            uint weight; // weight 는 대표단에 의해 누적됩니다.
+            bool voted;  // 만약 이 값이 true라면, 그 사람은 이미 투표한 것 입니다.
+            address delegate; // 투표에 위임된 사람
+            uint vote;   // 투표된 제안의 인덱스 데이터 값
         }
 
-        // This is a type for a single proposal.
+        // 이것은 단일 제안에 대한 유형입니다.
         struct Proposal {
-            bytes32 name;   // short name (up to 32 bytes)
-            uint voteCount; // number of accumulated votes
+            bytes32 name;   // 간단한 명칭 (최대 32바이트)
+            uint voteCount; // 누적 투표 수
         }
 
         address public chairperson;
 
-        // This declares a state variable that
-        // stores a `Voter` struct for each possible address.
+        // 이것은 각각의 가능한 주소에 대해
+        // `Voter` 구조체를 저장하는 상태변수를 선언합니다.
         mapping(address => Voter) public voters;
 
-        // A dynamically-sized array of `Proposal` structs.
+        // 동적으로 크기가 지정된 `Proposal` 구조체의 배열입니다.
         Proposal[] public proposals;
 
-        /// Create a new ballot to choose one of `proposalNames`.
+        /// `proposalNames` 중 하나를 선택하기 위한 새로운 투표권을 생성십시오.
         function Ballot(bytes32[] proposalNames) public {
             chairperson = msg.sender;
             voters[chairperson].weight = 1;
 
-            // For each of the provided proposal names,
-            // create a new proposal object and add it
-            // to the end of the array.
+            // 각각의 제공된 제안서 이름에 대해,
+            // 새로운 제안서 개체를 만들어 배열 끝에 추가합니다.
             for (uint i = 0; i < proposalNames.length; i++) {
                 // `Proposal({...})` creates a temporary
                 // Proposal object and `proposals.push(...)`
@@ -84,16 +75,16 @@ of votes.
             }
         }
 
-        // Give `voter` the right to vote on this ballot.
-        // May only be called by `chairperson`.
+        // `voter` 에게 이 투표권에 대한 권한을 부여하십시오.
+        // 오직 `chairperson` 으로부터 호출받을 수 있습니다.
         function giveRightToVote(address voter) public {
-            // If the argument of `require` evaluates to `false`,
-            // it terminates and reverts all changes to
-            // the state and to Ether balances. It is often
-            // a good idea to use this if functions are
-            // called incorrectly. But watch out, this
-            // will currently also consume all provided gas
-            // (this is planned to change in the future).
+            // `require`의 인수가 `false`로 평가되면,
+            // 그것은 종료되고 모든 변경내용을 state와 
+            // Ether Balance로 되돌립니다. 
+            // 함수가 잘못 호출되면 이것을 사용하는 것이 좋습니다.
+            // 그러나 조심하십시오,  
+            // 이것은 현재 제공된 모든 가스를 소비할 것입니다.
+            // (이것은 앞으로 바뀌게 될 예정입니다)
             require(
                 (msg.sender == chairperson) &&
                 !voters[voter].voted &&
@@ -102,62 +93,59 @@ of votes.
             voters[voter].weight = 1;
         }
 
-        /// Delegate your vote to the voter `to`.
+        /// `to` 로 유권자에게 투표를 위임하십시오.
         function delegate(address to) public {
-            // assigns reference
+            // 참조를 지정하십시오.
             Voter storage sender = voters[msg.sender];
             require(!sender.voted);
 
-            // Self-delegation is not allowed.
+            // 자체 위임은 허용되지 않습니다.
             require(to != msg.sender);
 
-            // Forward the delegation as long as
-            // `to` also delegated.
-            // In general, such loops are very dangerous,
-            // because if they run too long, they might
-            // need more gas than is available in a block.
-            // In this case, the delegation will not be executed,
-            // but in other situations, such loops might
-            // cause a contract to get "stuck" completely.
+            // `to`가 위임하는 동안 delegation을 전달하십시오.
+            // 일반적으로 이런 루프는 매우 위험하기 때문에,
+            // 너무 오래 실행되면 블록에서 사용가능한 가스보다
+            // 더 많은 가스가 필요하게 될지도 모릅니다.
+            // 이 경우 위임(delegation)은 실행되지 않지만,
+            // 다른 상황에서는 이러한 루프로 인해
+            // 스마트 계약서가 완전히 "고착"될 수 있습니다.
             while (voters[to].delegate != address(0)) {
                 to = voters[to].delegate;
 
-                // We found a loop in the delegation, not allowed.
+                // 우리는 delegation에 루프가 있음을 확인 했고 허용하지 않았습니다.
                 require(to != msg.sender);
             }
 
-            // Since `sender` is a reference, this
-            // modifies `voters[msg.sender].voted`
+            // `sender` 는 참조이므로, 
+            // `voters[msg.sender].voted` 를 수정합니다.
             sender.voted = true;
             sender.delegate = to;
             Voter storage delegate_ = voters[to];
             if (delegate_.voted) {
-                // If the delegate already voted,
-                // directly add to the number of votes
+                // 대표가 이미 투표한 경우,
+                // 투표 수에 직접 추가 하십시오
                 proposals[delegate_.vote].voteCount += sender.weight;
             } else {
-                // If the delegate did not vote yet,
-                // add to her weight.
+                // 대표가 아직 투표하지 않았다면,
+                // weight에 추가하십시오.
                 delegate_.weight += sender.weight;
             }
         }
 
-        /// Give your vote (including votes delegated to you)
-        /// to proposal `proposals[proposal].name`.
+        /// (당신에게 위임된 투표권을 포함하여) 
+        /// `proposals[proposal].name` 제안서에 투표 하십시오.
         function vote(uint proposal) public {
             Voter storage sender = voters[msg.sender];
             require(!sender.voted);
             sender.voted = true;
             sender.vote = proposal;
 
-            // If `proposal` is out of the range of the array,
-            // this will throw automatically and revert all
-            // changes.
+            // 만약 `proposal` 이 배열의 범위를 벗어나면
+            // 자동으로 throw 하고 모든 변경사항을 되돌릴 것입니다.
             proposals[proposal].voteCount += sender.weight;
         }
 
-        /// @dev Computes the winning proposal taking all
-        /// previous votes into account.
+        /// @dev 모든 이전 득표를 고려하여 승리한 제안서를 계산합니다.
         function winningProposal() public view
                 returns (uint winningProposal_)
         {
@@ -170,9 +158,9 @@ of votes.
             }
         }
 
-        // Calls winningProposal() function to get the index
-        // of the winner contained in the proposals array and then
-        // returns the name of the winner
+        // winningProposal() 함수를 호출하여 
+        // 제안 배열에 포함된 승자의 index를 가져온 다음
+        // 승자의 이름을 반환합니다.
         function winnerName() public view
                 returns (bytes32 winnerName_)
         {
@@ -181,13 +169,13 @@ of votes.
     }
 
 
-Possible Improvements
+개선가능 한 사안들
 =====================
 
-Currently, many transactions are needed to assign the rights
-to vote to all participants. Can you think of a better way?
+현재 모든 참가자에게 투표권을 부여하기 위해 많은 거래가 필요 합니다.
+더 나은 방법을 생각해 볼 수 있습니까?
 
-.. index:: auction;blind, auction;open, blind auction, open auction
+.. 색인:: auction;blind, auction;open, blind auction, open auction
 
 *************
 Blind Auction
