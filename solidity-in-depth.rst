@@ -1,11 +1,11 @@
 #################
-Solidity in Depth
+솔리디티 파고들기
 #################
 
-This section should provide you with all you need to know about Solidity.
-If something is missing here, please contact us on
-`Gitter <https://gitter.im/ethereum/solidity>`_ or make a pull request on
-`Github <https://github.com/ethereum/solidity/pulls>`_.
+이 섹션에서는 솔리디티에 대해 당신이 알아야할 모든 정보를 제공합니다.
+만약 누락된 정보가 있다면 
+`Gitter <https://gitter.im/ethereum/solidity>`_나 
+`Github <https://github.com/ethereum/solidity/pulls>`_을 통해 Pull request를 요청해 주십시오.
 
 .. toctree::
    :maxdepth: 2
