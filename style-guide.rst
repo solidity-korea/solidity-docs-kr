@@ -1,54 +1,53 @@
 .. index:: style, coding style
 
 #############
-Style Guide
+스타일 가이드
 #############
 
 ************
-Introduction
+소개
 ************
 
-This guide is intended to provide coding conventions for writing solidity code.
-This guide should be thought of as an evolving document that will change over
-time as useful conventions are found and old conventions are rendered obsolete.
+이 가이드는 솔리디티 코드를 작성할 때 지켜야 할 코딩 규칙에 대해 설명합니다.
+좀더 나은 규칙이 발견되면 기존의 규칙은 삭제될 수 있고 시간이 지나면서 가이드는 바뀔 수 있습니다.
 
-Many projects will implement their own style guides.  In the event of
-conflicts, project specific style guides take precedence.
+많은 프로젝트들이 각각의 스타일 가이드를 만들 것입니다.
+충돌하는 지점이 발생하면, 프로젝트의 스타일 가이드를 우선적으로 따릅니다.
 
-The structure and many of the recommendations within this style guide were
-taken from python's
-`pep8 style guide <https://www.python.org/dev/peps/pep-0008/>`_.
+이 가이드 권장사항 규격은 파이썬의 `pep8 style guide <https://www.python.org/dev/peps/pep-0008/>`_ 를 따왔습니다.
 
-The goal of this guide is *not* to be the right way or the best way to write
-solidity code.  The goal of this guide is *consistency*.  A quote from python's
-`pep8 <https://www.python.org/dev/peps/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds>`_
-captures this concept well.
+가이드의 목표는 솔리디티 코드를 작성할 때 최고의 방법을 알려드리는 것이 아닙니다.
+가이드의 목표는 **일관성** 을 유지하는 것입니다.
+파이썬의 `pep8 <https://www.python.org/dev/peps/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds>`_ 인용구는 이 철학을 잘 소개하고 있습니다.
 
-    A style guide is about consistency. Consistency with this style guide is important. Consistency within a project is more important. Consistency within one module or function is most important.
-    But most importantly: know when to be inconsistent -- sometimes the style guide just doesn't apply. When in doubt, use your best judgement. Look at other examples and decide what looks best. And don't hesitate to ask!
-
+    스타일 가이드는 일관성에 관한 것입니다. 일관성있는 스타일 가이드는 매우 중요합니다.
+    일관성있는 프로젝트, 모듈, 함수 또한 매우 중요합니다.
+    하지만 제일 중요한 것은 일관성을 가지지 않는 경우가 언제인지를 아는 것입니다.
+    때때로 스타일 가이드가 적용되지 않을 때가 있습니다.
+    의심을 갖고, 최선의 판단을 내리십시오.
+    다른 예를 보고 제일 나은 방향을 결정하십시오. 그리고 물어보는 걸 주저하지 마세요!
 
 ***********
-Code Layout
+코드 레이아웃
 ***********
 
 
-Indentation
+들여쓰기
 ===========
 
-Use 4 spaces per indentation level.
+들여쓰기마다 4 스페이스를 사용합니다.
 
-Tabs or Spaces
+탭 or 스페이스
 ==============
 
-Spaces are the preferred indentation method.
+스페이스를 선호합니다.
 
-Mixing tabs and spaces should be avoided.
+탭과 스페이스를 섞어 사용하는 것을 피하세요.
 
-Blank Lines
+빈 줄
 ===========
 
-Surround top level declarations in solidity source with two blank lines.
+상위 선언 괄호는 2개의 빈 줄을 사이로 둡니다.
 
 Yes::
 
@@ -79,9 +78,9 @@ No::
         ...
     }
 
-Within a contract surround function declarations with a single blank line.
+컨트랙트 내의 선언 괄호는 1개의 빈 줄을 사이로 둡니다.
 
-Blank lines may be omitted between groups of related one-liners (such as stub functions for an abstract contract)
+함수 스텁이나 추상 컨트랙트를 만드는 등 1줄 코드 사이에는 빈 줄을 생략합니다.
 
 Yes::
 
@@ -114,58 +113,58 @@ No::
 
 .. _maximum_line_length:
 
-Maximum Line Length 
+최대 행 길이
 ===================
 
-Keeping lines under the `PEP 8 recommendation <https://www.python.org/dev/peps/pep-0008/#maximum-line-length>`_ of 79 (or 99) 
-characters helps readers easily parse the code.
+`PEP 8 recommendation <https://www.python.org/dev/peps/pep-0008/#maximum-line-length>`_ of 79 (or 99) 줄의
+내용들을 숙지하시면 도움이 될 것입니다.
 
-Wrapped lines should conform to the following guidelines.
+줄바꿈은 다음과 같은 가이드라인을 따르세요.
 
-1. The first argument should not be attached to the opening parenthesis. 
-2. One, and only one, indent should be used.
-3. Each argument should fall on its own line.
-4. The terminating element, :code:`);`, should be placed on the final line by itself.
+1. 첫 번째 인자는 여는 괄호 옆에 붙이지 않습니다.
+2. 한 번의 들여쓰기를 사용합니다.
+3. 각각의 인자는 각 줄마다 위치합니다.
+4. 끝을 내는 :code:`);` 는 마지막 줄에 혼자 남겨질 수 있게 하세요.
 
-Function Calls
+함수 호출
 
 Yes::
 
     thisFunctionCallIsReallyLong(
-        longArgument1, 
-        longArgument2, 
+        longArgument1,
+        longArgument2,
         longArgument3
     );
 
 No::
 
-    thisFunctionCallIsReallyLong(longArgument1, 
-                                  longArgument2, 
+    thisFunctionCallIsReallyLong(longArgument1,
+                                  longArgument2,
                                   longArgument3
     );
-                                  
-    thisFunctionCallIsReallyLong(longArgument1, 
-        longArgument2, 
+
+    thisFunctionCallIsReallyLong(longArgument1,
+        longArgument2,
         longArgument3
-    );                                  
-                                  
+    );
+
     thisFunctionCallIsReallyLong(
         longArgument1, longArgument2,
         longArgument3
-    );                                    
+    );
 
     thisFunctionCallIsReallyLong(
-    longArgument1, 
-    longArgument2, 
+    longArgument1,
+    longArgument2,
     longArgument3
     );
 
     thisFunctionCallIsReallyLong(
-        longArgument1, 
-        longArgument2, 
-        longArgument3);        
+        longArgument1,
+        longArgument2,
+        longArgument3);
 
-Assignment Statements
+값 할당
 
 Yes::
 
@@ -183,7 +182,7 @@ No::
                                                                        argument3,
                                                                        argument4);
 
-Event Definitions and Event Emitters
+이벤트 정의와 구현
 
 Yes::
 
@@ -215,17 +214,17 @@ No::
                       recipient,
                       publicKey,
                       amount,
-                      options); 
+                      options);
 
-Source File Encoding
+소스 파일 인코딩
 ====================
 
-UTF-8 or ASCII encoding is preferred.
+UTF-8 이나 ASCII 인코딩을 선호합니다.
 
-Imports
+임포트
 =======
 
-Import statements should always be placed at the top of the file.
+import 문법은 항상 파일 최상단에 위치합니다.
 
 Yes::
 
@@ -255,21 +254,21 @@ No::
         ...
     }
 
-Order of Functions
+함수 순서
 ==================
 
-Ordering helps readers identify which functions they can call and to find the constructor and fallback definitions easier.
+순서를 지키면 호출 가능한 함수들이 무엇인지, 생성자나 실패 예외처리가 어디있는지를 쉽게 찾을 수 있게 도움을 줍니다.
 
-Functions should be grouped according to their visibility and ordered:
+함수들은 다음과 같은 순서로 묶습니다.
 
-- constructor
-- fallback function (if exists)
+- 생성자
+- (있다면) fallback function
 - external
 - public
 - internal
 - private
 
-Within a grouping, place the ``constant`` functions last.
+그룹 내에서는 ``constant`` 함수는 마지막에 두세요.
 
 Yes::
 
@@ -323,12 +322,11 @@ No::
         // ...
     }
 
-Whitespace in Expressions
+표현식 내 공백
 =========================
 
-Avoid extraneous whitespace in the following  situations:
-
-Immediately inside parenthesis, brackets or braces, with the exception of single line function declarations.
+다음과 같은 상황일 때 여분의 공백을 두는 걸 피하세요:
+소, 중, 대괄호 안 바로 옆에 붙은 경우. 단, 한 줄의 함수 선언은 예외
 
 Yes::
 
@@ -342,7 +340,7 @@ Exception::
 
     function singleLine() public { spam(); }
 
-Immediately before a comma, semicolon:
+콤마나 세미콜론 바로 전에 붙은 경우:
 
 Yes::
 
@@ -352,8 +350,7 @@ No::
 
     function spam(uint i , Coin coin) public ;
 
-More than one space around an assignment or other operator to align with
-  another:
+값을 할당할 때나 다른 연산자와 정렬을 맞추려는 공백이 1개를 넘는 경우:
 
 Yes::
 
@@ -367,7 +364,7 @@ No::
     y             = 2;
     long_variable = 3;
 
-Don't include a whitespace in the fallback function:
+fallback 함수 안에 공백을 넣지 마세요:
 
 Yes::
 
@@ -381,16 +378,14 @@ No::
         ...
     }
 
-Control Structures
+구조 잡기
 ==================
 
-The braces denoting the body of a contract, library, functions and structs
-should:
+컨트랙트, 라이브러리, 함수나 구조체의 내용을 담는 중괄호는 다음을 따라야 합니다:
 
-* open on the same line as the declaration
-* close on their own line at the same indentation level as the beginning of the
-  declaration.
-* The opening brace should be proceeded by a single space.
+* 선언부의 같은 줄에 괄호를 여세요
+* 선언부와 같은 들여쓰기면서 고유한 마지막 한 줄에 괄호를 닫으세요
+* 여는 괄호는 한 칸의 공백이 들어갑니다
 
 Yes::
 
@@ -411,13 +406,8 @@ No::
         }
     }
 
-The same recommendations apply to the control structures ``if``, ``else``, ``while``,
-and ``for``.
-
-Additionally there should be a single space between the control structures
-``if``, ``while``, and ``for`` and the parenthetic block representing the
-conditional, as well as a single space between the conditional parenthetic
-block and the opening brace.
+같은 권장 형태가 ``if``, ``else``, ``while`` 그리고 ``for`` 구문을 구성할때도 쓰입니다.
+특히 ``if``, ``while``, ``for`` 에서 소괄호로 쌓인 조건부의 경우 앞뒤로 공백 한 칸씩을 추가해야 합니다.
 
 Yes::
 
@@ -442,8 +432,7 @@ No::
     for (...) {
         ...;}
 
-For control structures whose body contains a single statement, omitting the
-braces is ok *if* the statement is contained on a single line.
+*한 줄* 과 하나의 구현체만 가지고 있는 경우엔 괄호를 생략할 수 있습니다.
 
 Yes::
 
@@ -458,9 +447,8 @@ No::
             value: 42
         }));
 
-For ``if`` blocks which have an ``else`` or ``else if`` clause, the ``else`` should be
-placed on the same line as the ``if``'s closing brace. This is an exception compared
-to the rules of other block-like structures.
+``else`` 나 ``else if`` 구문을 가진 ``if`` 문의 경우 ``if`` 문의 닫는 괄호와 같은 줄에 ``else`` 문이 위치해야 합니다.
+이것은 다른 블록 형태의 구조 규칙과는 예외입니다.
 
 Yes::
 
@@ -487,16 +475,12 @@ No::
         x -= 1;
     }
 
-Function Declaration
+함수 선언
 ====================
 
-For short function declarations, it is recommended for the opening brace of the
-function body to be kept on the same line as the function declaration.
-
-The closing brace should be at the same indentation level as the function
-declaration.
-
-The opening brace should be preceded by a single space.
+짧은 함수 선언의 경우 함수 내용부의 여는 괄호는 선언부와 같은 줄에 위치합니다.
+닫는 괄호는 함수 선언부와 같은 들여쓰기를 가집니다.
+여는 괄호는 한 칸의 공백 뒤에 위치합니다.
 
 Yes::
 
@@ -526,7 +510,7 @@ No::
     function increment(uint x) public pure returns (uint) {
         return x + 1;}
 
-You should explicitly label the visibility of all functions, including constructors.  
+생성자를 포함한 모든 함수에 대해 접근 제어자를 명시적으로 적습니다.
 
 Yes::
 
@@ -537,11 +521,10 @@ Yes::
 No::
 
     function implicitlyPublic(uint val) {
-        doSomething(); 
+        doSomething();
     }
 
-The visibility modifier for a function should come before any custom
-modifiers.
+함수의 접근 제어자는 커스텀 키워드보다 앞에 옵니다.
 
 Yes::
 
@@ -555,10 +538,8 @@ No::
         selfdestruct(owner);
     }
 
-For long function declarations, it is recommended to drop each argument onto
-it's own line at the same indentation level as the function body.  The closing
-parenthesis and opening bracket should be placed on their own line as well at
-the same indentation level as the function declaration.
+함수가 많은 인자를 갖고 있을 땐, 각 인자마다 같은 들여쓰기로 한 줄씩 작성하는 것을 권장합니다.
+열고 닫는 중괄호 또한 같은 규칙으로 한 줄씩 작성합니다.
 
 Yes::
 
@@ -601,8 +582,7 @@ No::
         doSomething();
     }
 
-If a long function declaration has modifiers, then each modifier should be
-dropped to its own line.
+제어자를 가진 긴 함수의 경우 각 제어자는 각각의 줄을 가지며 작성합니다.
 
 Yes::
 
@@ -652,7 +632,8 @@ No::
         doSomething();
     }
 
-Multiline output parameters and return statements should follow the same style recommended for wrapping long lines found in the :ref:`Maximum Line Length <maximum_line_length>` section.
+많은 줄의 출력 파라미터와 리턴문은 :ref:`최대 행 길이 <maximum_line_length>` 섹션에서 언급된
+긴 줄을 묶는 권장사항을 따라야 합니다.
 
 Yes::
 
@@ -660,19 +641,19 @@ Yes::
         address a,
         address b,
         address c
-    ) 
-        public 
+    )
+        public
         returns (
-            address someAddressName, 
-            uint256 LongArgument, 
+            address someAddressName,
+            uint256 LongArgument,
             uint256 Argument
         )
-    {    
+    {
         doSomething()
-        
+
         return (
-            veryLongReturnArg1, 
-            veryLongReturnArg2, 
+            veryLongReturnArg1,
+            veryLongReturnArg2,
             veryLongReturnArg3
         );
     }
@@ -683,22 +664,21 @@ No::
         address a,
         address b,
         address c
-    ) 
-        public 
-        returns (address someAddressName, 
-                 uint256 LongArgument, 
+    )
+        public
+        returns (address someAddressName,
+                 uint256 LongArgument,
                  uint256 Argument)
-    {    
+    {
         doSomething()
-        
-        return (veryLongReturnArg1, 
-                veryLongReturnArg1, 
+
+        return (veryLongReturnArg1,
+                veryLongReturnArg1,
                 veryLongReturnArg1);
     }
 
-For constructor functions on inherited contracts whose bases require arguments,
-it is recommended to drop the base constructors onto new lines in the same
-manner as modifiers if the function declaration is long or hard to read.
+인자가 필요한 상속 생성자의 경우, 선언부가 길거나 읽기 어려울 때
+제어자와 같은 방식으로 새 줄에 기본 생성자를 떨어뜨려 놓는 것을 권장합니다.
 
 Yes::
 
@@ -736,26 +716,24 @@ No::
         }
     }
 
-When declaring short functions with a single statement, it is permissible to do it on a single line.
+단일문의 짧은 함수를 선언할 때 한 줄에 모두 작성할 수 있습니다.
 
-Permissible::
+허용::
 
     function shortFunction() public { doSomething(); }
 
-These guidelines for function declarations are intended to improve readability.
-Authors should use their best judgement as this guide does not try to cover all
-possible permutations for function declarations.
+함수 선언에 대한 이 가이드라인들은 가독성을 높이기 위함입니다.
+이 가이드는 함수 선언의 모든 경우를 다루지는 않으므로 작성자는 최선의 판단을 내려야 합니다.
 
-Mappings
+매핑
 ========
 
 TODO
 
-Variable Declarations
+변수 선언
 =====================
 
-Declarations of array variables should not have a space between the type and
-the brackets.
+배열 변수를 선언할 때, 타입과 중괄호 사이 공백을 두지 않습니다.
 
 Yes::
 
@@ -766,10 +744,10 @@ No::
     uint [] x;
 
 
-Other Recommendations
+기타 권장사항
 =====================
 
-* Strings should be quoted with double-quotes instead of single-quotes.
+* 문자열은 작은 따옴표보다 큰 따옴표를 사용합니다.
 
 Yes::
 
@@ -781,7 +759,7 @@ No::
     str = 'bar';
     str = '"Be yourself; everyone else is already taken." -Oscar Wilde';
 
-* Surround operators with a single space on either side.
+* 연산자 사이에 공백을 둡니다.
 
 Yes::
 
@@ -797,10 +775,8 @@ No::
     x += 3+4;
     x |= y&&z;
 
-* Operators with a higher priority than others can exclude surrounding
-  whitespace in order to denote precedence.  This is meant to allow for
-  improved readability for complex statement. You should always use the same
-  amount of whitespace on either side of an operator:
+* 우선순위를 나타내기 위해 우선순위가 더 높은 연산자는 공백을 제외할 수 있습니다.
+  이로 인해 가독성을 늘릴 수 있으며, 연산자 양쪽에는 같은 공백을 사용해야 합니다.
 
 Yes::
 
@@ -816,119 +792,104 @@ No::
 
 
 ******************
-Naming Conventions
+명명 규칙
 ******************
 
-Naming conventions are powerful when adopted and used broadly.  The use of
-different conventions can convey significant *meta* information that would
-otherwise not be immediately available.
+명명 규칙은 넓게 사용될 때 더욱 강력합니다. 이를 통해 중요하고 많은 *메타* 정보들을 전달할 수 있습니다.
+이 권장사항은 가독성을 높이기 위한 것으로, 규칙이 아니라 사물의 이름을 통해 정보를 전달하기 위함입니다.
+마지막으로 코드의 일관성은 이 문서의 규칙들로 항상 대체할 수 있어야 합니다.
 
-The naming recommendations given here are intended to improve the readability,
-and thus they are not rules, but rather guidelines to try and help convey the
-most information through the names of things.
-
-Lastly, consistency within a codebase should always supercede any conventions
-outlined in this document.
-
-
-Naming Styles
+명명 스타일
 =============
 
-To avoid confusion, the following names will be used to refer to different
-naming styles.
+혼동을 줄이기 위한 예로, 다음 이름들은 모두 다른 명명 스타일을 가지고 있습니다.
 
-* ``b`` (single lowercase letter)
-* ``B`` (single uppercase letter)
+* ``b`` (소문자 한 글자)
+* ``B`` (대문자 한 글자)
 * ``lowercase``
 * ``lower_case_with_underscores``
 * ``UPPERCASE``
 * ``UPPER_CASE_WITH_UNDERSCORES``
 * ``CapitalizedWords`` (or CapWords)
-* ``mixedCase`` (differs from CapitalizedWords by initial lowercase character!)
+* ``mixedCase`` (첫 글자가 소문자로 CapitalizedWords와 다르다!)
 * ``Capitalized_Words_With_Underscores``
 
-.. note:: When using initialisms in CapWords, capitalize all the letters of the initialisms. Thus HTTPServerError is better than HttpServerError. When using initialisms is mixedCase, capitalize all the letters of the initialisms, except keep the first one lower case if it is the beginning of the name. Thus xmlHTTPRequest is better than XMLHTTPRequest.
+.. note:: CapWords 스타일에서 이니셜을 사용할 땐 이니셜 모두를 대문자로 씁니다. 즉, HttpServerError 대신 HTTPServerError를 사용하는 것입니다. mixedCase 스타일에서 이니셜을 사용할 땐 이니셜을 대문자로 쓰되, 이름의 처음으로 쓰일 땐 소문자를 사용합니다. 즉, XMLHTTPRequest 보다 xmlHTTPRequest이 낫습니다.
 
-
-Names to Avoid
+피해야 할 명명법
 ==============
 
-* ``l`` - Lowercase letter el
-* ``O`` - Uppercase letter oh
-* ``I`` - Uppercase letter eye
+* ``l`` - 문자열 el 의 소문자
+* ``O`` - 문자열 oh 의 대문자
+* ``I`` - 문자열 eye의 대문자
 
-Never use any of these for single letter variable names.  They are often
-indistinguishable from the numerals one and zero.
+한 글자 변수 이름은 사용하지 마세요. 종종 숫자 1과 0과도 구별하기 어려울 때가 있습니다.
 
-
-Contract and Library Names
+컨트랙트와 라이브러리 이름
 ==========================
 
-Contracts and libraries should be named using the CapWords style. Examples: ``SimpleToken``, ``SmartBank``, ``CertificateHashRepository``, ``Player``.
+컨트랙트와 라이브러리는 CapWords 스타일을 사용합니다.
+예: ``SimpleToken``, ``SmartBank``, ``CertificateHashRepository``, ``Player``.
 
-
-Struct Names
+구조체 이름
 ==========================
 
-Structs should be named using the CapWords style. Examples: ``MyCoin``, ``Position``, ``PositionXY``.
+구조체는 CapWords 스타일을 사용합니다.
+예: ``MyCoin``, ``Position``, ``PositionXY``.
 
-
-Event Names
+이벤트 이름
 ===========
 
-Events should be named using the CapWords style. Examples: ``Deposit``, ``Transfer``, ``Approval``, ``BeforeTransfer``, ``AfterTransfer``.
+이벤트는 CapWords 스타일을 사용합니다.
+예: ``Deposit``, ``Transfer``, ``Approval``, ``BeforeTransfer``, ``AfterTransfer``.
 
-
-Function Names
+함수 이름
 ==============
 
-Functions other than constructors should use mixedCase. Examples: ``getBalance``, ``transfer``, ``verifyOwner``, ``addMember``, ``changeOwner``.
+생성자가 아닌 함수는 mixedCase 스타일을 사용합니다.
+예: ``getBalance``, ``transfer``, ``verifyOwner``, ``addMember``, ``changeOwner``.
 
-
-Function Argument Names
+함수 인자 이름
 =======================
 
-Function arguments should use mixedCase. Examples: ``initialSupply``, ``account``, ``recipientAddress``, ``senderAddress``, ``newOwner``.
+함수 인자는 mixedCase 스타일을 사용합니다.
+예: ``initialSupply``, ``account``, ``recipientAddress``, ``senderAddress``, ``newOwner``.
 
-When writing library functions that operate on a custom struct, the struct
-should be the first argument and should always be named ``self``.
+커스텀 구조체에서 동작하는 라이브러리 함수를 작성할 때,
+구조체는 함수의 첫 번째 인자여야 하며 ``self`` 라는 이름을 가집니다.
 
-
-Local and State Variable Names
+지역, 상태 변수 이름
 ==============================
 
-Use mixedCase. Examples: ``totalSupply``, ``remainingSupply``, ``balancesOf``, ``creatorAddress``, ``isPreSale``, ``tokenExchangeRate``.
+mixedCase 스타일을 사용합니다.
+예: ``totalSupply``, ``remainingSupply``, ``balancesOf``, ``creatorAddress``, ``isPreSale``, ``tokenExchangeRate``.
 
-
-Constants
+상수
 =========
 
-Constants should be named with all capital letters with underscores separating
-words. Examples: ``MAX_BLOCKS``, `TOKEN_NAME`, ``TOKEN_TICKER``, ``CONTRACT_VERSION``.
+상수는 밑줄과 함께 대문자를 사용합니다.
+예: ``MAX_BLOCKS``, ``TOKEN_NAME``, ``TOKEN_TICKER``, ``CONTRACT_VERSION``.
 
-
-Modifier Names
+제어자 이름
 ==============
 
-Use mixedCase. Examples: ``onlyBy``, ``onlyAfter``, ``onlyDuringThePreSale``.
+mixedCase 스타일을 사용합니다.
+예: ``onlyBy``, ``onlyAfter``, ``onlyDuringThePreSale``.
 
-
-Enums
+열거형
 =====
 
-Enums, in the style of simple type declarations, should be named using the CapWords style. Examples: ``TokenGroup``, ``Frame``, ``HashStyle``, ``CharacterLocation``.
+열거형은 CapWords 스타일을 사용합니다.
+예: ``TokenGroup``, ``Frame``, ``HashStyle``, ``CharacterLocation``.
 
-
-Avoiding Naming Collisions
+명명 충돌의 방지
 ==========================
 
 * ``single_trailing_underscore_``
 
-This convention is suggested when the desired name collides with that of a
-built-in or otherwise reserved name.
+이 규칙은 원하는 이름이 예약어와 충돌할 때 제안됩니다.
 
-
-General Recommendations
+일반 권장사항
 =======================
 
 TODO
