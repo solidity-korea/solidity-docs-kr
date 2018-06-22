@@ -1,15 +1,15 @@
 ###############################
-Introduction to Smart Contracts
+스마트 컨트랙트 소개
 ###############################
 
 .. _simple-smart-contract:
 
 ***********************
-A Simple Smart Contract
+간단한 스마트 컨트랙트
 ***********************
 
-Let us begin with the most basic example. It is fine if you do not understand everything
-right now, we will go into more detail later.
+예제 하나를 만들어봅시다.
+나중에 더 자세히 살펴볼 것이기 때문에 지금 모든 걸 이해하지 않아도 괜찮습니다.
 
 Storage
 =======
@@ -30,53 +30,37 @@ Storage
         }
     }
 
-The first line simply tells that the source code is written for
-Solidity version 0.4.0 or anything newer that does not break functionality
-(up to, but not including, version 0.5.0). This is to ensure that the
-contract does not suddenly behave differently with a new compiler version. The keyword ``pragma`` is called that way because, in general,
-pragmas are instructions for the compiler about how to treat the
-source code (e.g. `pragma once <https://en.wikipedia.org/wiki/Pragma_once>`_).
+첫 줄은 코드가 Solidity 0.4.0 버전을 기반으로 작성되었다는 것을 뜻하며,
+이후 버전(0.5.0 버전 직전까지)에서도 정상 동작할 수 있게 합니다.
+이 줄을 통해 컨트랙트가 새 컴파일러 버전에서 다르게 동작하지 않을 것을 보장합니다.
+일반적으로, 컴파일러가 소스 코드를 어떻게 다루어야 하는지를 나타내는 키워드로 ``pragma`` 를 사용합니다.
+(참고. `pragma once <https://en.wikipedia.org/wiki/Pragma_once>`_).
 
-A contract in the sense of Solidity is a collection of code (its *functions*) and
-data (its *state*) that resides at a specific address on the Ethereum
-blockchain. The line ``uint storedData;`` declares a state variable called ``storedData`` of
-type ``uint`` (unsigned integer of 256 bits). You can think of it as a single slot
-in a database that can be queried and altered by calling functions of the
-code that manages the database. In the case of Ethereum, this is always the owning
-contract. And in this case, the functions ``set`` and ``get`` can be used to modify
-or retrieve the value of the variable.
+Solidity의 관점에서 컨트랙트란 무수한 코드들(*함수*)과 데이터(*상태*)가 Ethereum 블록체인의 특정 주소에 존재하는 것입니다.
+다음 줄의 ``uint storedData;`` 는 ``uint`` (256 비트의 부호없는 양의 정수) 타입의 ``storedData`` 로 불리는 변수를 선언한 것입니다.
+이것은 데이터베이스에서 함수를 호출함으로써 값을 조회하거나 변경할 수 있는 하나의 영역으로 생각할 수 있습니다.
+Ethereum에서, 변수들은 컨트랙트에 포함되어 있으며 ``set`` 과 ``get`` 함수로 변수의 값을 변경하거나 조회할 수 있습니다.
 
-To access a state variable, you do not need the prefix ``this.`` as is common in
-other languages.
+상태 변수에 접근할 때 다른 프로그래밍 언어에서 일반적으로 사용되는 ``this.`` 키워드를 사용하지 않습니다.
 
-This contract does not do much yet (due to the infrastructure
-built by Ethereum) apart from allowing anyone to store a single number that is accessible by
-anyone in the world without a (feasible) way to prevent you from publishing
-this number. Of course, anyone could just call ``set`` again with a different value
-and overwrite your number, but the number will still be stored in the history
-of the blockchain. Later, we will see how you can impose access restrictions
-so that only you can alter the number.
+이 컨트랙트는 누구나 접근 가능한 숫자를 저장하는 단순한 일 외에는 아직 할 수 있는게 많지 않습니다.
+물론 누구나 ``set`` 을 호출하여 다른 값으로 덮어쓰는 것이 가능합니다. 하지만 이전 숫자는 블록체인 히스토리 안에 여전히 저장됩니다.
+이후에, 숫자를 바꿀 수 있는 접근 제한을 어떻게 둘 수 있는지를 알아볼 것입니다.
 
 .. note::
-    All identifiers (contract names, function names and variable names) are restricted to
-    the ASCII character set. It is possible to store UTF-8 encoded data in string variables.
+    모든 지시자(컨트랙트, 함수, 변수 이름들)는 ASCII 문자열로 제한됩니다. UTF-8로 인코딩된 데이터도 string 변수로 저장할 수 있습니다.
 
 .. warning::
-    Be careful with using Unicode text as similarly looking (or even identical) characters can
-    have different code points and as such will be encoded as a different byte array.
+    문자열처럼 보이는(혹은 동일한) 유니코드 텍스트 사용은 다른 코드 지점을 가지고 다른 바이트 배열로 인코딩될 수 있다는 점에 주의하세요.
 
 .. index:: ! subcurrency
 
-Subcurrency Example
+Subcurrency 예제
 ===================
 
-The following contract will implement the simplest form of a
-cryptocurrency. It is possible to generate coins out of thin air, but
-only the person that created the contract will be able to do that (it is trivial
-to implement a different issuance scheme).
-Furthermore, anyone can send coins to each other without any need for
-registering with username and password - all you need is an Ethereum keypair.
-
+다음으로는 간단한 가상화폐를 만들어보겠습니다.
+코인 발행은 컨트랙트를 만든 사람만이 할 수 있습니다.
+코인을 전송할 땐 아이디와 비밀번호 등이 필요하지 않습니다. 오직 필요한 것은 Ethereum 키 쌍 뿐입니다.
 
 ::
 
@@ -111,58 +95,41 @@ registering with username and password - all you need is an Ethereum keypair.
         }
     }
 
-This contract introduces some new concepts, let us go through them one by one.
+이번 컨트랙트는 좀 다릅니다. 하나씩 차근히 살펴보죠.
 
-The line ``address public minter;`` declares a state variable of type address
-that is publicly accessible. The ``address`` type is a 160-bit value
-that does not allow any arithmetic operations. It is suitable for
-storing addresses of contracts or keypairs belonging to external
-persons. The keyword ``public`` automatically generates a function that
-allows you to access the current value of the state variable
-from outside of the contract.
-Without this keyword, other contracts have no way to access the variable.
-The code of the function generated by the compiler is roughly equivalent
-to the following::
+``address public minter;`` 로 누구나 접근 가능한 address 타입의 변수를 선언했습니다.
+``address`` 타입은 160 비트의 값으로 그 어떤 산술 연산을 허용하지 않습니다.
+이 타입은 컨트랙트 주소나 외부 사용자들의 키 쌍을 저장하는 데 적합합니다.
+``public`` 키워드는 변수의 현재 값을 컨트랙트 바깥에서 접근할 수 있도록 하는 함수를 자동으로 만들어줍니다.
+
+이 키워드 없이는 다른 컨트랙트가 이 변수에 접근할 방법이 없습니다.
+키워드 사용 결과로 컴파일러가 자동으로 만든 함수 코드는 대강 다음과 같습니다::
 
     function minter() returns (address) { return minter; }
 
-Of course, adding a function exactly like that will not work
-because we would have a
-function and a state variable with the same name, but hopefully, you
-get the idea - the compiler figures that out for you.
+물론, 위 함수를 정확하게 입력해도 이름이 같아서 제대로 동작하지는 않을 것입니다.
+그러나 컴파일러가 이런 식으로 동작한다는 것을 알아두세요.
 
 .. index:: mapping
 
-The next line, ``mapping (address => uint) public balances;`` also
-creates a public state variable, but it is a more complex datatype.
-The type maps addresses to unsigned integers.
-Mappings can be seen as `hash tables <https://en.wikipedia.org/wiki/Hash_table>`_ which are
-virtually initialized such that every possible key exists and is mapped to a
-value whose byte-representation is all zeros. This analogy does not go
-too far, though, as it is neither possible to obtain a list of all keys of
-a mapping, nor a list of all values. So either keep in mind (or
-better, keep a list or use a more advanced data type) what you
-added to the mapping or use it in a context where this is not needed,
-like this one. The :ref:`getter function<getter-functions>` created by the ``public`` keyword
-is a bit more complex in this case. It roughly looks like the
-following::
+다음 줄의 ``mapping (address => uint) public balances;`` 또한 public 상태의 변수를 선언하지만 조금 더 복잡한 데이터 타입입니다. 이 타입은 주소와 양의 정수를 연결(매핑) 짓습니다.
+
+매핑은 `hash tables <https://en.wikipedia.org/wiki/Hash_table>`_ 과 유사하다고 볼 수 있으며 모든 키와 0 바이트 값이 연결되어 가상으로 초기화되었다 할 수 있습니다.
+그렇다고 모든 키와 값들을 쉽게 가져올 수 있다고 생각해서는 안 되며, 내가 추가한 게 무엇인지 알고 전체를 가져오지 않는 상황에서 사용해야 합니다.
+``public`` 키워드를 통해 만들어진 :ref:`getter function<getter-functions>` 은 조금더 복잡합니다. 대략 이런 형태인데요::
+
 
     function balances(address _account) public view returns (uint) {
         return balances[_account];
     }
 
-As you see, you can use this function to easily query the balance of a
-single account.
+보시는 것처럼, 특정 계좌의 잔액이 어떤지 알아내는 데 이 함수을 사용할 수 있습니다.
 
 .. index:: event
 
-The line ``event Sent(address from, address to, uint amount);`` declares
-a so-called "event" which is emitted in the last line of the function
-``send``. User interfaces (as well as server applications of course) can
-listen for those events being emitted on the blockchain without much
-cost. As soon as it is emitted, the listener will also receive the
-arguments ``from``, ``to`` and ``amount``, which makes it easy to track
-transactions. In order to listen for this event, you would use ::
+다음 줄의 ``event Sent(address from, address to, uint amount);`` 는 소위 '이벤트' 로 불리며 ``send`` 함수 마지막 줄에서 발생됩니다.
+유저 인터페이스(서버 애플리케이션 포함) 는 블록체인 상에서 발생한 이벤트들을 큰 비용을 들이지 않고 받아볼 수 있습니다.
+이벤트가 발생되었을 때 이를 받는 곳에서는 ``from``, ``to``, ``amount`` 의 인자를 함께 받으며, 이는 트랜잭션을 파악하는데 도움을 줍니다. 이벤트를 받아보기 위해 다음과 같이 사용합니다::
 
     Coin.Sent().watch({}, '', function(error, result) {
         if (!error) {
@@ -175,310 +142,228 @@ transactions. In order to listen for this event, you would use ::
         }
     })
 
-Note how the automatically generated function ``balances`` is called from
-the user interface.
+유저 인터페이스 상에서 자동으로 만들어진 함수 ``balances`` 가 어떻게 불리고 있는지 함께 알아두세요.
 
 .. index:: coin
 
-The special function ``Coin`` is the
-constructor which is run during creation of the contract and
-cannot be called afterwards. It permanently stores the address of the person creating the
-contract: ``msg`` (together with ``tx`` and ``block``) is a magic global variable that
-contains some properties which allow access to the blockchain. ``msg.sender`` is
-always the address where the current (external) function call came from.
+특별한 함수 ``Coin`` 은 컨트랙트 생성 시 실행되는 생성자이며 이후에는 사용되지 않습니다.
+이것은 컨트랙트를 만든 사람의 주소를 영구적으로 저장합니다: ``msg`` (``tx`` 와 ``block`` 포함)는 유용한 전역 변수로 블록체인에 접근할 수 있는 다양한 속성들을 담고 있습니다. ``msg.sender`` 는 외부에서 지금 함수를 호출한 주소를 나타냅니다.
 
-Finally, the functions that will actually end up with the contract and can be called
-by users and contracts alike are ``mint`` and ``send``.
-If ``mint`` is called by anyone except the account that created the contract,
-nothing will happen. On the other hand, ``send`` can be used by anyone (who already
-has some of these coins) to send coins to anyone else. Note that if you use
-this contract to send coins to an address, you will not see anything when you
-look at that address on a blockchain explorer, because the fact that you sent
-coins and the changed balances are only stored in the data storage of this
-particular coin contract. By the use of events it is relatively easy to create
-a "blockchain explorer" that tracks transactions and balances of your new coin.
+마지막으로, 사용자나 컨트랙트가 호출할 수 있는 함수들은 ``mint`` 와 ``send`` 입니다.
+만약 ``mint`` 를 호출한 사용자가 컨트랙트를 만든 사람이 아니면 아무일도 일어나지 않습니다.
+반대로 ``send`` 는 어디든 코인을 보낼 사람이면 (이미 이 코인을 가진) 누구나 호출 가능합니다.
+코인을 전송하려고 이 컨트랙트를 사용해도 블록체인 탐색기로 본 해당 주소에는 변화가 없을 겁니다.
+왜냐하면 코인을 보낸 것과 잔액이 변경된 사실은 이 코인 컨트랙트 내의 데이터 저장소에만 저장되어 있거든요.
+이벤트를 사용하면 트랜잭션을 추적하거나 새 코인의 잔액을 더 쉽게 찾아볼 수 있습니다.
 
 .. _blockchain-basics:
 
 *****************
-Blockchain Basics
+블록체인 개론
 *****************
 
-Blockchains as a concept are not too hard to understand for programmers. The reason is that
-most of the complications (mining, `hashing <https://en.wikipedia.org/wiki/Cryptographic_hash_function>`_, `elliptic-curve cryptography <https://en.wikipedia.org/wiki/Elliptic_curve_cryptography>`_, `peer-to-peer networks <https://en.wikipedia.org/wiki/Peer-to-peer>`_, etc.)
-are just there to provide a certain set of features and promises. Once you accept these
-features as given, you do not have to worry about the underlying technology - or do you have
-to know how Amazon's AWS works internally in order to use it?
+블록체인의 개념은 개발자들에게는 그리 어려운 건 아닙니다. 그 이유는 대부분의 복잡한 것들(mining, `hashing <https://en.wikipedia.org/wiki/Cryptographic_hash_function>`_, `elliptic-curve cryptography <https://en.wikipedia.org/wiki/Elliptic_curve_cryptography>`_, `peer-to-peer networks <https://en.wikipedia.org/wiki/Peer-to-peer>`_, etc.) 은 단지 일련의 약속들로 정해져 있기 때문입니다.
+이러한 개념들을 받아들일 때 여러분은 그 기반이 되는 기술에 대해 걱정할 필요는 없습니다. 아마존의 AWS가 내부적으로 어떻게 동작하는지를 알고 쓰는 건 아닌 것처럼 말입니다.
 
 .. index:: transaction
 
-Transactions
+트랜잭션
 ============
 
-A blockchain is a globally shared, transactional database.
-This means that everyone can read entries in the database just by participating in the network.
-If you want to change something in the database, you have to create a so-called transaction
-which has to be accepted by all others.
-The word transaction implies that the change you want to make (assume you want to change
-two values at the same time) is either not done at all or completely applied. Furthermore,
-while your transaction is applied to the database, no other transaction can alter it.
+블록체인은 전세계적으로 공유되어 트랜잭션이 일어나는 데이터베이스입니다.
+이것은 네트워크에 참여하면 누구나 데이터베이스를 살펴볼 수 있다는 것을 뜻합니다.
+만약 여러분이 데이터베이스의 어떤 것을 변경하려고 한다면, 소위 트랜잭션을 만들어야 하며 이는 다른 모두가 동의해야만 합니다.
+트랜잭션이라는 단어는 당신이 만드려는 어떤 변화(동시에 두 값을 바꾸려 할 때)가 모두 안 되었거나, 모두 되었다는 것을 뜻합니다.
+그리고 여러분의 트랜잭션이 데이터베이스에 적용되는 동안 어떤 트랜잭션도 그 값을 바꿀 수 없습니다.
 
-As an example, imagine a table that lists the balances of all accounts in an
-electronic currency. If a transfer from one account to another is requested,
-the transactional nature of the database ensures that if the amount is
-subtracted from one account, it is always added to the other account. If due
-to whatever reason, adding the amount to the target account is not possible,
-the source account is also not modified.
+예를 들어, 모든 계좌의 전자 화폐 잔액을 나타내는 도표를 상상해봅시다.
+한 계좌에서 다른 계좌로 이체하는 작업이 필요할 때, 데이터베이스의 트랜잭션은 한 계좌에서 돈이 빠져나갔으면 다른 계좌에 그 금액만큼 추가가 되있어야 한다는 걸 보장해야 합니다.
+어떤 이유로 금액 추가가 되지 않으면 돈도 빠져나가지 않아야겠죠.
 
-Furthermore, a transaction is always cryptographically signed by the sender (creator).
-This makes it straightforward to guard access to specific modifications of the
-database. In the example of the electronic currency, a simple check ensures that
-only the person holding the keys to the account can transfer money from it.
+그리고 트랜잭션은 항상 만든 사용자에 의해 암호화됩니다.
+그래서 데이터베이스를 직접 수정하려는 것을 차단할 수 있습니다.
+전자화폐의 경우 이 간단한 검사가 계좌의 키를 소유한 사용자만이 이체할 권한을 가지는 것을 보장합니다.
 
 .. index:: ! block
 
-Blocks
+블록
 ======
 
-One major obstacle to overcome is what, in Bitcoin terms, is called a "double-spend attack":
-What happens if two transactions exist in the network that both want to empty an account,
-a so-called conflict?
+비트코인이 극복해야할 가장 큰 장애물은 '이중 지불 공격' 입니다.
+계정을 초기화할 2개의 트랜잭션이 함께 일어나 '충돌' 한다면 어떻게 될까요?
 
-The abstract answer to this is that you do not have to care. An order of the transactions
-will be selected for you, the transactions will be bundled into what is called a "block"
-and then they will be executed and distributed among all participating nodes.
-If two transactions contradict each other, the one that ends up being second will
-be rejected and not become part of the block.
+그에 대한 추상적인 답은 여러분이 딱히 신경 쓸 필요는 없다는 것입니다.
+트랜잭션들의 순서는 여러분이 설정한대로 선택되고 그 트랜잭션들은 '블록' 이라 불리는 곳에 합쳐집니다.
+그리고 네트워크에 참여한 모든 노드들에 전파됩니다.
+만약 두 개의 트랜잭션이 충돌한다면, 두 번째가 되는 트랜잭션은 거절될 것이며 블록의 일부가 되지 않습니다.
 
-These blocks form a linear sequence in time and that is where the word "blockchain"
-derives from. Blocks are added to the chain in rather regular intervals - for
-Ethereum this is roughly every 17 seconds.
+이러한 블록들은 시간에 따라 선형의 순서를 가진 형태를 띄며 '블록체인'의 어원이 되었습니다.
+블록들은 일정한 간격에 의해 체인으로 연결됩니다. Ethereum은 약 17초마다 만들어지고요.
 
-As part of the "order selection mechanism" (which is called "mining") it may happen that
-blocks are reverted from time to time, but only at the "tip" of the chain. The more
-blocks that are added on top, the less likely it is. So it might be that your transactions
-are reverted and even removed from the blockchain, but the longer you wait, the less
-likely it will be.
-
+('채굴' 이라 불리는) '순서 선택 메커니즘'의 일환으로 블록들의 순서가 바뀌는 경우도 있는데, 이는 블록의 끝 부분에서만 일어납니다.
+이런 현상은 많은 블록이 생길수록 가능성도 점점 낮아집니다.
+따라서 여러분의 트랜잭션이 블록체인에서 바뀌거나 제거되는 경우도 있지만, 시간이 지날수록 그럴 가능성은 낮아집니다.
 
 .. _the-ethereum-virtual-machine:
 
 .. index:: !evm, ! ethereum virtual machine
 
 ****************************
-The Ethereum Virtual Machine
+Ethereum 가상 머신
 ****************************
 
-Overview
+소개
 ========
 
-The Ethereum Virtual Machine or EVM is the runtime environment
-for smart contracts in Ethereum. It is not only sandboxed but
-actually completely isolated, which means that code running
-inside the EVM has no access to network, filesystem or other processes.
-Smart contracts even have limited access to other smart contracts.
+Ethereum 가상머신, EVM은 Ethereum의 스마트 컨트랙트를 위한 런타임 환경입니다.
+이것은 완전히 독립되어 있기 때문에 EVM 에서 실행되는 코드는 네트워크나 파일 시스템, 기타 프로세스들에 접근할 수 없습니다.
+심지어 스마트 컨트랙트는 다른 스마트 컨트랙트에 접근이 제한적으로 불가능합니다.
 
 .. index:: ! account, address, storage, balance
 
-Accounts
+계정
 ========
 
-There are two kinds of accounts in Ethereum which share the same
-address space: **External accounts** that are controlled by
-public-private key pairs (i.e. humans) and **contract accounts** which are
-controlled by the code stored together with the account.
+Ethereum 내에는 같은 공간을 공유하는 2가지의 계정 종류가 있습니다:
+**외부 계정** 은 사람이 가지고 있는 공개키, 비밀키 쌍으로 동작되며,
+**컨트랙트 계정** 은 계정과 함께 저장된 코드에 의해 동작됩니다.
 
-The address of an external account is determined from
-the public key while the address of a contract is
-determined at the time the contract is created
-(it is derived from the creator address and the number
-of transactions sent from that address, the so-called "nonce").
+외부 계정의 주소는 공개키에 의해 정해지는 반면 컨트랙트의 주소는 생성되는 시점에 정해집니다.
+(생성한 사용자의 주소와 주소로부터 보내진 트랜잭션의 수, '논스'에 기반합니다.)
 
-Regardless of whether or not the account stores code, the two types are
-treated equally by the EVM.
+계정이 코드를 저장하든 아니든 상관없이 두 종류는 모두 EVM 내에서는 동일하게 다뤄집니다.
 
-Every account has a persistent key-value store mapping 256-bit words to 256-bit
-words called **storage**.
-
-Furthermore, every account has a **balance** in
-Ether (in "Wei" to be exact) which can be modified by sending transactions that
-include Ether.
+모든 계정은 256비트의 문자열들이 서로 키-값으로 영구히 매핑된 **스토리지** 를 가지고 있습니다.
+그리고 모든 계정은 트랜잭션으로 바뀔 수 있는 Ether(정확히는 'Wei') 잔액을 가지고 있습니다.
 
 .. index:: ! transaction
 
-Transactions
+트랜잭션
 ============
 
-A transaction is a message that is sent from one account to another
-account (which might be the same or the special zero-account, see below).
-It can include binary data (its payload) and Ether.
+트랜잭션은 한 계정에서 다른 계정(같을수도 있고 특별한 0의 계정일 수도 있습니다)으로 보내지는 일종의 메시지입니다.
+그리고 바이너리 데이터(트랜잭션의 페이로드)와 Ether 양을 포함할 수 있습니다.
 
-If the target account contains code, that code is executed and
-the payload is provided as input data.
+대상 계정이 코드를 포함하고 있으면 코드는 실행되고 페이로드는 입력 데이터로 제공됩니다.
 
-If the target account is the zero-account (the account with the
-address ``0``), the transaction creates a **new contract**.
-As already mentioned, the address of that contract is not
-the zero address but an address derived from the sender and
-its number of transactions sent (the "nonce"). The payload
-of such a contract creation transaction is taken to be
-EVM bytecode and executed. The output of this execution is
-permanently stored as the code of the contract.
-This means that in order to create a contract, you do not
-send the actual code of the contract, but in fact code that
-returns that code.
+만약 대상 계정이 0의 계정(주소 ``0`` 을 가지는 계정) 일 땐, 트랜잭션은 **새로운 컨트랙트** 를 생성하며 앞서 말씀드렸던 것처럼
+사용자와 '논스'로 불리는 트랜잭션의 수에 의해 주소가 결정됩니다. 각 컨트랙트 생성 트랜잭션 페이로드는 EVM 바이트코드로 실행되기 위해 사용됩니다.
+이 실행 결과는 컨트랙트의 코드로 영구히 저장됩니다.
+이것은 컨트랙트를 만들기 위해 실제 코드를 보내는 대신, 그 코드를 리턴하는 코드를 보내야 한다는 것을 뜻합니다.
 
 .. index:: ! gas, ! gas price
 
-Gas
-===
+가스
+======
 
-Upon creation, each transaction is charged with a certain amount of **gas**,
-whose purpose is to limit the amount of work that is needed to execute
-the transaction and to pay for this execution. While the EVM executes the
-transaction, the gas is gradually depleted according to specific rules.
+트랜잭션 발생 시, 일정량의 **가스** 가 사용되며 이는 트랜잭션 실행에 필요한 작업의 양을 제한하는 목적을 가지고 있습니다.
+그리고 특별한 규칙에 의해 작업 중 가스는 조금씩 고갈되게 됩니다.
 
-The **gas price** is a value set by the creator of the transaction, who
-has to pay ``gas_price * gas`` up front from the sending account.
-If some gas is left after the execution, it is refunded in the same way.
+**가스 가격** 은 트랜잭션을 만든 사용자가 정하고 최대 ``가스 가격 * 가스 양`` 을 지불합니다.
+실행이 끝난 이후에도 가스가 남았다면 이는 같은 방식으로 다시 환불됩니다.
 
-If the gas is used up at any point (i.e. it is negative),
-an out-of-gas exception is triggered, which reverts all modifications
-made to the state in the current call frame.
+만약 가스가 모두 사용되었다면(음수가 되었다면), 가스 부족 예외 오류가 발생하며 현재 단계에서 발생하는 모든 변화를 되돌립니다.
 
 .. index:: ! storage, ! memory, ! stack
 
-Storage, Memory and the Stack
+스토리지, 메모리와 스택
 =============================
 
-Each account has a persistent memory area which is called **storage**.
-Storage is a key-value store that maps 256-bit words to 256-bit words.
-It is not possible to enumerate storage from within a contract
-and it is comparatively costly to read and even more so, to modify
-storage. A contract can neither read nor write to any storage apart
-from its own.
+각 계정은 **스토리지** 라 불리는 영구 메모리 저장소를 가지고 있습니다.
+스토리지는 256비트 문자가 키-값 형태로 연결된 저장소입니다.
+컨트랙트 내의 스토리지를 탐색하는 건 불가능하며 읽고 수정하는데 비용이 많이 듭니다.
+컨트랙트가 소유하지 않은 스토리지는 읽거나 쓸 수 없습니다.
 
-The second memory area is called **memory**, of which a contract obtains
-a freshly cleared instance for each message call. Memory is linear and can be
-addressed at byte level, but reads are limited to a width of 256 bits, while writes
-can be either 8 bits or 256 bits wide. Memory is expanded by a word (256-bit), when
-accessing (either reading or writing) a previously untouched memory word (ie. any offset
-within a word). At the time of expansion, the cost in gas must be paid. Memory is more
-costly the larger it grows (it scales quadratically).
+두번째 영역은 **메모리** 이며 각 메시지 콜에 대해 새로 초기화된 인스턴스를 가지고 있습니다.
+메모리는 선형이며 바이트 레벨로 다뤄집니다. 쓰기가 8 비트나 256 비트가 될 수 있는 반면 읽기는 256 비트로 한정됩니다.
+이전에 변경되지 않은 메모리 워드 영역(즉, 워드 내 오프셋) 에 액세스할 때(읽기, 쓰기 모두) 메모리는 256비트 워드 영역으로 확장됩니다.
+확장되는 시점에 가스 비용이 지불되어야 합니다. 메모리는 커질수록 비용도 커집니다. (2차식으로 증가합니다)
 
-The EVM is not a register machine but a stack machine, so all
-computations are performed on an area called the **stack**. It has a maximum size of
-1024 elements and contains words of 256 bits. Access to the stack is
-limited to the top end in the following way:
-It is possible to copy one of
-the topmost 16 elements to the top of the stack or swap the
-topmost element with one of the 16 elements below it.
-All other operations take the topmost two (or one, or more, depending on
-the operation) elements from the stack and push the result onto the stack.
-Of course it is possible to move stack elements to storage or memory,
-but it is not possible to just access arbitrary elements deeper in the stack
-without first removing the top of the stack.
+EVM은 레지스터 머신이 아니라 스택 머신입니다. 모든 연산은 **스택** 이라 불리는 영역에서 처리됩니다.
+최대 1024개의 요소를 가질 수 있고 256비트의 단어들을 포함합니다.
+스택은 상단 꼭대기에서 접근이 일어납니다:
+
+스택 최상단의 16개 요소들 중 하나를 최상단에 복사하거나 최상단의 요소를 밑의 16개 요소 중 하나와 교체하는 것이 가능합니다.
+연산들은 스택의 최상단 2개(어떤 연산이냐에 따라 하나일수도, 더 많을수도) 를 가져오며 그 결과를 스택에 푸시합니다.
+물론 스택 요소들을 스토리지나 메모리로 옮기는 것도 가능합니다.
+하지만 스택의 상단 요소를 제거하지 않으면 그 밑에 존재하는 요소를 임의로 접근하는 건 불가능합니다.
 
 .. index:: ! instruction
 
-Instruction Set
+명령어 집합
 ===============
 
-The instruction set of the EVM is kept minimal in order to avoid
-incorrect implementations which could cause consensus problems.
-All instructions operate on the basic data type, 256-bit words.
-The usual arithmetic, bit, logical and comparison operations are present.
-Conditional and unconditional jumps are possible. Furthermore,
-contracts can access relevant properties of the current block
-like its number and timestamp.
+EVM의 명령어들은 최소로 구성되며 합의 문제를 야기할 수 있는 잘못된 구현을 방지합니다.
+모든 명령어는 기본 데이터 타입, 256비트 단어 기반으로 동작합니다.
+일반적인 산술, 비트, 논리, 비교 연산이 있습니다.
+조건과 조건 없는 점프도 가능합니다.
+그리고 컨트랙트는 현재 블록의 수나 타임스탬프 관련 속성에도 접근할 수 있습니다.
 
 .. index:: ! message call, function;call
 
-Message Calls
+메시지 콜
 =============
 
-Contracts can call other contracts or send Ether to non-contract
-accounts by the means of message calls. Message calls are similar
-to transactions, in that they have a source, a target, data payload,
-Ether, gas and return data. In fact, every transaction consists of
-a top-level message call which in turn can create further message calls.
+메시지 콜을 사용하면 컨트랙트는 다른 컨트랙트를 호출하거나 컨트랙트가 아닌 계정으로 Ether를 송금할 수 있습니다.
+메시지 콜은 송신자, 수신자, 데이터 페이로드, Ether, 가스와 리턴 값 등을 가지고 있어 트랜잭션과 유사합니다.
+실제로 모든 트랜잭션은 상위 메시지 콜로 구성되며 추가 메시지 콜도 만들 수 있습니다.
 
-A contract can decide how much of its remaining **gas** should be sent
-with the inner message call and how much it wants to retain.
-If an out-of-gas exception happens in the inner call (or any
-other exception), this will be signalled by an error value put onto the stack.
-In this case, only the gas sent together with the call is used up.
-In Solidity, the calling contract causes a manual exception by default in
-such situations, so that exceptions "bubble up" the call stack.
+컨트랙트는 내부 메시지 호출과 함께 보내고 남길 가스량을 정할 수 있습니다.
+만약 내부 호출 중 가스 부족 오류(아니면 다른 오류) 가 발생하면 스택에 에러 값이 추가되며 알리게 됩니다.
+이 경우 호출을 위해 사용된 가스만 소모됩니다.
+Solidity에서 호출하는 계약은 이런 상황에서 기본적으로 수동 예외를 발생시키므로 호출 스택의 우선순위를 올립니다.
 
-As already said, the called contract (which can be the same as the caller)
-will receive a freshly cleared instance of memory and has access to the
-call payload - which will be provided in a separate area called the **calldata**.
-After it has finished execution, it can return data which will be stored at
-a location in the caller's memory preallocated by the caller.
+앞서 말했듯, 호출된 컨트랙트는 깨끗이 비워진 메모리 인스턴스와 **호출 데이터** 라는 격리된 공간의 호출 페이로드 접근 권한을 가집니다.
+실행이 완료되면 호출자에 의해 이미 할당된 메모리 영역 안에 저장될 데이터를 리턴받을 수 있습니다.
 
-Calls are **limited** to a depth of 1024, which means that for more complex
-operations, loops should be preferred over recursive calls.
+호출은 1024개의 깊이로 제한되며 이것은 복잡한 연산일수록 재귀호출보다 반복문이 선호된다는 것을 뜻합니다.
 
 .. index:: delegatecall, callcode, library
 
-Delegatecall / Callcode and Libraries
+델리게이트 콜 / 콜코드와 라이브러리
 =====================================
 
-There exists a special variant of a message call, named **delegatecall**
-which is identical to a message call apart from the fact that
-the code at the target address is executed in the context of the calling
-contract and ``msg.sender`` and ``msg.value`` do not change their values.
+메시지 콜은 다양한 변형이 있는데, **델리게이트 콜** 의 경우는 대상 주소의 코드가 호출하는 컨트랙트의 컨텍스트 내에서 실행된다는 것과
+``msg.sender`` 와 ``msg.value``  가 값이 바뀌지 않는다는 것 외에는 메시지 콜과 동일합니다.
 
-This means that a contract can dynamically load code from a different
-address at runtime. Storage, current address and balance still
-refer to the calling contract, only the code is taken from the called address.
+이것은 컨트랙트가 실행 중 다양한 주소의 코드를 동적으로 불러온다는 것을 뜻합니다.
+스토리지, 현재 주소와 잔액은 여전히 호출하는 컨트랙트를 참조하지만 코드는 호출된 주소에서 가져옵니다.
 
-This makes it possible to implement the "library" feature in Solidity:
-Reusable library code that can be applied to a contract's storage, e.g. in
-order to  implement a complex data structure.
+이것은 Solidity에서 복잡한 데이터 구조 구현이 가능한 컨트랙트의 스토리지에 적용 가능한 재사용 가능한 코드, "라이브러리"의 구현을 가능하도록 합니다.
 
 .. index:: log
 
-Logs
+로그
 ====
 
-It is possible to store data in a specially indexed data structure
-that maps all the way up to the block level. This feature called **logs**
-is used by Solidity in order to implement **events**.
-Contracts cannot access log data after it has been created, but they
-can be efficiently accessed from outside the blockchain.
-Since some part of the log data is stored in `bloom filters <https://en.wikipedia.org/wiki/Bloom_filter>`_, it is
-possible to search for this data in an efficient and cryptographically
-secure way, so network peers that do not download the whole blockchain
-("light clients") can still find these logs.
+블록 레벨까지의 모든 절차를 매핑하며 특별히 인덱싱된 데이터 구조 데이터를 저장하는 것도 가능합니다.
+이 기능은 **로그** 라 부르며 Solidity에서 **이벤트** 를 구현하기 위해 사용됩니다.
+컨트랙트들은 로그 데이터를 만들고 접근할 수는 없지만 블록체인 바깥에서 효율적으로 접근 가능합니다.
+
+일부 로그 데이터들은 `bloom filters <https://en.wikipedia.org/wiki/Bloom_filter>`_ 안에 저장되기 때문에,
+효율적이고 암호화되어 안전한 방법으로 데이터를 찾는게 가능합니다.
+따라서 모든 블록체인을 다운받지 않은 네트워크 피어들도 로그들을 여전히 찾을 수 있습니다.
 
 .. index:: contract creation
 
-Create
+생성
 ======
 
-Contracts can even create other contracts using a special opcode (i.e.
-they do not simply call the zero address). The only difference between
-these **create calls** and normal message calls is that the payload data is
-executed and the result stored as code and the caller / creator
-receives the address of the new contract on the stack.
+컨트랙트들은 특별한 연산 부호를 사용하여 다른 컨트랙트들을 생성할 수 있습니다.
+이러한 **생성 콜** 과 일반 메시지 콜의 차이는 페이로드 데이터가 실행된다는 것과 결과가 코드로 저장된다는 점,
+호출자와 생성자가 스택의 새 컨트랙트 주소를 받는다는 점 입니다.
 
 .. index:: selfdestruct
 
-Self-destruct
+자기 파괴
 =============
 
-The only possibility that code is removed from the blockchain is
-when a contract at that address performs the ``selfdestruct`` operation.
-The remaining Ether stored at that address is sent to a designated
-target and then the storage and code is removed from the state.
+코드가 블록체인에서 지워지는 유일한 때는 주소의 컨트랙트가 ``selfdestruct`` 연산을 사용했을 때입니다.
+주소에 저장된 남은 Ether는 지정된 타겟으로 옮겨지고 스토리지와 코드는 해당 상태에서 지워집니다.
 
-.. warning:: Even if a contract's code does not contain a call to ``selfdestruct``,
-  it can still perform that operation using ``delegatecall`` or ``callcode``.
+.. warning:: 컨트랙트 코드가 ``selfdestruct`` 를 포함하지 않더라도, ``delegatecall`` 이나 ``callcode`` 를 실행해 그 작업을 수행할 수 있습니다.
 
-.. note:: The pruning of old contracts may or may not be implemented by Ethereum
-  clients. Additionally, archive nodes could choose to keep the contract storage
-  and code indefinitely.
+.. note:: 어떤 Ethereum 클라이언트냐에 따라 오래된 컨트랙트의 제거가 구현이 되었거나, 안 되었을 수 있습니다.
+  추가로, 아카이브된 노드들은 컨트랙트 스토리지와 코드를 무기한 보관하도록 선택할 수 있습니다.
 
-.. note:: Currently **external accounts** cannot be removed from the state.
+.. note:: 현재 상태에서 **외부 계정** 은 삭제할 수 없습니다.
