@@ -1,5 +1,5 @@
 ###############
-Common Patterns
+자주 쓰이는 패턴
 ###############
 
 .. index:: withdrawal
@@ -7,15 +7,15 @@ Common Patterns
 .. _withdrawal_pattern:
 
 *************************
-Withdrawal from Contracts
+콘트랙트에서의 출금
 *************************
 
-The recommended method of sending funds after an effect
-is using the withdrawal pattern. Although the most intuitive
-method of sending Ether, as a result of an effect, is a
-direct ``send`` call, this is not recommended as it
-introduces a potential security risk. You may read
-more about this on the :ref:`security_considerations` page.
+effect 이후 기금송금에 있어 가장 권장하는 방법은
+출금 패턴을 사용하는 것입니다. Effect의 결과로 Ether를 송금하는
+가장 직관적인 방법은 직접 ``send`` 를 호출하는 것이겠지만,
+잠재적인 보안위협을 초래 할 수 있으므로 권장하지 않습니다.
+:ref:`security_consideration` 페이지에서 더 알아 볼 수 있습니다. 
+
 
 This is an example of the withdrawal pattern in practice in
 a contract where the goal is to send the most money to the
