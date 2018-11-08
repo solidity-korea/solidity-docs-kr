@@ -7,24 +7,22 @@
 .. _withdrawal_pattern:
 
 *************************
-콘트랙트에서의 출금
+컨트랙트에서의 출금
 *************************
 
 effect 이후 기금송금에 있어 가장 권장하는 방법은
 출금 패턴을 사용하는 것입니다. Effect의 결과로 Ether를 송금하는
 가장 직관적인 방법은 직접 ``send`` 를 호출하는 것이겠지만,
 잠재적인 보안위협을 초래 할 수 있으므로 권장하지 않습니다.
-:ref:`security_consideration` 페이지에서 더 알아 볼 수 있습니다. 
+:ref:`security_consideration` 페이지에서 보안에 대해 더 알아 볼 수 있습니다. 
 
 
-This is an example of the withdrawal pattern in practice in
-a contract where the goal is to send the most money to the
-contract in order to become the "richest", inspired by
-`King of the Ether <https://www.kingoftheether.com/>`_.
+다음은 `King of the Ether <https://www.kingoftheether.com/>`_ 에서 
+영감을 받아 작성된 "richest"가 되기 위해 가장 많은 돈을
+컨트랙트로 송금하는 실제 출금패턴 예제입니다.
 
-In the following contract, if you are usurped as the richest,
-you will receive the funds of the person who has gone on to
-become the new richest.
+다음의 컨트랙트에서 당신이 "richest"를 빼앗긴다면, 새롭게 "richest"
+가 된 사람으로부터 기금을 돌려 받을 것입니다.
 
 ::
 
@@ -61,7 +59,7 @@ become the new richest.
         }
     }
 
-This is as opposed to the more intuitive sending pattern:
+다음은 직관적인 전송패턴과 정반대인 패턴입니다.
 
 ::
 
@@ -88,6 +86,14 @@ This is as opposed to the more intuitive sending pattern:
             }
         }
     }
+
+이 예제에서, 반드시 알아둬야 할 것은, 공격자(해커)가 실패
+fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
+컨트랙트를 할 수 없는 상태로 만들 수 있다는 점입니다.
+(예를들어 ``revert()`` 를 사용하거나 단순히 2300개 이상의 가스를 소비시킴으로써)
+그렇게하면, "poisoned" 컨트랙트에 기금을 ``transfer`` 하기위해 송금이
+요청 될 때마다 컨트랙트와 더불어 ``becomeRichest`` 도 실패 할
+것이고, 이는 컨트랙트가 영원히 진행되지 않게 만들 것입니다.
 
 Notice that, in this example, an attacker could trap the
 contract into an unusable state by causing ``richest`` to be
