@@ -87,7 +87,7 @@ effect 이후 기금송금에 있어 가장 권장하는 방법은
         }
     }
 
-이 예제에서, 반드시 알아둬야 할 것은, 공격자(해커)가 실패
+본 예제에서, 반드시 알아둬야 할 것은, 공격자(해커)가 실패
 fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 컨트랙트를 할 수 없는 상태로 만들 수 있다는 점입니다.
 (예를들어 ``revert()`` 를 사용하거나 단순히 2300개 이상의 가스를 소비시킴으로써)
@@ -95,44 +95,36 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 요청 될 때마다 컨트랙트와 더불어 ``becomeRichest`` 도 실패 할
 것이고, 이는 컨트랙트가 영원히 진행되지 않게 만들 것입니다.
 
-Notice that, in this example, an attacker could trap the
-contract into an unusable state by causing ``richest`` to be
-the address of a contract that has a fallback function
-which fails (e.g. by using ``revert()`` or by just
-consuming more than the 2300 gas stipend). That way,
-whenever ``transfer`` is called to deliver funds to the
-"poisoned" contract, it will fail and thus also ``becomeRichest``
-will fail, with the contract being stuck forever.
-
-In contrast, if you use the "withdraw" pattern from the first example,
-the attacker can only cause his or her own withdraw to fail and not the
-rest of the contract's workings.
+반대로, 첫번째 예제에서 "withdraw" 패턴을 사용한다면
+공격자(해커)의 출금만 실패할 것이고, 나머지 컨트랙트는 제대로 동작 할 것입니다.
 
 .. index:: access;restricting
 
 ******************
-Restricting Access
+제한된 액세스
 ******************
 
-Restricting access is a common pattern for contracts.
-Note that you can never restrict any human or computer
-from reading the content of your transactions or
-your contract's state. You can make it a bit harder
-by using encryption, but if your contract is supposed
-to read the data, so will everyone else.
+제한된 액세스는 컨트랙트에서의 일반적인 패턴입니다.
+알아둬야 할 것은, 다른사람이나 컴퓨터가 당신의
+컨트랙트 상태의 내용을 읽는것을 결코 제한 할 수
+없다는 것입니다. 암호화를 사용함으로써 컨트랙트를
+더 읽기 어렵게 만들 수 있습니다. 하지만 컨트랙트가
+데이터를 읽으려고 한다면, 다른 모든 사람들 또한
+당신의 데이터를 읽을 수 있을것입니다.
 
-You can restrict read access to your contract's state
-by **other contracts**. That is actually the default
-unless you declare make your state variables ``public``.
+**다른 컨트랙트들** 이 컨트랙트 상태를
+읽지 못 하도록 권한을 제한 할 수 있습니다.
+상태변수를 ``public`` 으로 선언하지 않는 한,
+이 제한은 디폴트로 제공됩니다.
 
-Furthermore, you can restrict who can make modifications
-to your contract's state or call your contract's
-functions and this is what this section is about.
+게다가, 컨트랙트 상태를 수정하거나 컨트랙트 함수를 호출
+할 수 있는 사람을 제한 할 수 있습니다.
+다음이 바로 본 섹션에 대한 내용입니다.
 
 .. index:: function;modifier
 
-The use of **function modifiers** makes these
-restrictions highly readable.
+**function modifiers** 를 사용하면 이런 제한을
+매우 알아보기 쉽게 할 수 있습니다.
 
 ::
 
@@ -212,14 +204,13 @@ restrictions highly readable.
         }
     }
 
-A more specialised way in which access to function
-calls can be restricted will be discussed
-in the next example.
+함수호출에 대한 액세스를 제한 할 수 있는 보다 특별한
+방법에 대해서는 다음 예제에서 설명합니다.
 
 .. index:: state machine
 
 *************
-State Machine
+상태 머신
 *************
 
 Contracts often act as a state machine, which means
