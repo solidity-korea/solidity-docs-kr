@@ -213,59 +213,54 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 상태 머신
 *************
 
-Contracts often act as a state machine, which means
-that they have certain **stages** in which they behave
-differently or in which different functions can
-be called. A function call often ends a stage
-and transitions the contract into the next stage
-(especially if the contract models **interaction**).
-It is also common that some stages are automatically
-reached at a certain point in **time**.
+컨트랙트는 종종 상태머신인 것처럼 동작합니다. 다시 말해,
+컨트랙트들이 다르게 동작하거나 다른 함수들에 의해 호출되는
+어떠한 **단계** 를 가지고 있습니다.
+함수 호출은 종종 단계를 끝내고 컨트랙트를 다음 단계로 전환
+시킵니다. (특히 컨트랙트 모델이 **상호작용** 인 경우에)
+또한, **시간** 의 특정 지점에서 일부 단계에 자동으로 도달
+하는 것이 일반적입니다.
 
-An example for this is a blind auction contract which
-starts in the stage "accepting blinded bids", then
-transitions to "revealing bids" which is ended by
-"determine auction outcome".
+예를 들어 "블라인드 입찰을 수락하는" 단계에서 시작하여
+"옥션 결과 결정"으로 끝나는 "공개 입찰"로 전환하는
+블라인드 옥션 컨트랙트가 있습니다.
 
 .. index:: function;modifier
 
-Function modifiers can be used in this situation
-to model the states and guard against
-incorrect usage of the contract.
+이 상황에서 상태를 모델링하고 컨트랙트의 잘못된 사용을
+방지하기 위해 함수 수정자를 사용할 수 있습니다.
 
-Example
+예제
 =======
 
-In the following example,
-the modifier ``atStage`` ensures that the function can
-only be called at a certain stage.
+다음의 예제에서,
+수정자 ``atStage`` 는 함수가 어떤 단계에서만
+호출되도록 보장해 줍니다.
 
-Automatic timed transitions
-are handled by the modifier ``timeTransitions``, which
-should be used for all functions.
+자동 timed 전환은
+모든 함수에서 사용되는 수정자 ``timeTransitions``
+에 의해 처리됩니다.
 
-.. note::
-    **Modifier Order Matters**.
+.. 알아 둘 것::
+    **수정자 주문 관련 사항**.
     If atStage is combined
     with timedTransitions, make sure that you mention
     it after the latter, so that the new stage is
     taken into account.
 
-Finally, the modifier ``transitionNext`` can be used
-to automatically go to the next stage when the
-function finishes.
+마지막으로, 수정자 ``transitionNext`` 는 함수가 끝났을 때,
+자동적으로 다음 단계로 넘어가도록 하기 위해 사용될 수 있습니다.
 
-.. note::
-    **Modifier May be Skipped**.
-    This only applies to Solidity before version 0.4.0:
-    Since modifiers are applied by simply replacing
-    code and not by using a function call,
-    the code in the transitionNext modifier
-    can be skipped if the function itself uses
-    return. If you want to do that, make sure
-    to call nextStage manually from those functions.
-    Starting with version 0.4.0, modifier code
-    will run even if the function explicitly returns.
+.. 알아두기::
+    **수정자는 스킵 될 수 있습니다**.
+    이는 솔리디티 0.4.0 이전 버전에서만 적용됩니다:
+    수정자는 단순히 코드를 교체하고 함수 호출을 사용하지
+    않음으로써 적용되므로, 함수 자체에서 return을
+    사용하면, transitionNext 수정자의 코드를 스킵
+    할 수 있습니다. 이를 사용하고 싶다면, 반드시
+    그 함수들에서 nextStage를 수동으로 호출해야 합니다.
+    0.4.0 버전 부터는 함수가 명시적으로 return 되는
+    경우에도 수정자 코드가 실행됩니다.
 
 ::
 
