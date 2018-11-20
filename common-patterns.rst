@@ -10,7 +10,7 @@
 컨트랙트에서의 출금
 *************************
 
-effect 이후 기금송금에 있어 가장 권장하는 방법은
+Effect 이후 기금송금에 있어 가장 권장되는 방법은
 출금 패턴을 사용하는 것입니다. Effect의 결과로 Ether를 송금하는
 가장 직관적인 방법은 직접 ``send`` 를 호출하는 것이겠지만,
 잠재적인 보안위협을 초래 할 수 있으므로 권장하지 않습니다.
@@ -52,14 +52,14 @@ effect 이후 기금송금에 있어 가장 권장하는 방법은
 
         function withdraw() public {
             uint amount = pendingWithdrawals[msg.sender];
-            // Remember to zero the pending refund before
-            // sending to prevent re-entrancy attacks
+            // 리엔트란시(re-entrancy) 공격을 예방하기 위해
+            // 송금하기 전에 보류중인 환불을 0으로 기억해 두십시오.
             pendingWithdrawals[msg.sender] = 0;
             msg.sender.transfer(amount);
         }
     }
 
-다음은 직관적인 전송패턴과 정반대인 패턴입니다.
+다음은 직관적인 송금패턴과 정반대인 패턴입니다.
 
 ::
 
@@ -76,7 +76,7 @@ effect 이후 기금송금에 있어 가장 권장하는 방법은
 
         function becomeRichest() public payable returns (bool) {
             if (msg.value > mostSent) {
-                // This line can cause problems (explained below).
+                // 현재의 라인이 문제의 원인이 될 수 있습니다. (아래에서 설명됨)
                 richest.transfer(msg.value);
                 richest = msg.sender;
                 mostSent = msg.value;
@@ -87,7 +87,7 @@ effect 이후 기금송금에 있어 가장 권장하는 방법은
         }
     }
 
-본 예제에서, 반드시 알아둬야 할 것은, 공격자(해커)가 실패
+본 예제에서, 반드시 알아둬야 할 것은, 공격자가 실패
 fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 컨트랙트를 할 수 없는 상태로 만들 수 있다는 점입니다.
 (예를들어 ``revert()`` 를 사용하거나 단순히 2300개 이상의 가스를 소비시킴으로써)
@@ -96,7 +96,7 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 것이고, 이는 컨트랙트가 영원히 진행되지 않게 만들 것입니다.
 
 반대로, 첫번째 예제에서 "withdraw" 패턴을 사용한다면
-공격자(해커)의 출금만 실패할 것이고, 나머지 컨트랙트는 제대로 동작 할 것입니다.
+공격자의 출금만 실패할 것이고, 나머지 컨트랙트는 제대로 동작 할 것입니다.
 
 .. index:: access;restricting
 
@@ -131,29 +131,29 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
     pragma solidity ^0.4.11;
 
     contract AccessRestriction {
-        // These will be assigned at the construction
-        // phase, where `msg.sender` is the account
-        // creating this contract.
+        // 이것들은 건설단계에서 할당됩니다.
+        // 여기서, `msg.sender` 는 
+        // 이 계약을 생성하는 계정입니다.
         address public owner = msg.sender;
         uint public creationTime = now;
 
-        // Modifiers can be used to change
-        // the body of a function.
-        // If this modifier is used, it will
-        // prepend a check that only passes
-        // if the function is called from
-        // a certain address.
+        // 수정자를 사용하여 함수의
+        // 본문을 변경할 수 있습니다.
+        // 이 수정자가 사용되면, 
+        // 함수가 특정 주소에서 호출 된
+        // 경우에만 통과하는 검사가
+        // 추가됩니다.
         modifier onlyBy(address _account)
         {
             require(msg.sender == _account);
-            // Do not forget the "_;"! It will
-            // be replaced by the actual function
-            // body when the modifier is used.
+            // "_;" 를 깜빡하지 마세요! 수정자가
+            // 사용 될 때, "_;"가 실제 함수
+            // 본문으로 대체됩니다.
             _;
         }
 
-        /// Make `_newOwner` the new owner of this
-        /// contract.
+        /// `_newOwner` 를 이 컨트랙트의
+        /// 새 소유자로 만듭니다.
         function changeOwner(address _newOwner)
             public
             onlyBy(owner)
@@ -166,9 +166,9 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
             _;
         }
 
-        /// Erase ownership information.
-        /// May only be called 6 weeks after
-        /// the contract has been created.
+        /// 소유권 정보를 지우십시오.
+        /// 컨트랙트가 생성된 후 6주가 
+        /// 지나야 호출 될 수 있습니다.
         function disown()
             public
             onlyBy(owner)
@@ -177,12 +177,12 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
             delete owner;
         }
 
-        // This modifier requires a certain
-        // fee being associated with a function call.
-        // If the caller sent too much, he or she is
-        // refunded, but only after the function body.
-        // This was dangerous before Solidity version 0.4.0,
-        // where it was possible to skip the part after `_;`.
+        // 이 수정자는 함수 호출과 관련된
+        // 특정 요금을 요구합니다.
+        // 호출자가 너무 많은 금액을 송금했을시, 
+        // 함수 본문 이후에만 환급이 됩니다.
+        // 이는 솔리디티 0.4.0 이전의 버전에서는 위험했었다.
+        // `_;` 이후의 부분은 스킵될 가능성이 있었다.
         modifier costs(uint _amount) {
             require(msg.value >= _amount);
             _;
@@ -195,12 +195,12 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
             costs(200 ether)
         {
             owner = _newOwner;
-            // just some example condition
+            // 몇 가지의 예제 조건
             if (uint(owner) & 0 == 1)
-                // This did not refund for Solidity
-                // before version 0.4.0.
+                // 이는 솔리디티 0.4.0 이전의
+                // 버전에서는 환불되지 않았습니다.
                 return;
-            // refund overpaid fees
+            // 초과 요금에 대한 환불
         }
     }
 
@@ -234,19 +234,18 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 =======
 
 다음의 예제에서,
-수정자 ``atStage`` 는 함수가 어떤 단계에서만
+수정자 ``atStage`` 는 함수가 특정 단계에서만
 호출되도록 보장해 줍니다.
 
-자동 timed 전환은
+자동 timed transitions 는
 모든 함수에서 사용되는 수정자 ``timeTransitions``
 에 의해 처리됩니다.
 
-.. 알아 둘 것::
+.. 알아두기::
     **수정자 주문 관련 사항**.
-    If atStage is combined
-    with timedTransitions, make sure that you mention
-    it after the latter, so that the new stage is
-    taken into account.
+    atStage 수정자가 timedTransitions 수정자와
+    결합된다면, 후미에 반드시 이 결합에 대해 언급하여,
+    새로운 단계가 고려되도록 하십시오.
 
 마지막으로, 수정자 ``transitionNext`` 는 함수가 끝났을 때,
 자동적으로 다음 단계로 넘어가도록 하기 위해 사용될 수 있습니다.
@@ -275,7 +274,7 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
             Finished
         }
 
-        // This is the current stage.
+        // 이 부분이 현재의 단계입니다.
         Stages public stage = Stages.AcceptingBlindedBids;
 
         uint public creationTime = now;
@@ -289,9 +288,9 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
             stage = Stages(uint(stage) + 1);
         }
 
-        // Perform timed transitions. Be sure to mention
-        // this modifier first, otherwise the guards
-        // will not take the new stage into account.
+        // timed transitions를 수행하십시오. 
+        // 이 수정자를 먼저 언급해야 합니다. 그렇지 않으면,
+        // Guards가 새로운 단계를 고려하지 않을 것 입니다.
         modifier timedTransitions() {
             if (stage == Stages.AcceptingBlindedBids &&
                         now >= creationTime + 10 days)
@@ -299,18 +298,18 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
             if (stage == Stages.RevealBids &&
                     now >= creationTime + 12 days)
                 nextStage();
-            // The other stages transition by transaction
+            // 다른 단계는 거래에 의해 전환됩니다.
             _;
         }
 
-        // Order of the modifiers matters here!
+        // 수정자의 순서가 중요합니다!
         function bid()
             public
             payable
             timedTransitions
             atStage(Stages.AcceptingBlindedBids)
         {
-            // We will not implement that here
+            // 우리는 여기서 그것을 구현하지 않을 것입니다.
         }
 
         function reveal()
@@ -320,8 +319,8 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
         {
         }
 
-        // This modifier goes to the next stage
-        // after the function is done.
+        // 이 수정자는 함수가 완료된 후
+        // 다음 단계로 이동합니다.
         modifier transitionNext()
         {
             _;
