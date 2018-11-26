@@ -4,32 +4,15 @@
 Security Considerations
 #######################
 
-While it is usually quite easy to build software that works as expected,
-it is much harder to check that nobody can use it in a way that was **not** anticipated.
+소프트웨어를 원하는 방식으로 작동되도록 만드는 것은 어렵지 않으나, 다른 사람이 원하지 않는 방식으로 작동하지 않도록 확인하는 것은 매우 어렵다.
 
-In Solidity, this is even more important because you can use smart contracts
-to handle tokens or, possibly, even more valuable things. Furthermore, every
-execution of a smart contract happens in public and, in addition to that,
-the source code is often available.
+솔리디티에서는 토큰이나 심지어 더 가치있는 것들을 다루기 때문에 이러한 문제는 특히 중요하다. 더해서 모든 스마트 콘트랙트는 공개적으로 실행되고 대부분의 소스코드 또한 누구나 확인 할 수 있는 경우가 많다.
 
-Of course you always have to consider how much is at stake:
-You can compare a smart contract with a web service that is open to the
-public (and thus, also to malicious actors) and perhaps even open source.
-If you only store your grocery list on that web service, you might not have
-to take too much care, but if you manage your bank account using that web service,
-you should be more careful.
+물론 보안에 얼마나 신경을 써야 하는 지는 상황에 따라 다르다. 웹 서비스 또한 대중(악의적인 공격자를 포함한) 누구나 접근할 수 있고 심지어 오픈소스인 경우도 있다. 만약 웹 서비스에 자잘한 정보들만 저장한다면 보안 문제에 크게 신경쓰지 않아도 되지만, 웹 서비스를 통해서 은행 계좌를 관리한다면 조금 더 조심해야 한다.
 
-This section will list some pitfalls and general security recommendations but
-can, of course, never be complete. Also, keep in mind that even if your
-smart contract code is bug-free, the compiler or the platform itself might
-have a bug. A list of some publicly known security-relevant bugs of the compiler
-can be found in the
-:ref:`list of known bugs<known_bugs>`, which is also machine-readable. Note
-that there is a bug bounty program that covers the code generator of the
-Solidity compiler.
+이 장에서는 조심할 문제들과 일반적인 보안관련 패턴들을 다루지만 완벽한 것은 아니다. 명심할 것은 스마트 콘트랙트에 아무런 버그가 없더라도, 컴파일러나 플랫폼 자체에는 버그가 있을 수 있다는 점이다.
 
-As always, with open source documentation, please help us extend this section
-(especially, some examples would not hurt)!
+언제나 그렇듯이, 이 문서는 오픈 소스 기반의 문서이기 때문에, 보안에 대한 문제가 생긴다면 주저없이 내용을 추가해주시기 바랍니다.
 
 ********
 Pitfalls
