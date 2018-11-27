@@ -25,64 +25,56 @@
 
 만약 당신이 채굴자의 부정 행위를 막고자 한다면, 난수를 생성하는 것이 어느정도 유용할 수 있습니다.
 
-Re-Entrancy
+재진입 문제
 ===========
 
-Any interaction from a contract (A) with another contract (B) and any transfer
-of Ether hands over control to that contract (B). This makes it possible for B
-to call back into A before this interaction is completed. To give an example,
-the following code contains a bug (it is just a snippet and not a
-complete contract):
+
+(A)콘트랙트에서 (B)콘트랙트로 연결되는 어떠한 상호작용 및 Ether의 전송은 제어권을 (B)에게 넘겨주게 됩니다. 이 때문에 B의 상호작용이 끝나기 전에 다시 A를 호출할 수 있는 상황이 벌어질 수 있습니다. 예를 들어, 다음 코드는 버그를 포함하고 있습니다(요약된 코드입니다).
 
 ::
 
     pragma solidity ^0.4.0;
 
-    // THIS CONTRACT CONTAINS A BUG - DO NOT USE
+    // 버그가 포함된 코드입니다. 사용하지 마세요!
     contract Fund {
-        /// Mapping of ether shares of the contract.
+        /// 컨트랙트의 Ether 정보 mapping
         mapping(address => uint) shares;
-        /// Withdraw your share.
+        /// 지분을 인출하는 함수
         function withdraw() public {
             if (msg.sender.send(shares[msg.sender]))
                 shares[msg.sender] = 0;
         }
     }
 
-The problem is not too serious here because of the limited gas as part
-of ``send``, but it still exposes a weakness: Ether transfer can always
-include code execution, so the recipient could be a contract that calls
-back into ``withdraw``. This would let it get multiple refunds and
-basically retrieve all the Ether in the contract. In particular, the
-following contract will allow an attacker to refund multiple times
-as it uses ``call`` which forwards all remaining gas by default:
+``send``함수 자체에서 gas의 소비량을 제어하기 때문에, 큰 문제는 되지 않지만, 그럼에도 이 코드는 보안 상의 문제를 가지고 있습니다.
+Ether의 전송은 항상 코드의 실행을 포함하기에, 수신자는 반복적으로 ``withdraw``를 실행할 수 있게되죠. 결과적으로 중복된 ``withdraw``함수의 실행을 통해 컨트랙트 상의 모든 Ether를 가져갈 수 있다는 의미입니다. 상황에 따라, 공격자는 아래 코드 속 ``call``을 통해 남은 gas를 모두 가져올 수 있을지도 모릅니다.
+
 
 ::
 
     pragma solidity ^0.4.0;
 
-    // THIS CONTRACT CONTAINS A BUG - DO NOT USE
+    // 버그가 포함된 코드입니다. 사용하지 마세요!
     contract Fund {
-        /// Mapping of ether shares of the contract.
+        /// 컨트랙트의 Ether 정보 mapping
         mapping(address => uint) shares;
-        /// Withdraw your share.
+        /// 지분을 인출하는 함수
         function withdraw() public {
             if (msg.sender.call.value(shares[msg.sender])())
                 shares[msg.sender] = 0;
         }
     }
 
-To avoid re-entrancy, you can use the Checks-Effects-Interactions pattern as
-outlined further below:
+재진입 공격을 막기 위해서는 아래와 같이 Checks-Effects-Interactions 패턴을 사용할 수 있습니다.
 
 ::
 
     pragma solidity ^0.4.11;
 
     contract Fund {
-        /// Mapping of ether shares of the contract.
+        /// 컨트랙트의 Ether 정보 mapping
         mapping(address => uint) shares;
-        /// Withdraw your share.
+        /// 지분을 인출하는 함수
         function withdraw() public {
             var share = shares[msg.sender];
             shares[msg.sender] = 0;
@@ -90,10 +82,7 @@ outlined further below:
         }
     }
 
-Note that re-entrancy is not only an effect of Ether transfer but of any
-function call on another contract. Furthermore, you also have to take
-multi-contract situations into account. A called contract could modify the
-state of another contract you depend on.
+재진입 공격은 Ether 전송에서 뿐만 아니라 함수를 호출하는 어떤 상황에서도 수행될 수 있습니다. 나아가, 여러분은 하나의 계정에 많은 컨트랙트를 가질 수도 있을 텐데요, 이 때, 하나의 컨트랙트가 다른 컨트랙트를 호출할 수 있다는 것도 알아둬야합니다.
 
 Gas Limit and Loops
 ===================
