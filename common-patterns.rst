@@ -1,5 +1,5 @@
 ###############
-Common Patterns
+자주 쓰이는 패턴
 ###############
 
 .. index:: withdrawal
@@ -7,24 +7,22 @@ Common Patterns
 .. _withdrawal_pattern:
 
 *************************
-Withdrawal from Contracts
+컨트랙트에서의 출금
 *************************
 
-The recommended method of sending funds after an effect
-is using the withdrawal pattern. Although the most intuitive
-method of sending Ether, as a result of an effect, is a
-direct ``send`` call, this is not recommended as it
-introduces a potential security risk. You may read
-more about this on the :ref:`security_considerations` page.
+Effect 이후 기금송금에 있어 가장 권장되는 방법은
+출금 패턴을 사용하는 것입니다. Effect의 결과로 Ether를 송금하는
+가장 직관적인 방법은 직접 ``send`` 를 호출하는 것이겠지만,
+잠재적인 보안위협을 초래 할 수 있으므로 권장하지 않습니다.
+:ref:`security_consideration` 페이지에서 보안에 대해 더 알아 볼 수 있습니다. 
 
-This is an example of the withdrawal pattern in practice in
-a contract where the goal is to send the most money to the
-contract in order to become the "richest", inspired by
-`King of the Ether <https://www.kingoftheether.com/>`_.
 
-In the following contract, if you are usurped as the richest,
-you will receive the funds of the person who has gone on to
-become the new richest.
+다음은 `King of the Ether <https://www.kingoftheether.com/>`_ 에서 
+영감을 받아 작성된 "richest"가 되기 위해 가장 많은 돈을
+컨트랙트로 송금하는 실제 출금패턴 예제입니다.
+
+다음의 컨트랙트에서 당신이 "richest"를 빼앗긴다면, 새롭게 "richest"
+가 된 사람으로부터 기금을 돌려 받을 것입니다.
 
 ::
 
@@ -54,14 +52,14 @@ become the new richest.
 
         function withdraw() public {
             uint amount = pendingWithdrawals[msg.sender];
-            // Remember to zero the pending refund before
-            // sending to prevent re-entrancy attacks
+            // 리엔트란시(re-entrancy) 공격을 예방하기 위해
+            // 송금하기 전에 보류중인 환불을 0으로 기억해 두십시오.
             pendingWithdrawals[msg.sender] = 0;
             msg.sender.transfer(amount);
         }
     }
 
-This is as opposed to the more intuitive sending pattern:
+다음은 직관적인 송금패턴과 정반대인 패턴입니다.
 
 ::
 
@@ -78,7 +76,7 @@ This is as opposed to the more intuitive sending pattern:
 
         function becomeRichest() public payable returns (bool) {
             if (msg.value > mostSent) {
-                // This line can cause problems (explained below).
+                // 현재의 라인이 문제의 원인이 될 수 있습니다. (아래에서 설명됨)
                 richest.transfer(msg.value);
                 richest = msg.sender;
                 mostSent = msg.value;
@@ -89,73 +87,73 @@ This is as opposed to the more intuitive sending pattern:
         }
     }
 
-Notice that, in this example, an attacker could trap the
-contract into an unusable state by causing ``richest`` to be
-the address of a contract that has a fallback function
-which fails (e.g. by using ``revert()`` or by just
-consuming more than the 2300 gas stipend). That way,
-whenever ``transfer`` is called to deliver funds to the
-"poisoned" contract, it will fail and thus also ``becomeRichest``
-will fail, with the contract being stuck forever.
+본 예제에서, 반드시 알아둬야 할 것은, 공격자가 실패
+fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
+컨트랙트를 할 수 없는 상태로 만들 수 있다는 점입니다.
+(예를들어 ``revert()`` 를 사용하거나 단순히 2300개 이상의 가스를 소비시킴으로써)
+그렇게하면, "poisoned" 컨트랙트에 기금을 ``transfer`` 하기위해 송금이
+요청 될 때마다 컨트랙트와 더불어 ``becomeRichest`` 도 실패 할
+것이고, 이는 컨트랙트가 영원히 진행되지 않게 만들 것입니다.
 
-In contrast, if you use the "withdraw" pattern from the first example,
-the attacker can only cause his or her own withdraw to fail and not the
-rest of the contract's workings.
+반대로, 첫번째 예제에서 "withdraw" 패턴을 사용한다면
+공격자의 출금만 실패할 것이고, 나머지 컨트랙트는 제대로 동작 할 것입니다.
 
 .. index:: access;restricting
 
 ******************
-Restricting Access
+제한된 액세스
 ******************
 
-Restricting access is a common pattern for contracts.
-Note that you can never restrict any human or computer
-from reading the content of your transactions or
-your contract's state. You can make it a bit harder
-by using encryption, but if your contract is supposed
-to read the data, so will everyone else.
+제한된 액세스는 컨트랙트에서의 일반적인 패턴입니다.
+알아둬야 할 것은, 다른사람이나 컴퓨터가 당신의
+컨트랙트 상태의 내용을 읽는것을 결코 제한 할 수
+없다는 것입니다. 암호화를 사용함으로써 컨트랙트를
+더 읽기 어렵게 만들 수 있습니다. 하지만 컨트랙트가
+데이터를 읽으려고 한다면, 다른 모든 사람들 또한
+당신의 데이터를 읽을 수 있을것입니다.
 
-You can restrict read access to your contract's state
-by **other contracts**. That is actually the default
-unless you declare make your state variables ``public``.
+**다른 컨트랙트들** 이 컨트랙트 상태를
+읽지 못 하도록 권한을 제한 할 수 있습니다.
+상태변수를 ``public`` 으로 선언하지 않는 한,
+이 제한은 디폴트로 제공됩니다.
 
-Furthermore, you can restrict who can make modifications
-to your contract's state or call your contract's
-functions and this is what this section is about.
+게다가, 컨트랙트 상태를 수정하거나 컨트랙트 함수를 호출
+할 수 있는 사람을 제한 할 수 있습니다.
+다음이 바로 본 섹션에 대한 내용입니다.
 
 .. index:: function;modifier
 
-The use of **function modifiers** makes these
-restrictions highly readable.
+**function modifiers** 를 사용하면 이런 제한을
+매우 알아보기 쉽게 할 수 있습니다.
 
 ::
 
     pragma solidity ^0.4.11;
 
     contract AccessRestriction {
-        // These will be assigned at the construction
-        // phase, where `msg.sender` is the account
-        // creating this contract.
+        // 이것들은 건설단계에서 할당됩니다.
+        // 여기서, `msg.sender` 는 
+        // 이 계약을 생성하는 계정입니다.
         address public owner = msg.sender;
         uint public creationTime = now;
 
-        // Modifiers can be used to change
-        // the body of a function.
-        // If this modifier is used, it will
-        // prepend a check that only passes
-        // if the function is called from
-        // a certain address.
+        // 수정자를 사용하여 함수의
+        // 본문을 변경할 수 있습니다.
+        // 이 수정자가 사용되면, 
+        // 함수가 특정 주소에서 호출 된
+        // 경우에만 통과하는 검사가
+        // 추가됩니다.
         modifier onlyBy(address _account)
         {
             require(msg.sender == _account);
-            // Do not forget the "_;"! It will
-            // be replaced by the actual function
-            // body when the modifier is used.
+            // "_;" 를 깜빡하지 마세요! 수정자가
+            // 사용 될 때, "_;"가 실제 함수
+            // 본문으로 대체됩니다.
             _;
         }
 
-        /// Make `_newOwner` the new owner of this
-        /// contract.
+        /// `_newOwner` 를 이 컨트랙트의
+        /// 새 소유자로 만듭니다.
         function changeOwner(address _newOwner)
             public
             onlyBy(owner)
@@ -168,9 +166,9 @@ restrictions highly readable.
             _;
         }
 
-        /// Erase ownership information.
-        /// May only be called 6 weeks after
-        /// the contract has been created.
+        /// 소유권 정보를 지우십시오.
+        /// 컨트랙트가 생성된 후 6주가 
+        /// 지나야 호출 될 수 있습니다.
         function disown()
             public
             onlyBy(owner)
@@ -179,12 +177,12 @@ restrictions highly readable.
             delete owner;
         }
 
-        // This modifier requires a certain
-        // fee being associated with a function call.
-        // If the caller sent too much, he or she is
-        // refunded, but only after the function body.
-        // This was dangerous before Solidity version 0.4.0,
-        // where it was possible to skip the part after `_;`.
+        // 이 수정자는 함수 호출과 관련된
+        // 특정 요금을 요구합니다.
+        // 호출자가 너무 많은 금액을 송금했을시, 
+        // 함수 본문 이후에만 환급이 됩니다.
+        // 이는 솔리디티 0.4.0 이전의 버전에서는 위험했었다.
+        // `_;` 이후의 부분은 스킵될 가능성이 있었다.
         modifier costs(uint _amount) {
             require(msg.value >= _amount);
             _;
@@ -197,78 +195,71 @@ restrictions highly readable.
             costs(200 ether)
         {
             owner = _newOwner;
-            // just some example condition
+            // 몇 가지의 예제 조건
             if (uint(owner) & 0 == 1)
-                // This did not refund for Solidity
-                // before version 0.4.0.
+                // 이는 솔리디티 0.4.0 이전의
+                // 버전에서는 환불되지 않았습니다.
                 return;
-            // refund overpaid fees
+            // 초과 요금에 대한 환불
         }
     }
 
-A more specialised way in which access to function
-calls can be restricted will be discussed
-in the next example.
+함수호출에 대한 액세스를 제한 할 수 있는 보다 특별한
+방법에 대해서는 다음 예제에서 설명합니다.
 
 .. index:: state machine
 
 *************
-State Machine
+상태 머신
 *************
 
-Contracts often act as a state machine, which means
-that they have certain **stages** in which they behave
-differently or in which different functions can
-be called. A function call often ends a stage
-and transitions the contract into the next stage
-(especially if the contract models **interaction**).
-It is also common that some stages are automatically
-reached at a certain point in **time**.
+컨트랙트는 종종 상태머신인 것처럼 동작합니다. 다시 말해,
+컨트랙트들이 다르게 동작하거나 다른 함수들에 의해 호출되는
+어떠한 **단계** 를 가지고 있습니다.
+함수 호출은 종종 단계를 끝내고 컨트랙트를 다음 단계로 전환
+시킵니다. (특히 컨트랙트 모델이 **상호작용** 인 경우에)
+또한, **시간** 의 특정 지점에서 일부 단계에 자동으로 도달
+하는 것이 일반적입니다.
 
-An example for this is a blind auction contract which
-starts in the stage "accepting blinded bids", then
-transitions to "revealing bids" which is ended by
-"determine auction outcome".
+예를 들어 "블라인드 입찰을 수락하는" 단계에서 시작하여
+"옥션 결과 결정"으로 끝나는 "공개 입찰"로 전환하는
+블라인드 옥션 컨트랙트가 있습니다.
 
 .. index:: function;modifier
 
-Function modifiers can be used in this situation
-to model the states and guard against
-incorrect usage of the contract.
+이 상황에서 상태를 모델링하고 컨트랙트의 잘못된 사용을
+방지하기 위해 함수 수정자를 사용할 수 있습니다.
 
-Example
+예제
 =======
 
-In the following example,
-the modifier ``atStage`` ensures that the function can
-only be called at a certain stage.
+다음의 예제에서,
+수정자 ``atStage`` 는 함수가 특정 단계에서만
+호출되도록 보장해 줍니다.
 
-Automatic timed transitions
-are handled by the modifier ``timeTransitions``, which
-should be used for all functions.
+자동 timed transitions 는
+모든 함수에서 사용되는 수정자 ``timeTransitions``
+에 의해 처리됩니다.
 
-.. note::
-    **Modifier Order Matters**.
-    If atStage is combined
-    with timedTransitions, make sure that you mention
-    it after the latter, so that the new stage is
-    taken into account.
+.. 알아두기::
+    **수정자 주문 관련 사항**.
+    atStage 수정자가 timedTransitions 수정자와
+    결합된다면, 후미에 반드시 이 결합에 대해 언급하여,
+    새로운 단계가 고려되도록 하십시오.
 
-Finally, the modifier ``transitionNext`` can be used
-to automatically go to the next stage when the
-function finishes.
+마지막으로, 수정자 ``transitionNext`` 는 함수가 끝났을 때,
+자동적으로 다음 단계로 넘어가도록 하기 위해 사용될 수 있습니다.
 
-.. note::
-    **Modifier May be Skipped**.
-    This only applies to Solidity before version 0.4.0:
-    Since modifiers are applied by simply replacing
-    code and not by using a function call,
-    the code in the transitionNext modifier
-    can be skipped if the function itself uses
-    return. If you want to do that, make sure
-    to call nextStage manually from those functions.
-    Starting with version 0.4.0, modifier code
-    will run even if the function explicitly returns.
+.. 알아두기::
+    **수정자는 스킵 될 수 있습니다**.
+    이는 솔리디티 0.4.0 이전 버전에서만 적용됩니다:
+    수정자는 단순히 코드를 교체하고 함수 호출을 사용하지
+    않음으로써 적용되므로, 함수 자체에서 return을
+    사용하면, transitionNext 수정자의 코드를 스킵
+    할 수 있습니다. 이를 사용하고 싶다면, 반드시
+    그 함수들에서 nextStage를 수동으로 호출해야 합니다.
+    0.4.0 버전 부터는 함수가 명시적으로 return 되는
+    경우에도 수정자 코드가 실행됩니다.
 
 ::
 
@@ -283,7 +274,7 @@ function finishes.
             Finished
         }
 
-        // This is the current stage.
+        // 이 부분이 현재의 단계입니다.
         Stages public stage = Stages.AcceptingBlindedBids;
 
         uint public creationTime = now;
@@ -297,9 +288,9 @@ function finishes.
             stage = Stages(uint(stage) + 1);
         }
 
-        // Perform timed transitions. Be sure to mention
-        // this modifier first, otherwise the guards
-        // will not take the new stage into account.
+        // timed transitions를 수행하십시오. 
+        // 이 수정자를 먼저 언급해야 합니다. 그렇지 않으면,
+        // Guards가 새로운 단계를 고려하지 않을 것 입니다.
         modifier timedTransitions() {
             if (stage == Stages.AcceptingBlindedBids &&
                         now >= creationTime + 10 days)
@@ -307,18 +298,18 @@ function finishes.
             if (stage == Stages.RevealBids &&
                     now >= creationTime + 12 days)
                 nextStage();
-            // The other stages transition by transaction
+            // 다른 단계는 거래에 의해 전환됩니다.
             _;
         }
 
-        // Order of the modifiers matters here!
+        // 수정자의 순서가 중요합니다!
         function bid()
             public
             payable
             timedTransitions
             atStage(Stages.AcceptingBlindedBids)
         {
-            // We will not implement that here
+            // 우리는 여기서 그것을 구현하지 않을 것입니다.
         }
 
         function reveal()
@@ -328,8 +319,8 @@ function finishes.
         {
         }
 
-        // This modifier goes to the next stage
-        // after the function is done.
+        // 이 수정자는 함수가 완료된 후
+        // 다음 단계로 이동합니다.
         modifier transitionNext()
         {
             _;
