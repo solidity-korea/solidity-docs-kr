@@ -3,96 +3,95 @@
 .. _types:
 
 *****
-Types
+타입
 *****
 
-Solidity is a statically typed language, which means that the type of each
-variable (state and local) needs to be specified (or at least known -
-see :ref:`type-deduction` below) at
-compile-time. Solidity provides several elementary types which can be combined
-to form complex types.
+solidity는 컴파일 시점에 각 변수(상태변수와 지역변수)의 타입이 명시되어야하는
+(또는 최소한 추론가능해야하는 - :ref:`type-deduction` 참조) 정적 타입 언어입니다.
+solidity는 몇 가지의 기본 타입을 제공하며 이를 조합해서 복합 타입을 만들 수 있습니다.
 
-In addition, types can interact with each other in expressions containing
-operators. For a quick reference of the various operators, see :ref:`order`.
+또한, 타입은 연산자가 포함된 표현식에서 서로 상호작용할 수 있습니다.
+여러 가지 연산자에 대한 내용은  :ref:`order` 를 참조하세요. 
 
 .. index:: ! value type, ! type;value
 
-Value Types
+값 타입
 ===========
 
-The following types are also called value types because variables of these
-types will always be passed by value, i.e. they are always copied when they
-are used as function arguments or in assignments.
+다음의 타입들은 변수가 전달될 때 값(value)이 전달되므로 값 타입이라고도 불립니다.
+즉, 이 타입이 함수의 인자로 사용되거나 할당값으로 사용될 땐, 값이 복사됩니다.
 
 .. index:: ! bool, ! true, ! false
 
 Booleans
 --------
 
-``bool``: The possible values are constants ``true`` and ``false``.
+``bool``: 가능한 값은 상수 ``true`` 그리고 ``false`` 입니다.
 
-Operators:
+연산자:
 
-*  ``!`` (logical negation)
-*  ``&&`` (logical conjunction, "and")
-*  ``||`` (logical disjunction, "or")
-*  ``==`` (equality)
-*  ``!=`` (inequality)
+*  ``!`` (논리 부정)
+*  ``&&`` (논리 AND, "and")
+*  ``||`` (논리 OR, "or")
+*  ``==`` (같음)
+*  ``!=`` (같지 않음)
 
-The operators ``||`` and ``&&`` apply the common short-circuiting rules. This means that in the expression ``f(x) || g(y)``, if ``f(x)`` evaluates to ``true``, ``g(y)`` will not be evaluated even if it may have side-effects.
+``||`` 과 ``&&`` 에는 일반적인 short-circuiting rules이 적용됩니다.
+이것은 ``f(x) || g(y)`` 에서 만약 ``f(x)`` 가 ``true`` 라면,   
+``g(y)`` 의 값을 확인하지 않는다면 부작용이 있을 수 있음에도 불구하고 값을 확인하지 않는것을 의미합니다.
 
 .. index:: ! uint, ! int, ! integer
 
-Integers
+정수
 --------
 
-``int`` / ``uint``: Signed and unsigned integers of various sizes. Keywords ``uint8`` to ``uint256`` in steps of ``8`` (unsigned of 8 up to 256 bits) and ``int8`` to ``int256``. ``uint`` and ``int`` are aliases for ``uint256`` and ``int256``, respectively.
+``int`` / ``uint``: 다양한 크기의 부호있는 정수 타입, 부호없는 정수 타입이 존재합니다.
+``uint8`` 에서 ``uint256`` 까지, 그리고 ``int8`` 부터 ``int256`` 까지 8비트 단위로 키워드가 존재합니다.
+``uint`` 와 ``int`` 는 각각 ``uint256`` 와 ``int256`` 의 별칭입니다.
 
-Operators:
+연산자:
 
-* Comparisons: ``<=``, ``<``, ``==``, ``!=``, ``>=``, ``>`` (evaluate to ``bool``)
-* Bit operators: ``&``, ``|``, ``^`` (bitwise exclusive or), ``~`` (bitwise negation)
-* Arithmetic operators: ``+``, ``-``, unary ``-``, unary ``+``, ``*``, ``/``, ``%`` (remainder), ``**`` (exponentiation), ``<<`` (left shift), ``>>`` (right shift)
+* 비교 연산자: ``<=``, ``<``, ``==``, ``!=``, ``>=``, ``>`` (``bool`` 결과값을 가짐)
+* 비트 연산자: ``&``, ``|``, ``^`` (배타적 비트 or), ``~`` (비트 보수)
+* 산술 연산자: ``+``, ``-``, 단항 ``-``, 단항 ``+``, ``*``, ``/``, ``%`` (나머지), ``**`` (거듭제곱), ``<<`` (왼쪽 시프트), ``>>`` (오른쪽 시프트)
 
-Division always truncates (it is just compiled to the ``DIV`` opcode of the EVM), but it does not truncate if both
-operators are :ref:`literals<rational_literals>` (or literal expressions).
+나눗셈의 결과는 항상 정수이며 소수부분은 절사됩니다(EVM의 ``DIV`` opcode로 컴파일 됩니다).
+그러나 두 연산자가 :ref:`literals<rational_literals>` (또는 리터럴 표현식)인 경우 소수부분은 절사되지 않습니다.
 
-Division by zero and modulus with zero throws a runtime exception.
+0으로 나누거나 0으로 모듈로 연산을 하면 런타임 예외가 발생합니다.
 
-The result of a shift operation is the type of the left operand. The
-expression ``x << y`` is equivalent to ``x * 2**y``, and ``x >> y`` is
-equivalent to ``x / 2**y``. This means that shifting negative numbers
-sign extends. Shifting by a negative amount throws a runtime exception.
+시프트 연산 결과의 타입은 왼쪽 피연산자의 타입을 따릅니다.
+``x << y`` 는 ``x * 2**y`` 와 동일하며, ``x >> y`` 는 ``x / 2**y`` 와 동일합니다.
+이는 음수를 시프트하는 경우 부호가 확장됨을 의미합니다.(This means that shifting negative numbers sign extends.)
+음수만큼 시프트 연산을 실행하는 경우 런타임 예외가 발생합니다.
 
 .. warning::
-    The results produced by shift right of negative values of signed integer types is different from those produced
-    by other programming languages. In Solidity, shift right maps to division so the shifted negative values
-    are going to be rounded towards zero (truncated). In other programming languages the shift right of negative values
-    works like division with rounding down (towards negative infinity).
+    부호있는 음의 정수를 우측 시프트 연산 한 결과값은 다른 프로그래밍 언어에서의 결과값과 다릅니다.
+    solidity에서는, 우측 시프트는 나눗셈과 매핑되며 그로 인해 시프트된 음의 값은 0으로 반올림되어 갑니다(절사).
+    다른 프로그래밍 언어에서는, 음의 값을 우측 시프트연산 하는 경우, 나눗셈과 소수점 이하 버림이 동시에 작동하는것과 유사하게 동작합니다(음의 무한대 방향).
 
 .. index:: ! ufixed, ! fixed, ! fixed point number
 
-Fixed Point Numbers
+부동 소수점 숫자
 -------------------
 
 .. warning::
-    Fixed point numbers are not fully supported by Solidity yet. They can be declared, but
-    cannot be assigned to or from.
+    고정 소수점 수는 아직 solidity에서 완벽하게 지원되지 않습니다. 고정 소수점 수는 선언될 수는 있지만 할당될 수는 없습니다.
 
-``fixed`` / ``ufixed``: Signed and unsigned fixed point number of various sizes. Keywords ``ufixedMxN`` and ``fixedMxN``, where ``M`` represents the number of bits taken by
-the type and ``N`` represents how many decimal points are available. ``M`` must be divisible by 8 and goes from 8 to 256 bits. ``N`` must be between 0 and 80, inclusive.
-``ufixed`` and ``fixed`` are aliases for ``ufixed128x19`` and ``fixed128x19``, respectively.
+``fixed`` / ``ufixed``: 다양한 크기의 부호있는 고정 소수점, 부호없는 고정 소수점 타입이 존재합니다.
+키워드 ``ufixedMxN`` 와 ``fixedMxN`` 에서 ``M`` 은 타입에 의해 취해진 비트의 수를 나타내며 ``N`` 은 소수점이하 자리수를 나타냅니다.
+``M`` 은 8에서 256비트 사이의 값이며 반드시 8로 나누어 떨어져야 합니다.
+``N`` 은 0과 80 사이의 값이어야만 합니다.
+``ufixed`` 와 ``fixed`` 는 각각 ``ufixed128x19`` 와 ``fixed128x19`` 의 별칭입니다.
 
-Operators:
+연산자:
 
-* Comparisons: ``<=``, ``<``, ``==``, ``!=``, ``>=``, ``>`` (evaluate to ``bool``)
-* Arithmetic operators: ``+``, ``-``, unary ``-``, unary ``+``, ``*``, ``/``, ``%`` (remainder)
+* 비교 연산자: ``<=``, ``<``, ``==``, ``!=``, ``>=``, ``>`` (``bool`` 결과값을 가짐)
+* 산술 연산자: ``+``, ``-``, 단항 ``-``, 단항 ``+``, ``*``, ``/``, ``%`` (나머지)
 
 .. note::
-    The main difference between floating point (``float`` and ``double`` in many languages, more precisely IEEE 754 numbers) and fixed point numbers is
-    that the number of bits used for the integer and the fractional part (the part after the decimal dot) is flexible in the former, while it is strictly
-    defined in the latter. Generally, in floating point almost the entire space is used to represent the number, while only a small number of bits define
-    where the decimal point is.
+    부동 소수점 수와 고정 소수점 수의 주요한 차이점은, 부동 소수점 수는 정수와 소수점 부분을 표현하기 위해 사용되는 비트의 수가 유동적인데 반해, 고정 소수점의 경우 엄격히 정의되어 있습니다.
+    일반적으로, 부동 소수점 방식에서는 거의 모든 공간이 소수 부분을 나타내기 위해 사용되지만 고정 소수점 방식에서는 적은 수의 비트만이 소수 부분을 정의하는데 사용됩니다.
 
 .. index:: address, balance, send, call, callcode, delegatecall, transfer
 
@@ -101,26 +100,26 @@ Operators:
 Address
 -------
 
-``address``: Holds a 20 byte value (size of an Ethereum address). Address types also have members and serve as a base for all contracts.
+``address`` : 20바이트(이더리움 address의 크기)를 담을 수 있습니다. address 타입에는 멤버가 있으며 모든 컨트랙트의 기반이 됩니다.
 
-Operators:
+
+연산자:
 
 * ``<=``, ``<``, ``==``, ``!=``, ``>=`` and ``>``
 
 .. note::
-    Starting with version 0.5.0 contracts do not derive from the address type, but can still be explicitly converted to address.
+    0.5.0으로 시작하는 버전의 컨트랙트는 address 타입에서 파생되지 않았지만, address 타입으로 명시적 변환될 수 있습니다.
 
 .. _members-of-addresses:
 
-Members of Addresses
+address의 members
 ^^^^^^^^^^^^^^^^^^^^
 
-* ``balance`` and ``transfer``
+* ``balance`` 와 ``transfer``
 
-For a quick reference, see :ref:`address_related`.
+빠르게 훑으려면 :ref:`address_related` 를 참조하세요.
 
-It is possible to query the balance of an address using the property ``balance``
-and to send Ether (in units of wei) to an address using the ``transfer`` function:
+``balance`` 속성을 이용하여 address의 잔고를 조회하고 ``transfer`` 함수를 이용하여 다른 address에 Ether를 (wei 단위로) 보낼 수 있습니다:
 
 ::
 
@@ -129,22 +128,23 @@ and to send Ether (in units of wei) to an address using the ``transfer`` functio
     if (x.balance < 10 && myAddress.balance >= 10) x.transfer(10);
 
 .. note::
-    If ``x`` is a contract address, its code (more specifically: its fallback function, if present) will be executed together with the ``transfer`` call (this is a feature of the EVM and cannot be prevented). If that execution runs out of gas or fails in any way, the Ether transfer will be reverted and the current contract will stop with an exception.
-
+    ``x`` 가 컨트랙트 address인 경우, 코드(더 구체적으로는: fallback 함수가 존재하는 경우)는 ``transfer`` 호출과 함께
+     실행될 것입니다(이건 EVM의 특성이며 막을 수 없습니다).
+     코드가 실행될때 가스가 부족하거나 어떤식으로든 실패한다면, Ether 전송은 원상복구되며 현재의 컨트랙트는 예외를 발생하며 중지됩니다.
+     
 * ``send``
 
-Send is the low-level counterpart of ``transfer``. If the execution fails, the current contract will not stop with an exception, but ``send`` will return ``false``.
+Send는 low-level 수준에서 ``transfer`` 에 대응됩니다. 실행이 실패하면 컨트랙트는 중단되지 않고 대신 ``send`` 가 ``false`` 를 반환할 것입니다.
 
 .. warning::
-    There are some dangers in using ``send``: The transfer fails if the call stack depth is at 1024
-    (this can always be forced by the caller) and it also fails if the recipient runs out of gas. So in order
-    to make safe Ether transfers, always check the return value of ``send``, use ``transfer`` or even better:
-    use a pattern where the recipient withdraws the money.
+    ``send`` 를 사용할 땐 몇가지 주의사항이 있습니다: call stack의 깊이가 1024라면 전송은 실패하며(이것은 항상 호출자에 의해 강제 될 수 있습니다) 그리고
+    수신자의 gas가 전부 소모되어도 실패합니다. 그러므로 안전한 Ether 전송을 위해서, 항상 ``send`` 의 반환값을 확인하고, ``transfer`` 를 사용하세요: 혹은 더 좋은 방법은 수신자가 돈을 인출하는 패턴을 사용하는 것입니다. 
 
-* ``call``, ``callcode`` and ``delegatecall``
+* ``call``, ``callcode`` 그리고 ``delegatecall``
 
-Furthermore, to interface with contracts that do not adhere to the ABI,
-the function ``call`` is provided which takes an arbitrary number of arguments of any type. These arguments are padded to 32 bytes and concatenated. One exception is the case where the first argument is encoded to exactly four bytes. In this case, it is not padded to allow the use of function signatures here.
+또한, ABI를 준수하지 않는 컨트랙트와 상호작용하기 위하여 임의 숫자의 인자를 취하는 ``call`` 함수가 제공되며 인자의 타입 역시 모든 타입을 취할 수 있습니다.
+이러한 인자는 32바이트가 될 때까지 채워지고 연결됩니다. 한 가지 예외는 첫 번째 인자가 정확히 4바이트로 인코딩 되는 경우입니다.
+이 경우에는, 함수 서명이 사용되도록 하기 위해 인자가 채워지지 않습니다.
 
 ::
 
@@ -152,148 +152,135 @@ the function ``call`` is provided which takes an arbitrary number of arguments o
     nameReg.call("register", "MyName");
     nameReg.call(bytes4(keccak256("fun(uint256)")), a);
 
-``call`` returns a boolean indicating whether the invoked function terminated (``true``) or caused an EVM exception (``false``). It is not possible to access the actual data returned (for this we would need to know the encoding and size in advance).
+``call`` 은 호출된 함수가 종료되었는지(``true``) 아니면 EVM 예외를 발생시켰는지를(``false``) 나타내는 boolean을 반환합니다.
+반환된 데이터 자체에 접근하는건 불가능합니다(이를 위해선 우리는 인코딩과 크기를 미리 알고 있어야 합니다).
 
-It is possible to adjust the supplied gas with the ``.gas()`` modifier::
+``.gas ()`` 제어자를 사용하여 제공된 가스를 조절할 수 있습니다::
 
     namReg.call.gas(1000000)("register", "MyName");
 
-Similarly, the supplied Ether value can be controlled too::
+이와 유사하게, 제공된 Ether의 값도 역시 조절할 수 있습니다::
 
     nameReg.call.value(1 ether)("register", "MyName");
 
-Lastly, these modifiers can be combined. Their order does not matter::
+마지막으로, 이 제한자들은 함께 사용할 수 있으며 순서는 상관 없습니다::
 
     nameReg.call.gas(1000000).value(1 ether)("register", "MyName");
 
 .. note::
-    It is not yet possible to use the gas or value modifiers on overloaded functions.
+    현재로서는 오버로딩된 함수에서 가스 제한자나 값 제한자를 사용할 수 없습니다.
+    
+    이를 위한 해결책은 가스와 값에 관해 특수한 경우가 있다는걸 소개하고 다시 한번 더 문제를 일으키지 않는지 확인하는 것입니다.
 
-    A workaround is to introduce a special case for gas and value and just re-check
-    whether they are present at the point of overload resolution.
+이와 유사하게, 함수 ``delegatecall`` 을 사용할 수 있습니다:
+차이점은, 주어진 주소에선 오직 코드만 사용되고, 다른 것들(저장소, 잔고, ...)은 현재 컨트랙트의 것을 사용합니다.
+``delegatecall`` 의 목적은 다른 컨트랙트에 저장된 라이브러리 코드를 사용하기 위함입니다.
+사용자는 양쪽 컨트랙트의 저장소 레이아웃이 delegatecall을 통해 사용되기 적합한지 반드시 확인해야 합니다.
+homestead 단계 전까지는, ``callcode`` 라고 불리는 delegatecall의 제한된 변형형태만이 이용가능했는데,
+이 변형된 형태는 ``msg.sender`` 와 ``msg.value`` 에 접근하는 기능을 제공하지 않았습니다.
 
-In a similar way, the function ``delegatecall`` can be used: the difference is that only the code of the given address is used, all other aspects (storage, balance, ...) are taken from the current contract. The purpose of ``delegatecall`` is to use library code which is stored in another contract. The user has to ensure that the layout of storage in both contracts is suitable for delegatecall to be used. Prior to homestead, only a limited variant called ``callcode`` was available that did not provide access to the original ``msg.sender`` and ``msg.value`` values.
+세 가지 함수 ``call``, ``delegatecall`` 및 ``callcode`` 는 매우 low-level 함수이므로 Solidity의 타입 안전성을 깨뜨리니 *최후의 수단* 으로서만 사용해야합니다.
 
-All three functions ``call``, ``delegatecall`` and ``callcode`` are very low-level functions and should only be used as a *last resort* as they break the type-safety of Solidity.
-
-The ``.gas()`` option is available on all three methods, while the ``.value()`` option is not supported for ``delegatecall``.
+``.gas ()`` 옵션은 세 가지 메소드 모두에서 사용할 수 있지만, ``.value ()`` 옵션은 ``delegatecall`` 에서 사용할 수 없습니다.
 
 .. note::
-    All contracts inherit the members of address, so it is possible to query the balance of the
-    current contract using ``this.balance``.
+    모든 컨트랙트는 address의 멤버를 상속하므로, ``this.balance`` 를 이용하여 현재 컨트랙트의 잔액을 조회하는것이 가능합니다.
 
 .. note::
-    The use of ``callcode`` is discouraged and will be removed in the future.
+    ``callcode`` 는 추후 버전에서 제거 될 예정이라 사용을 권장하지 않습니다.
 
 .. warning::
-    All these functions are low-level functions and should be used with care.
-    Specifically, any unknown contract might be malicious and if you call it, you
-    hand over control to that contract which could in turn call back into
-    your contract, so be prepared for changes to your state variables
-    when the call returns.
+    이 함수들은 low-level 함수이므로 주의해서 사용해야 합니다.
+    특히 알지 못하는 컨트랙트는 위험할 수 있으며 만약 이를 호출할 경우
+    해당 컨트랙트에 대한 제어 권한을 넘겨주므로 호출이 반환될 때 상태 변수를 변경할 수 있습니다.
 
 .. index:: byte array, bytes32
 
 
-Fixed-size byte arrays
+고정 크기 바이트 배열
 ----------------------
 
 ``bytes1``, ``bytes2``, ``bytes3``, ..., ``bytes32``. ``byte`` is an alias for ``bytes1``.
 
-Operators:
+연산자:
 
-* Comparisons: ``<=``, ``<``, ``==``, ``!=``, ``>=``, ``>`` (evaluate to ``bool``)
-* Bit operators: ``&``, ``|``, ``^`` (bitwise exclusive or), ``~`` (bitwise negation), ``<<`` (left shift), ``>>`` (right shift)
-* Index access: If ``x`` is of type ``bytesI``, then ``x[k]`` for ``0 <= k < I`` returns the ``k`` th byte (read-only).
+* 비교 연산자: ``<=``, ``<``, ``==``, ``!=``, ``>=``, ``>`` (``bool`` 결과값을 가짐)
+* 비트 연산자: ``&``, ``|``, ``^`` (배타적 비트 or), ``~`` (비트 보수), ``<<`` (왼쪽 시프트), ``>>`` (오른쪽 시프트)
+* 인덱스 접근: 만약 ``x`` 가 ``bytesI`` 타입이라면,  ``0 <= k < I`` 일때 ``x[k]`` 는 ``k`` 번째 바이트를 반환한다(읽기 전용).
 
-The shifting operator works with any integer type as right operand (but will
-return the type of the left operand), which denotes the number of bits to shift by.
-Shifting by a negative amount will cause a runtime exception.
+시프트 연산자는 몇 비트만큼 이동할건지를 나타내는 오른쪽 피연산자로 모든 정수를 취할 수 있습니다(그렇지만 왼쪽 피연산자의 타입을 반환합니다).
+음수만큼 시프트하는 경우 런타임 예외가 발생합니다.
 
 Members:
 
-* ``.length`` yields the fixed length of the byte array (read-only).
+* ``.length`` 는 바이트 배열의 고정된 길이를 반환합니다(읽기 전용).
 
 .. note::
-    It is possible to use an array of bytes as ``byte[]``, but it is wasting a lot of space, 31 bytes every element,
-    to be exact, when passing in calls. It is better to use ``bytes``.
+    바이트 배열은 ``byte[]`` 로도 사용이 가능하지만, 이럴 경우 각 요소마다 정확히 31바이트의 공간을 낭비하게됩니다. ``bytes`` 를 사용하는것이 더 낫습니다.
 
-Dynamically-sized byte array
+동적 크기 바이트 배열
 ----------------------------
 
 ``bytes``:
-    Dynamically-sized byte array, see :ref:`arrays`. Not a value-type!
-``string``:
-    Dynamically-sized UTF-8-encoded string, see :ref:`arrays`. Not a value-type!
+    동적 크기 바이트 배열, :ref:`arrays` 을 참조하세요. 값 타입이 아닙니다!
 
-As a rule of thumb, use ``bytes`` for arbitrary-length raw byte data and ``string``
-for arbitrary-length string (UTF-8) data. If you can limit the length to a certain
-number of bytes, always use one of ``bytes1`` to ``bytes32`` because they are much cheaper.
+``string``:
+    동적 크기의 UTF-8 인코딩된 문자열, :ref:`arrays` 을 참조하세요. 값 타입이 아닙니다!
+
+경험에 따르면 임의 길이의 원시 바이트 데이터의 경우에는 ``bytes`` 를 사용하고
+임의 길이의 문자열(UTF-8) 데이터의 경우에는 ``string`` 을 사용하세요.
+만약 길이를 특정 바이트만큼 제한할수 있다면, 항상 ``bytes1`` 에서 ``bytes32`` 중 하나를 사용하세요. 왜냐하면 공간을 더 절약할 수 있기 때문입니다.
 
 .. index:: address, literal;address
 
 .. _address_literals:
 
-Address Literals
+Address 리터럴
 ----------------
 
-Hexadecimal literals that pass the address checksum test, for example
-``0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF`` are of ``address`` type.
-Hexadecimal literals that are between 39 and 41 digits
-long and do not pass the checksum test produce
-a warning and are treated as regular rational number literals.
+address 체크섬 테스트를 통과한 16진수 리터럴(예를 들면 ``0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF``)은 ``address`` 타입입니다.
+체크섬 테스트를 통과하지 못한 39자리 ~ 41자리 길이의 16진수 리터럴은 경고를 발생시키고 일반적인 유리수 리터럴로 취급됩니다.
 
 .. note::
-    The mixed-case address checksum format is defined in `EIP-55 <https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md>`_.
+    혼합 케이스 address의 체크섬 형식은 `EIP-55 <https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md>`_ 에 정의되어 있습니다.
 
 .. index:: literal, literal;rational
 
 .. _rational_literals:
 
-Rational and Integer Literals
+유리수 리터럴 및 정수 리터럴
 -----------------------------
 
-Integer literals are formed from a sequence of numbers in the range 0-9.
-They are interpreted as decimals. For example, ``69`` means sixty nine.
-Octal literals do not exist in Solidity and leading zeros are invalid.
+정수 리터럴은 0-9 범위의 일련의 숫자로 구성됩니다.
+정수 리터럴은 십진법으로 나타내어집니다. 예를 들어, ``69`` 는 육십구를 의미합니다.
+8진법 리터럴은 solidity에 존재하지 않으며 선행 0은 유효하지 않습니다.
 
-Decimal fraction literals are formed by a ``.`` with at least one number on
-one side.  Examples include ``1.``, ``.1`` and ``1.3``.
+소수점 이하 리터럴은 한쪽에 적어도 하나의 숫자가 있을때 ``.`` 에 의해 구성됩니다. 예로는 ``1.``, ``.1``, ``1.3`` 이 있습니다.
 
-Scientific notation is also supported, where the base can have fractions, while the exponent cannot.
-Examples include ``2e10``, ``-2e10``, ``2e-10``, ``2.5e1``.
+소수가 밑이 될 수 있지만 지수는 될 수 없는 과학적 표기법 또한 지원됩니다.
+``2e10``, ``-2e10``, ``2e-10``, ``2.5e1`` 같은 예가 있습니다.
 
-Number literal expressions retain arbitrary precision until they are converted to a non-literal type (i.e. by
-using them together with a non-literal expression).
-This means that computations do not overflow and divisions do not truncate
-in number literal expressions.
+숫자 리터럴 표현식은 리터럴이 아닌 타입으로 변환될때까지(즉, 리터럴이 아닌 표현식과 함께 사용되는 경우) 임의 정밀도를 유지합니다.
+이는 계산이 수행될때 오버플로우가 발생하지 않으며 나눗셈이 수행될때 자릿수를 잘라내지 않는걸 의미합니다.
 
-For example, ``(2**800 + 1) - 2**800`` results in the constant ``1`` (of type ``uint8``)
-although intermediate results would not even fit the machine word size. Furthermore, ``.5 * 8`` results
-in the integer ``4`` (although non-integers were used in between).
+예를 들어, ``(2**800 + 1) - 2**800`` 의 결과는 비록 중간 결과값이 machine word size에 적합하지 않을지라도 상수 ``1`` (``uint8`` 타입)입니다.
+게다가 ``.5 * 8`` 의 결과값은 (비록 중간에 정수가 아닌 숫자가 사용되었을지라도) 정수 ``4`` 입니다.
 
-Any operator that can be applied to integers can also be applied to number literal expressions as
-long as the operands are integers. If any of the two is fractional, bit operations are disallowed
-and exponentiation is disallowed if the exponent is fractional (because that might result in
-a non-rational number).
+정수에 사용할 수 있는 연산자는 피연산자가 정수인 숫자 리터럴 표현식에도 사용할 수 있습니다.
+(피연산자) 둘 중 하나라도 소수일 경우에는, 비트 연산이 허용되지 않으며 지수가 소수일 경우에도 지수 연산이 허용되지 않습니다(무리수가 발생할 수 있으므로).
 
 .. note::
-    Solidity has a number literal type for each rational number.
-    Integer literals and rational number literals belong to number literal types.
-    Moreover, all number literal expressions (i.e. the expressions that
-    contain only number literals and operators) belong to number literal
-    types.  So the number literal expressions ``1 + 2`` and ``2 + 1`` both
-    belong to the same number literal type for the rational number three.
+    solidity는 각 유리수에 대해 숫자 리터럴 타입을 가집니다.
+    정수 리터럴과 유리수 리터럴은 숫자 리터럴 타입에 속합니다.
+    또한 모든 숫자 리터럴 표현식(즉, 오직 숫자 리터럴과 연산자로만 구성된 표현식)은 숫자 리터럴 타입에 속합니다.
+    그러므로 숫자 리터럴 표현식  ``1 + 2`` 와 ``2 + 1`` 모두 유리수 3에 대해 같은 숫자 리터럴 타입에 속합니다.
 
 .. warning::
-    Division on integer literals used to truncate in earlier versions, but it will now convert into a rational number, i.e. ``5 / 2`` is not equal to ``2``, but to ``2.5``.
+    이전 버전에서는 정수 리터럴에 대한 나눗셈의 결과에서 자릿수를 버렸지만, 현재는 유리수로 변환됩니다. 즉 ``5 / 2`` 는 ``2`` 가 아니라 ``2.5`` 입니다.
 
 .. note::
-    Number literal expressions are converted into a non-literal type as soon as they are used with non-literal
-    expressions. Even though we know that the value of the
-    expression assigned to ``b`` in the following example evaluates to
-    an integer, but the partial expression ``2.5 + a`` does not type check so the code
-    does not compile
+    숫자 리터럴 표현식은 리터럴이 아닌 표현식과 함께 사용되는 즉시 리터럴이 아닌 타입으로 변환됩니다.
+    비록 우리는 다음 예제에서 ``b`` 에 할당된 값이 정수로 평가된다는걸 알고 있지만, 부분 표현식 ``2.5 + a`` 은 타입 검사를 하지 않으며 코드는 컴파일되지 않습니다.
 
 ::
 
@@ -302,21 +289,27 @@ a non-rational number).
 
 .. index:: literal, literal;string, string
 
-String Literals
+문자열 리터럴
 ---------------
 
-String literals are written with either double or single-quotes (``"foo"`` or ``'bar'``).  They do not imply trailing zeroes as in C; ``"foo"`` represents three bytes not four.  As with integer literals, their type can vary, but they are implicitly convertible to ``bytes1``, ..., ``bytes32``, if they fit, to ``bytes`` and to ``string``.
+문자열 리터럴은 큰따옴표나 작은따옴표와 함께 작성됩니다(``"foo"`` 또는 ``'bar'``).
+solidity에선 C에서 처럼 trailing zeroes를 포함하진 않습니다;
+``"foo"`` 는 4바이트가 아닌 3바이트를 차지합니다.
+정수 리터럴과 마찬가지로, 문자열 리터럴의 타입은 다양하며 ``bytes1``, ..., ``bytes32`` 로 암시적 변환될 수 있습니다.
+적합한 크기라면 ``bytes`` 와 ``string`` 으로도 변환될 수 있습니다.
 
-String literals support escape characters, such as ``\n``, ``\xNN`` and ``\uNNNN``. ``\xNN`` takes a hex value and inserts the appropriate byte, while ``\uNNNN`` takes a Unicode codepoint and inserts an UTF-8 sequence.
+문자열 리터럴은 ``\n``, ``\xNN``, ``\uNNNN`` 와 같은 escape characters을 지원합니다.
+``\xNN`` 은 16진수 값을 취해 적절한 바이트를 삽입하는 반면  ``\uNNNN`` 은 Unicode codepoint를 취해 UTF-8 sequence를 삽입합니다.
 
 .. index:: literal, bytes
 
-Hexadecimal Literals
+16진수 리터럴
 --------------------
 
-Hexademical Literals are prefixed with the keyword ``hex`` and are enclosed in double or single-quotes (``hex"001122FF"``). Their content must be a hexadecimal string and their value will be the binary representation of those values.
+16진수 리터럴은 키워드 ``hex`` 가 접두사로 붙고 큰따옴표나 작은따옴표로 둘러싸여집니다(``hex"001122FF"``).
+내용은 16진수 문자열이어야 하며 값은 바이너리로 표현됩니다.
 
-Hexademical Literals behave like String Literals and have the same convertibility restrictions.
+16진수 리터럴은 문자열 리터럴과 같이 동작하기에 동일하게 변경에 제한이 있습니다.
 
 .. index:: enum
 
@@ -325,9 +318,10 @@ Hexademical Literals behave like String Literals and have the same convertibilit
 Enums
 -----
 
-Enums are one way to create a user-defined type in Solidity. They are explicitly convertible
-to and from all integer types but implicit conversion is not allowed.  The explicit conversions
-check the value ranges at runtime and a failure causes an exception.  Enums needs at least one member.
+열거형은 solidity에서 사용자 정의 타입을 만드는 한 가지 방법입니다.
+열거형은 모든 정수타입으로/정수타입에서 명시적 변환이 가능하지만 암시적 변환은 허용되지 않습니다.
+명시적 변환은 런타임때 값 범위를 체크하고 실패시 예외를 발생시킵니다.
+열거형은 최소 하나의 멤버를 필요로 합니다.
 
 ::
 
@@ -360,54 +354,44 @@ check the value ranges at runtime and a failure causes an exception.  Enums need
 
 .. _function_types:
 
-Function Types
+함수 타입
 --------------
 
-Function types are the types of functions. Variables of function type
-can be assigned from functions and function parameters of function type
-can be used to pass functions to and return functions from function calls.
-Function types come in two flavours - *internal* and *external* functions:
+함수 타입입니다.
+함수 타입의 변수는 함수에서 할당 될 수 있으며 함수 타입의 함수매개변수는 함수가 호출될 때, 함수를 전달하거나 반환하는데 사용될 수 있습니다.
+함수 타입에는 두 종류가 있습니다 - *내부* 및 *외부* 함수 입니다:
 
-Internal functions can only be called inside the current contract (more specifically,
-inside the current code unit, which also includes internal library functions
-and inherited functions) because they cannot be executed outside of the
-context of the current contract. Calling an internal function is realized
-by jumping to its entry label, just like when calling a function of the current
-contract internally.
+내부 함수는 오직 현재 컨트랙트의 내부에서만(더 구체적으로는, 내부 라이브러리 함수와 상속받은 함수를 포함한 현재 코드 유닛 내부에서만) 호출될 수 있습니다.
+왜냐하면 내부 함수는 현재 컨트랙트의 컨텍스트 밖에서 실행될 수 없기 때문입니다.
+내부 함수를 호출하는것은 마치 현재 컨트랙트의 함수를 내부적으로 호출할떄와 마찬가지로 entry label로 가서 실현됩니다.
 
-External functions consist of an address and a function signature and they can
-be passed via and returned from external function calls.
+외부 함수는 address와 함수 서명으로 구성되며 외부 함수 호출을 통해 전달되고 반환 될 수 있습니다.
 
-Function types are notated as follows::
+함수 타입은 다음과 같이 표기됩니다::
 
     function (<parameter types>) {internal|external} [pure|constant|view|payable] [returns (<return types>)]
 
-In contrast to the parameter types, the return types cannot be empty - if the
-function type should not return anything, the whole ``returns (<return types>)``
-part has to be omitted.
+매개변수 타입과 달리, 반환 타입은 비워 둘 수 없습니다.
+함수 타입이 아무것도 반환하지 않는다면 ``returns (<return types>)`` 이 부분 전체를 생략해야 합니다.
 
-By default, function types are internal, so the ``internal`` keyword can be
-omitted. In contrast, contract functions themselves are public by default,
-only when used as the name of a type, the default is internal.
+기본적으로, 함수 타입은 내부함수이므로, ``internal`` 키워드는 생략 가능합니다.
+반대로, 컨트랙트 함수 자체는 기본적으로 public이며 타입의 이름으로 사용될 때만 기본값이 internal 입니다.
 
-There are two ways to access a function in the current contract: Either directly
-by its name, ``f``, or using ``this.f``. The former will result in an internal
-function, the latter in an external function.
+현재 컨트랙트에서 함수에 접근하는 방법은 두가지가 있습니다:
+``f`` 이렇게 직접 이름을 사용하거나, ``this.f`` 이런식으로 접근할 수 있습니다.
+전자는 내부함수, 후자는 외부함수가 될 것입니다.
 
-If a function type variable is not initialized, calling it will result
-in an exception. The same happens if you call a function after using ``delete``
-on it.
+함수 타입 변수가 초기화 되지 않은 상태에서, 이를 호출하면 예외가 발생합니다.
+함수에 ``delete`` 를 사용 후 그 함수를 호출하는 경우에도 동일하게 예외가 발생합니다.
 
-If external function types are used outside of the context of Solidity,
-they are treated as the ``function`` type, which encodes the address
-followed by the function identifier together in a single ``bytes24`` type.
+외부 함수 타입이 solidity 컨텍스트의 외부에서 사용되는 경우,
+이들은 뒤에 함수 식별자가 붙는 address를 단일 ``bytes24`` 타입으로 인코딩하는 ``function`` 으로 취급됩니다.
 
-Note that public functions of the current contract can be used both as an
-internal and as an external function. To use ``f`` as an internal function,
-just use ``f``, if you want to use its external form, use ``this.f``.
+현재 컨트랙트의 퍼블릭 함수는 내부 함수로도 외부함수로도 사용될 수 있습니다.
+``f`` 를 내부 함수로 사용하려면, ``f`` 만 사용하고 외부 함수로 사용하려면  ``this.f`` 로 사용하세요. 
 
-Additionally, public (or external) functions also have a special member called ``selector``,
-which returns the :ref:`ABI function selector <abi_function_selector>`::
+또한 퍼블릭 (또는 external) 함수에는 :ref:`ABI function selector <abi_function_selector>` 를 반환하는 
+특수한 멤버 `selector` 가 있습니다.
 
     pragma solidity ^0.4.16;
 
@@ -417,7 +401,7 @@ which returns the :ref:`ABI function selector <abi_function_selector>`::
       }
     }
 
-Example that shows how to use internal function types::
+내부 함수 타입을 사용하는 방법을 보여주는 예제::
 
     pragma solidity ^0.4.16;
 
@@ -468,7 +452,7 @@ Example that shows how to use internal function types::
       }
     }
 
-Another example that uses external function types::
+외부 함수 타입을 사용하는 또 다른 예제::
 
     pragma solidity ^0.4.21;
 
@@ -501,41 +485,32 @@ Another example that uses external function types::
     }
 
 .. note::
-    Lambda or inline functions are planned but not yet supported.
+    람다함수나 인라인함수 역시 계획되어있지만 아직 지원되지 않습니다.
 
 .. index:: ! type;reference, ! reference type, storage, memory, location, array, struct
 
-Reference Types
+참조 타입
 ==================
 
-Complex types, i.e. types which do not always fit into 256 bits have to be handled
-more carefully than the value-types we have already seen. Since copying
-them can be quite expensive, we have to think about whether we want them to be
-stored in **memory** (which is not persisting) or **storage** (where the state
-variables are held).
+복합 타입, 즉 항상 256비트에 들어맞지 않는 타입은 우리가 이제까지 다뤘던 타입보다 더욱 신중하게 다뤄야 합니다.
+복합 타입을 복사하는 것은 비싼 연산이 될 수 있으므로, 우리는 복합 타입을 **메모리** (지속성이 없음) 와 **스토리지** (상태 변수가 저장되는 곳)중 어디에 저장하고 싶은지 생각해보아야 합니다.
 
-Data location
+데이터 위치
 -------------
 
-Every complex type, i.e. *arrays* and *structs*, has an additional
-annotation, the "data location", about whether it is stored in memory or in storage. Depending on the
-context, there is always a default, but it can be overridden by appending
-either ``storage`` or ``memory`` to the type. The default for function parameters (including return parameters) is ``memory``, the default for local variables is ``storage`` and the location is forced
-to ``storage`` for state variables (obviously).
+모든 복합 타입은 자신이 *메모리* 나 *스토리지* 중 어디에 저장되었는지를 나타내는 "데이터 위치"가 추가적으로 존재합니다.
+컨텍스트에 따라 항상 기본값이 존재하지만, 타입에 ``스토리지`` 나 ``메모리`` 를 추가하여 재정의 할 수 있습니다. 
+함수 매개 변수(반환 매개 변수도 포함)의 기본값은 ``메모리`` 이고, 지역 변수의 기본값은 ``스토리지`` 이며 상태 변수의 위치는 ``스토리지`` 로 강제되어 있습니다.
 
-There is also a third data location, ``calldata``, which is a non-modifiable,
-non-persistent area where function arguments are stored. Function parameters
-(not return parameters) of external functions are forced to ``calldata`` and
-behave mostly like ``memory``.
+또한 세 번째 데이터 위치인 ``calldata`` 가 있으며, 여기에는 함수 인자가 저장되고 수정 불가능하며 지속성이 없습니다.
+외부 함수의 함수 매개 변수(반환 매개변수 제외)는 ``calldata`` 에 강제 저장되며 거의 ``memory`` 처럼 작동합니다.
 
-Data locations are important because they change how assignments behave:
+데이터 위치는 변수가 할당되는 방식을 변경하기 때문에 중요합니다:
 assignments between storage and memory and also to a state variable (even from other state variables)
 always create an independent copy.
 Assignments to local storage variables only assign a reference though, and
-this reference always points to the state variable even if the latter is changed
-in the meantime.
-On the other hand, assignments from a memory stored reference type to another
-memory-stored reference type do not create a copy.
+this reference always points to the state variable even if the latter is changed in the meantime.
+반면, 메모리에 저장된 참조 타입에서 다른 메모리에 저장된 참조 타입을 할당할땐 복사본을 만들지 않습니다.
 
 ::
 
@@ -565,60 +540,53 @@ memory-stored reference type do not create a copy.
         function h(uint[] memoryArray) public {}
     }
 
-Summary
+요약
 ^^^^^^^
 
-Forced data location:
- - parameters (not return) of external functions: calldata
- - state variables: storage
+강제 데이터 위치:
+ - 외부 함수의 매개 변수(반환값 미포함): calldata
+ - 상태 변수: 스토리지
 
-Default data location:
- - parameters (also return) of functions: memory
- - all other local variables: storage
+기본 데이터 위치:
+ - 함수의 매개변수(반환값 포함): 메모리
+ - 모든 지역 변수: 스토리지
 
 .. index:: ! array
 
 .. _arrays:
 
-Arrays
+배열
 ------
 
-Arrays can have a compile-time fixed size or they can be dynamic.
-For storage arrays, the element type can be arbitrary (i.e. also other
-arrays, mappings or structs). For memory arrays, it cannot be a mapping and
-has to be an ABI type if it is an argument of a publicly-visible function.
+배열은 컴파일시 고정 크기를 가질 수도 있고 동적인 크기를 가질 수도 있습니다.
+스토리지 배열의 경우, 요소의 타입은 임의적일 수(즉, 다른 배열이 될 수도 있고, 매핑이나 구조체일수도 있음) 있습니다.
+메모리 배열의 경우, 매핑이 될 수 없으며 만약 공개적으로 보여지는 함수의 인자라면 ABI 타입이어야 합니다.
 
-An array of fixed size ``k`` and element type ``T`` is written as ``T[k]``,
-an array of dynamic size as ``T[]``. As an example, an array of 5 dynamic
-arrays of ``uint`` is ``uint[][5]`` (note that the notation is reversed when
-compared to some other languages). To access the second uint in the
-third dynamic array, you use ``x[2][1]`` (indices are zero-based and
-access works in the opposite way of the declaration, i.e. ``x[2]``
-shaves off one level in the type from the right).
+크기는 ``k`` 로 고정되었고 요소의 타입은 ``T`` 인 배열은 ``T[k]`` 로 표시하며, 동적인 크기의 배열은 ``T[]`` 로 표시합니다.
+예를 들자면, ``uint`` 타입을 요소로 하는 동적 크기 배열 5개로 구성된 배열은 ``uint[][5]`` 입니다(다른 언어들과는 달리 행과 열의 표현이 바뀌어있음에 유의하세요).
+세번째 동적 크기 배열의 두번째 uint에 접근하려면, ``x[2][1]`` 이렇게 하세요
+(인덱스는 0부터 시작하며 접근은 선언과는 반대되는 방식으로 작동합니다. i.e. ``x[2]`` shaves off one level in the type from the right)
 
-Variables of type ``bytes`` and ``string`` are special arrays. A ``bytes`` is similar to ``byte[]``,
-but it is packed tightly in calldata. ``string`` is equal to ``bytes`` but does not allow
-length or index access (for now).
+``bytes`` 와 ``string`` 타입의 변수는 특별한 형태의 배열입니다.
+``bytes`` 는 ``byte[]`` 와 유사하지만 calldata로 꽉 차여져 있습니다.
+``string`` 은 ``bytes`` 와 동일하지만 (현재로서는) 길이나 인덱스 접근을 허용하지 않습니다
 
-So ``bytes`` should always be preferred over ``byte[]`` because it is cheaper.
+그러므로 ``bytes`` 는 언제나 ``byte[]`` 보다 우선순위로 고려되어야합니다. 더 저렴하기 때문입니다.
 
 .. note::
-    If you want to access the byte-representation of a string ``s``, use
-    ``bytes(s).length`` / ``bytes(s)[7] = 'x';``. Keep in mind
-    that you are accessing the low-level bytes of the UTF-8 representation,
-    and not the individual characters!
+    문자열 ``s`` 의 byte-representation에 접근하고자 한다면, ``bytes(s).length`` / ``bytes(s)[7] = 'x';`` 이렇게 하세요.
+    개별 문자가 아닌 UTF-8의 low-level 바이트에 접근하고 있다는걸 명심하세요!
 
-It is possible to mark arrays ``public`` and have Solidity create a :ref:`getter <visibility-and-getters>`.
-The numeric index will become a required parameter for the getter.
+배열을 ``public`` 으로 생성하고 solidity가 :ref:`getter <visibility-and-getters>` 를 생성하도록 할 수 있습니다.
+숫자 인덱스는 getter의 필수 매개 변수가 됩니다.
 
 .. index:: ! array;allocating, new
 
-Allocating Memory Arrays
+메모리 배열 할당
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Creating arrays with variable length in memory can be done using the ``new`` keyword.
-As opposed to storage arrays, it is **not** possible to resize memory arrays by assigning to
-the ``.length`` member.
+``new`` 키워드를 사용해 크기 변경이 가능한 배열을 메모리에 생성할 수 있습니다.
+스토리지 배열과는 달리, ``.length`` 멤버에 값을 할당함으로써 메모리 배열의 크기를 변경하는것은 **불가능** 합니다.
 
 ::
 
@@ -635,11 +603,10 @@ the ``.length`` member.
 
 .. index:: ! array;literals, !inline;arrays
 
-Array Literals / Inline Arrays
+배열 리터럴 / 인라인 배열
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Array literals are arrays that are written as an expression and are not
-assigned to a variable right away.
+배열 리터럴은 표현식으로 작성된 배열이며 즉각적으로 변수에 할당되지 않습니다.
 
 ::
 
@@ -654,13 +621,11 @@ assigned to a variable right away.
         }
     }
 
-The type of an array literal is a memory array of fixed size whose base
-type is the common type of the given elements. The type of ``[1, 2, 3]`` is
-``uint8[3] memory``, because the type of each of these constants is ``uint8``.
-Because of that, it was necessary to convert the first element in the example
-above to ``uint``. Note that currently, fixed size memory arrays cannot
-be assigned to dynamically-sized memory arrays, i.e. the following is not
-possible:
+배열 리터럴의 타입은 고정된 크기를 가지는 메모리 배열이며 base type은 주어진 요소들의 공통 타입을 따릅니다.
+``[1, 2, 3]`` 의 타입은 ``uint8[3] memory`` 입니다. 왜냐하면 정수 각각의 타입이 ``uint8`` 이기 때문입니다.
+그렇기 때문에, 위 예제의 첫 번째 요소를 ``uint`` 로 변환해야 했습니다. 
+현재로서는, 고정된 크기의 메모리 배열을 동적 크기의 메모리 배열에 할당할 수 없습니다.
+즉, 다음과 같은 것은 불가능합니다:
 
 ::
 
@@ -676,32 +641,34 @@ possible:
         }
     }
 
-It is planned to remove this restriction in the future but currently creates
-some complications because of how arrays are passed in the ABI.
+이 제약사항은 추후에 제거될 예정이지만,  현재 이러한 제약사항으로 인해 배열이 ABI로 전달되는 방식에 따라 몇가지 문제가 발생합니다.
 
 .. index:: ! array;length, length, push, !array;push
 
-Members
+멤버
 ^^^^^^^
 
 **length**:
-    Arrays have a ``length`` member to hold their number of elements.
-    Dynamic arrays can be resized in storage (not in memory) by changing the
-    ``.length`` member. This does not happen automatically when attempting to access elements outside the current length. The size of memory arrays is fixed (but dynamic, i.e. it can depend on runtime parameters) once they are created.
+    배열에는 요소의 갯수를 저장하기 위한 ``length`` 멤버가 존재합니다.
+    (메모리가 아닌) 스토리지에 저장된 동적 배열은 ``length`` 멤버의 값을 변경하여 크기를 조절할 수 있습니다.
+    현재 length를 벗어나는 요소에 접근을 시도한다고해서 크기의 조절이 자동으로 되는건 아닙니다.
+    메모리 배열은 생성될 때 크기가 결정되며 크기의 변경은 불가능합니다(그러나 동적 배열의 경우, 런타임 매개변수에 따라 달라질 수 있습니다.).
+
 **push**:
-     Dynamic storage arrays and ``bytes`` (not ``string``) have a member function called ``push`` that can be used to append an element at the end of the array. The function returns the new length.
+    동적 크기의 스토리지 배열과 ``bytes`` (``string`` 은 제외)는 ``push`` 라는 멤버 함수를 가지고 있습니다.
+    이 함수는 배열의 끝에 요소를 추가하는데 사용됩니다.
+    이 함수는 새로운 length를 반환합니다.
 
 .. warning::
     It is not yet possible to use arrays of arrays in external functions.
+    외부 함수에서 배열의 배열을 사용하는건 아직 불가능합니다.
 
 .. warning::
-    Due to limitations of the EVM, it is not possible to return
-    dynamic content from external function calls. The function ``f`` in
-    ``contract C { function f() returns (uint[]) { ... } }`` will return
-    something if called from web3.js, but not if called from Solidity.
+    EVM의 한계로 인해, 외부함수를 호출했을때 동적인 것을 반환하는건 불가능합니다.
+    ``contract C { function f() returns (uint[]) { ... } }`` 내부의  함수 ``f`` 는
+    web3.js에서 호출될 경우 무언가를 반환하겠지만 solidity에서 호출될 경우 반환이 불가능합니다.
 
-    The only workaround for now is to use large statically-sized arrays.
-
+    현재로선 유일한 해결 방법은 크기가 고정된(동적이지 않은) 거대한 크기의 배열을 사용하는 것입니다.
 
 ::
 
@@ -769,11 +736,10 @@ Members
 
 .. _structs:
 
-Structs
+구조체
 -------
 
-Solidity provides a way to define new types in the form of structs, which is
-shown in the following example:
+solidity는 아래의 예시처럼 구조체의 형식으로 새로운 타입을 정의하는 방법을 제공합니다.
 
 ::
 
@@ -823,49 +789,38 @@ shown in the following example:
         }
     }
 
-The contract does not provide the full functionality of a crowdfunding
-contract, but it contains the basic concepts necessary to understand structs.
-Struct types can be used inside mappings and arrays and they can itself
-contain mappings and arrays.
+컨트랙트는 크라우드펀딩에서의 계약에 필요한 모든 기능을 제공하진 않지만 구조체를 이해하는데 필요한 기본적인 개념을 포함합니다.
+구조체 타입은 매핑과 배열의 내부에서 사용될 수 있으며 구조체 역시 내부에 매핑과 배열을 포함할 수 있습니다.
 
-It is not possible for a struct to contain a member of its own type,
-although the struct itself can be the value type of a mapping member.
-This restriction is necessary, as the size of the struct has to be finite.
+구조체는 매핑 멤버의 값 타입이 될 순 있지만, 구조체가 동일한 구조체 타입의 멤버를 포함할 순 없습니다.
+구조체의 크기는 유한해야 하므로 이러한 제약이 필요한것이죠.
 
-Note how in all the functions, a struct type is assigned to a local variable
-(of the default storage data location).
-This does not copy the struct but only stores a reference so that assignments to
-members of the local variable actually write to the state.
+모든 종류의 함수에서, 어떻게 구조체 타입이 (기본 스토리지 데이터 위치의) 지역 변수에 할당되는지 유의하십시오.
+이는 구조체를 복사(copy)하지 않고 참조(reference)만 저장하므로 지역 변수의 멤버에 할당하는것은 실제로 상태에 기록됩니다.
 
-Of course, you can also directly access the members of the struct without
-assigning it to a local variable, as in
-``campaigns[campaignID].amount = 0``.
+물론 ``campaigns[campaignID].amount = 0`` 처럼 지역 변수에 할당하지 않고도 구조체의 멤버에 직접 접근 할 수도 있습니다.
 
 .. index:: !mapping
 
-Mappings
+매핑
 ========
 
-Mapping types are declared as ``mapping(_KeyType => _ValueType)``.
-Here ``_KeyType`` can be almost any type except for a mapping, a dynamically sized array, a contract, an enum and a struct.
-``_ValueType`` can actually be any type, including mappings.
+매핑 타입은 ``mapping(_KeyType => _ValueType)`` 와 같이 선언됩니다.
+여기서 ``_KeyType`` 은 매핑, 동적 크기 배열, 컨트랙트, 열거형, 구조체를 제외한 거의 모든 유형이 될 수 있습니다.
+``_ValueType`` 은 매핑 타입을 포함한 어떤 타입이든 될 수 있습니다.
 
-Mappings can be seen as `hash tables <https://en.wikipedia.org/wiki/Hash_table>`_ which are virtually initialized such that
-every possible key exists and is mapped to a value whose byte-representation is
-all zeros: a type's :ref:`default value <default-value>`. The similarity ends here, though: The key data is not actually stored
-in a mapping, only its ``keccak256`` hash used to look up the value.
+매핑은 사실상 모든 가능한 키가 초기화되고 byte-representation이 모두 0인 값(타입의 :ref:`기본 값 <default-value>`)에 매핑되는 
+`해시 테이블 <https://en.wikipedia.org/wiki/Hash_table>`_ 로 볼 수 있습니다.
+이는 매핑과 해시테이블의 유사한 점이며 차이점은, 키 데이터는 실제로 매핑에 저장되지 않고 오직 ``keccak256`` 해시만이 값을 찾기 위해 사용됩니다.
 
-Because of this, mappings do not have a length or a concept of a key or value being "set".
+이로 인해, 매핑에는 길이 또는 집합(set)을 이루는 키나 값의 개념을 가지고 있지 않습니다.
 
-Mappings are only allowed for state variables (or as storage reference types
-in internal functions).
+매핑은 상태변수(또는 내부 함수에서의 스토리지 참조 타입)에만 허용됩니다.
 
-It is possible to mark mappings ``public`` and have Solidity create a :ref:`getter <visibility-and-getters>`.
-The ``_KeyType`` will become a required parameter for the getter and it will
-return ``_ValueType``.
+매핑을 ``public`` 으로 표시하고 solidity가 :ref:`getter <visibility-and-getters>` 를 생성토록 할 수 있습니다.
+``_KeyType`` 은 getter의 필수 매개 변수이며 ``_ValueType`` 을 반환 합니다.
 
-The ``_ValueType`` can be a mapping too. The getter will have one parameter
-for each ``_KeyType``, recursively.
+매핑 역시 ``_ValueType`` 이 될 수 있습니다. getter는 각각의 ``_KeyType`` 에 대하여 하나의 매개변수를 재귀적으로 가집니다.
 
 ::
 
@@ -889,26 +844,36 @@ for each ``_KeyType``, recursively.
 
 
 .. note::
-  Mappings are not iterable, but it is possible to implement a data structure on top of them.
-  For an example, see `iterable mapping <https://github.com/ethereum/dapp-bin/blob/master/library/iterable_mapping.sol>`_.
+  매핑은 iterable하진 않지만, 그 위에 자료구조(data structure)를 구현하는건 가능합니다.
+  예시는 `iterable mapping <https://github.com/ethereum/dapp-bin/blob/master/library/iterable_mapping.sol>`_ 을 참조하세요.
 
 .. index:: assignment, ! delete, lvalue
 
 Operators Involving LValues
 ===========================
 
-If ``a`` is an LValue (i.e. a variable or something that can be assigned to), the following operators are available as shorthands:
+만약 ``a`` 가 LValue라면(즉, 할당 될 수 있는 변수 또는 무언가), 다음의 연산자를 약자로 사용할 수 있습니다:
 
 ``a += e`` is equivalent to ``a = a + e``. The operators ``-=``, ``*=``, ``/=``, ``%=``, ``|=``, ``&=`` and ``^=`` are defined accordingly. ``a++`` and ``a--`` are equivalent to ``a += 1`` / ``a -= 1`` but the expression itself still has the previous value of ``a``. In contrast, ``--a`` and ``++a`` have the same effect on ``a`` but return the value after the change.
+
+
+``a += e`` 는 ``a = a + e`` 와 동일합니다. 
+연산자 ``-=``, ``*=``, ``/=``, ``%=``, ``|=``, ``&=``, ``^=`` 역시 동일한 방식으로 정의됩니다.
+``a++`` 와 ``a--`` 는 ``a += 1`` / ``a -= 1``와 동일하게 값을 변경시키지만, 표현식 자체는 여전히 ``a``의 변경이 일어나지 않은 값을 반환합니다.
+이와 반대로, ``--a`` 와 ``++a`` 역시 ``a``의 값을 변화시키지만, 이 표현식은 변경된 값을 반환합니다.
 
 delete
 ------
 
-``delete a`` assigns the initial value for the type to ``a``. I.e. for integers it is equivalent to ``a = 0``, but it can also be used on arrays, where it assigns a dynamic array of length zero or a static array of the same length with all elements reset. For structs, it assigns a struct with all members reset.
+``delete a`` 는 타입의 초기 값을 ``a`` 에 할당합니다. 즉, 정수의 경우라면 ``a = 0`` 입니다.
+배열에서도 사용될 수 있는데 이 경우, 길이가 0인 동적 배열이나 동일한 길이의 정적 배열의 모든 요소를 초기화합니다.
+구조체에 사용할 경우, 구조체의 모든 멤버를 초기화합니다.
 
-``delete`` has no effect on whole mappings (as the keys of mappings may be arbitrary and are generally unknown). So if you delete a struct, it will reset all members that are not mappings and also recurse into the members unless they are mappings. However, individual keys and what they map to can be deleted.
+``delete`` 는 매핑에 아무런 영향을 미치지 못합니다(매핑의 키는 임의적이며 일반적으로 알려져있지 않기 때문입니다).
+따라서 구조체를 delete할 경우, 매핑이 아닌 모든 멤버를 초기화하며 멤버의 내부도 매핑이 아니라면 재귀적으로 초기화합니다.
+그러나, 개별 키 그리고 그 키가 어디에 매핑되었는지는 삭제될 수 있습니다.
 
-It is important to note that ``delete a`` really behaves like an assignment to ``a``, i.e. it stores a new object in ``a``.
+``delete a`` 는 실제로 ``a`` 에 초기값을 할당하는것처럼 동작합니다. 즉, ``a`` 에 새로운 객체를 저장합니다. 
 
 ::
 
@@ -932,42 +897,33 @@ It is important to note that ``delete a`` really behaves like an assignment to `
 
 .. index:: ! type;conversion, ! cast
 
-Conversions between Elementary Types
+기본 타입간의 변환
 ====================================
 
-Implicit Conversions
+암시적 형변환
 --------------------
 
-If an operator is applied to different types, the compiler tries to
-implicitly convert one of the operands to the type of the other (the same is
-true for assignments). In general, an implicit conversion between value-types
-is possible if it
-makes sense semantically and no information is lost: ``uint8`` is convertible to
-``uint16`` and ``int128`` to ``int256``, but ``int8`` is not convertible to ``uint256``
-(because ``uint256`` cannot hold e.g. ``-1``).
-Furthermore, unsigned integers can be converted to bytes of the same or larger
-size, but not vice-versa. Any type that can be converted to ``uint160`` can also
-be converted to ``address``.
+피연산자가 서로 다른 타입이라면, 컴파일러는 하나의 피연산자를 다른 피연산자의 타입으로 암시적 형변환을 시도합니다(할당의 경우에도 마찬가지입니다).
+일반적으로, 의미가 통하며 손실되는 정보가 없다면 value-type간 암시적 형변환이 가능합니다:
+``uint8`` 는 ``uint16`` 로 암시적 형변환되며 ``int128`` 는 ``int256`` 로 암시적 형변환됩니다, 그러나 ``int8`` 는 ``uint256`` 으로 암시적 형변환될 수 없습니다(왜냐하면 ``uint256`` 는 ``-1`` 같은 값을 표현할 수 없기 때문입니다).
+더욱이, 부호없는 정수는 같거나 큰 크기의 바이트로 변환 될 수 있지만 그 반대는 불가능합니다.
+``uint160`` 로 변환 가능한 타입이라면 ``address`` 로도 변환될 수 있습니다.
 
-Explicit Conversions
+명시적 형변환
 --------------------
 
-If the compiler does not allow implicit conversion but you know what you are
-doing, an explicit type conversion is sometimes possible. Note that this may
-give you some unexpected behaviour so be sure to test to ensure that the
-result is what you want! Take the following example where you are converting
-a negative ``int8`` to a ``uint``:
+컴파일러가 암시적 형변환을 허용하지 않더라도 당신이 현재 무엇을 하고있는지 알고 있다면 명시적 형변환이 때때로 가능할 수 있습니다.
+이는 예상치 않은 작동을 불러일으킬수 있으므로 확실히 당신이 원하는 결과가 나오는지 테스트해봐야 합니다!
+음수 ``int8`` 을 ``uint`` 로 변환하는 다음의 예제를 보겠습니다:
 
 ::
 
     int8 y = -3;
     uint x = uint(y);
 
-At the end of this code snippet, ``x`` will have the value ``0xfffff..fd`` (64 hex
-characters), which is -3 in the two's complement representation of 256 bits.
+이 코드 조각의 끝에서, ``x`` 는 ``0xfffff..fd`` 값을 가질것이고, (64 hex characters) 이는 256 비트의 2의 보수 표현에서 -3입니다.
 
-If a type is explicitly converted to a smaller type, higher-order bits are
-cut off::
+크기가 더 작은 타입으로 명시적 형변환 될 경우, 상위 비트가 잘려져 나갑니다::
 
     uint32 a = 0x12345678;
     uint16 b = uint16(a); // b will be 0x5678 now
@@ -976,22 +932,16 @@ cut off::
 
 .. _type-deduction:
 
-Type Deduction
+타입 추론
 ==============
 
-For convenience, it is not always necessary to explicitly specify the type of a
-variable, the compiler automatically infers it from the type of the first
-expression that is assigned to the variable::
+편의상, 항상 변수의 타입을 명시적으로 지정할 필요는 없으며 컴파일러는 변수에 할당된 첫번째 표현식의 타입에서 자동으로 타입을 추론합니다::
 
     uint24 x = 0x123;
     var y = x;
 
-Here, the type of ``y`` will be ``uint24``. Using ``var`` is not possible for function
-parameters or return parameters.
+여기서, ``y`` 의 타입은 ``uint24`` 가 될겁니다. ``var`` 은 함수 매개 변수나 반환 매개 변수에선 사용될 수 없습니다.
 
 .. warning::
-    The type is only deduced from the first assignment, so
-    the loop in the following snippet is infinite, as ``i`` will have the type
-    ``uint8`` and the highest value of this type is smaller than ``2000``.
+    첫 번째 할당에서만 타입이 추론되기에, i는 ``uint8`` 타입이고 이 타입의 가장 큰 값이 ``2000`` 보다 작기에 아래 코드 조각의 반복문은 무한반복문입니다.
     ``for (var i = 0; i < 2000; i++) { ... }``
-

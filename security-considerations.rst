@@ -1,107 +1,80 @@
 .. _security_considerations:
 
 #######################
-Security Considerations
+보안 측면 고려사항
 #######################
 
-While it is usually quite easy to build software that works as expected,
-it is much harder to check that nobody can use it in a way that was **not** anticipated.
+소프트웨어를 원하는대로 개발하는 것은 어렵지 않지만, 다른 사람이 아예 다른 의도로 작동시키는걸 막는 것은 어렵습니다.
 
-In Solidity, this is even more important because you can use smart contracts
-to handle tokens or, possibly, even more valuable things. Furthermore, every
-execution of a smart contract happens in public and, in addition to that,
-the source code is often available.
+솔리디티에서는 모든 스마트 컨트랙트가 공개적으로 실행되고 대부분의 소스코드를 확인할 수 있는 경우가 많습니다. 따라서 이런 보안 측면의 고려사항은 특히 더 중요합니다.
 
-Of course you always have to consider how much is at stake:
-You can compare a smart contract with a web service that is open to the
-public (and thus, also to malicious actors) and perhaps even open source.
-If you only store your grocery list on that web service, you might not have
-to take too much care, but if you manage your bank account using that web service,
-you should be more careful.
+물론 보안에 얼마나 신경을 써야하는 지는 상황에 따라 다릅니다. 가령, 웹 서비스는 공격자를 포함한 대중에게 공개되어야하고, 누구나 접근할 수 있어야하며, 어떤 때에는 오픈소스로 관리되는 경우도 있습니다. 만약 웹 서비스에 중요치 않은 정보만 저장한다면 문제가 되지 않지만, 은행 계좌와 같은 정보를 관리한다면 더욱 조심할 필요가 있죠.
 
-This section will list some pitfalls and general security recommendations but
-can, of course, never be complete. Also, keep in mind that even if your
-smart contract code is bug-free, the compiler or the platform itself might
-have a bug. A list of some publicly known security-relevant bugs of the compiler
-can be found in the
-:ref:`list of known bugs<known_bugs>`, which is also machine-readable. Note
-that there is a bug bounty program that covers the code generator of the
-Solidity compiler.
+이 장에서는 조심해야할 문제들과 일반적인 보안관련 패턴들을 다룹니다. 하지만 이는 완벽한 해결법이 아닙니다. 즉, 스마트 컨트랙트 상에는 버그가 없더라도, 컴파일러나 플랫폼 자체에 버그가 있을 수 있다는 얘기죠.
 
-As always, with open source documentation, please help us extend this section
-(especially, some examples would not hurt)!
+언제나 그렇듯이, 이 문서는 오픈 소스 기반의 문서이기 때문에, 보안에 대한 문제가 생긴다면 주저없이 내용을 추가해주시기 바랍니다.
 
 ********
-Pitfalls
+유의사항
 ********
 
-Private Information and Randomness
+개인 정보와 무작위성
 ==================================
 
-Everything you use in a smart contract is publicly visible, even
-local variables and state variables marked ``private``.
+스마트 컨트랙트 상의 모든 정보는 공개적으로 보여집니다. 심지어 지역 변수 및 상태 변수가 ``private``으로 선언되었다고해도 마찬가지죠.
 
-Using random numbers in smart contracts is quite tricky if you do not want
-miners to be able to cheat.
+만약 당신이 채굴자의 부정 행위를 막고자 한다면, 난수를 생성하는 것이 어느정도 유용할 수 있습니다.
 
-Re-Entrancy
+재진입 문제
 ===========
 
-Any interaction from a contract (A) with another contract (B) and any transfer
-of Ether hands over control to that contract (B). This makes it possible for B
-to call back into A before this interaction is completed. To give an example,
-the following code contains a bug (it is just a snippet and not a
-complete contract):
+
+(A)콘트랙트에서 (B)콘트랙트로 연결되는 어떠한 상호작용 및 Ether의 전송은 제어권을 (B)에게 넘겨주게 됩니다. 이 때문에 B의 상호작용이 끝나기 전에 다시 A를 호출할 수 있는 상황이 벌어질 수 있습니다. 예를 들어, 다음 코드는 버그를 포함하고 있습니다(요약된 코드입니다).
 
 ::
 
     pragma solidity ^0.4.0;
 
-    // THIS CONTRACT CONTAINS A BUG - DO NOT USE
+    // 버그가 포함된 코드입니다. 사용하지 마세요!
     contract Fund {
-        /// Mapping of ether shares of the contract.
+        /// 컨트랙트의 Ether 정보 mapping
         mapping(address => uint) shares;
-        /// Withdraw your share.
+        /// 지분을 인출하는 함수
         function withdraw() public {
             if (msg.sender.send(shares[msg.sender]))
                 shares[msg.sender] = 0;
         }
     }
 
-The problem is not too serious here because of the limited gas as part
-of ``send``, but it still exposes a weakness: Ether transfer can always
-include code execution, so the recipient could be a contract that calls
-back into ``withdraw``. This would let it get multiple refunds and
-basically retrieve all the Ether in the contract. In particular, the
-following contract will allow an attacker to refund multiple times
-as it uses ``call`` which forwards all remaining gas by default:
+``send``함수 자체에서 gas의 소비량을 제어하기 때문에, 큰 문제는 되지 않지만, 그럼에도 이 코드는 보안 상의 문제를 가지고 있습니다.
+Ether의 전송은 항상 코드의 실행을 포함하기에, 수신자는 반복적으로 ``withdraw``를 실행할 수 있게되죠. 결과적으로 중복된 ``withdraw``함수의 실행을 통해 컨트랙트 상의 모든 Ether를 가져갈 수 있다는 의미입니다. 상황에 따라, 공격자는 아래 코드 속 ``call``을 통해 남은 gas를 모두 가져올 수 있을지도 모릅니다.
+
 
 ::
 
     pragma solidity ^0.4.0;
 
-    // THIS CONTRACT CONTAINS A BUG - DO NOT USE
+    // 버그가 포함된 코드입니다. 사용하지 마세요!
     contract Fund {
-        /// Mapping of ether shares of the contract.
+        /// 컨트랙트의 Ether 정보 mapping
         mapping(address => uint) shares;
-        /// Withdraw your share.
+        /// 지분을 인출하는 함수
         function withdraw() public {
             if (msg.sender.call.value(shares[msg.sender])())
                 shares[msg.sender] = 0;
         }
     }
 
-To avoid re-entrancy, you can use the Checks-Effects-Interactions pattern as
-outlined further below:
+재진입 공격을 막기 위해서는 아래와 같이 Checks-Effects-Interactions 패턴을 사용할 수 있습니다.
 
 ::
 
     pragma solidity ^0.4.11;
 
     contract Fund {
-        /// Mapping of ether shares of the contract.
+        /// 컨트랙트의 Ether 정보 mapping
         mapping(address => uint) shares;
-        /// Withdraw your share.
+        /// 지분을 인출하는 함수
         function withdraw() public {
             var share = shares[msg.sender];
             shares[msg.sender] = 0;
@@ -109,10 +82,7 @@ outlined further below:
         }
     }
 
-Note that re-entrancy is not only an effect of Ether transfer but of any
-function call on another contract. Furthermore, you also have to take
-multi-contract situations into account. A called contract could modify the
-state of another contract you depend on.
+재진입 공격은 Ether 전송에서 뿐만 아니라 함수를 호출하는 어떤 상황에서도 수행될 수 있습니다. 나아가, 여러분은 하나의 계정에 많은 컨트랙트를 가질 수도 있을 텐데요, 이 때, 하나의 컨트랙트가 다른 컨트랙트를 호출할 수 있다는 것도 알아둬야합니다.
 
 Gas Limit and Loops
 ===================
