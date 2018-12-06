@@ -183,66 +183,62 @@
 .. 색인:: auction;blind, auction;open, blind auction, open auction
 
 *************
-Blind Auction
+블라인드 경매
 *************
 
-In this section, we will show how easy it is to create a
-completely blind auction contract on Ethereum.
-We will start with an open auction where everyone
-can see the bids that are made and then extend this
-contract into a blind auction where it is not
-possible to see the actual bid until the bidding
-period ends.
+이 섹션에서는, 이더리움 블라인드 경매 콘트렉트를 완전하게 만드는것이 얼마나
+쉬운지 보여줄 것입니다.
+우리는 누구나 제시되어진 가격을 볼수 있는 공개 경매로 시작하여 이 콘트렉트를 
+입찰기간이 끝나기전까지 실제 입찰가를 보는 것이 불가능한 블라인드 경매로
+확장시킬것입니다.
+
 
 .. _simple_auction:
 
-Simple Open Auction
+간단한 공개 경매
 ===================
 
-The general idea of the following simple auction contract
-is that everyone can send their bids during
-a bidding period. The bids already include sending
-money / ether in order to bind the bidders to their
-bid. If the highest bid is raised, the previously
-highest bidder gets her money back.
-After the end of the bidding period, the
-contract has to be called manually for the
-beneficiary to receive his money - contracts cannot
-activate themselves.
+아래의 간단한 경매 콘트랙트에 대한 일반적인 아이디어는 경매 기간동안 모든 사람이
+그들의 가격제시를 전송할 수 있다는 것입니다. 가격 제시는 이미 가격제시자(bidder)와
+그들의 가격제시(bid)를 묶기위해서 돈이나 이더를 송금하는 것을
+포함하고 있습니다. 만약 최고 제시 가격이 올라간다면, 그 이전의 최고 제시자는 그녀의 돈을
+돌려받습니다. 가격제시 기간이 끝난후, 그 콘트렉트는 그의 돈을 받는 수혜자를 위해 
+수동으로 호출 되어져야만 합니다 - 콘트렉트는 그들 스스로 활성화 시킬 수 없습니다.
+
 
 ::
 
     pragma solidity ^0.4.21;
 
     contract SimpleAuction {
-        // Parameters of the auction. Times are either
-        // absolute unix timestamps (seconds since 1970-01-01)
-        // or time periods in seconds.
+        // 옥션의 파라미터. 시간은 아래 둘중 하나입니다.
+        // 앱솔루트 유닉스 타임스탬프 (seconds since 1970-01-01)
+        // 혹은 시한(time period) in seconds.
         address public beneficiary;
         uint public auctionEnd;
 
-        // Current state of the auction.
+        // 옥션의 현재 상황.
         address public highestBidder;
         uint public highestBid;
 
-        // Allowed withdrawals of previous bids
+        // 이전 가격 제시들의 수락된 출금.
         mapping(address => uint) pendingReturns;
 
-        // Set to true at the end, disallows any change
+        // 마지막에 true 로 설정, 어떠한 변경도 허락되지 않습니다.
         bool ended;
 
-        // Events that will be fired on changes.
+        // 변경에 발생하는 이벤트
         event HighestBidIncreased(address bidder, uint amount);
         event AuctionEnded(address winner, uint amount);
 
-        // The following is a so-called natspec comment,
-        // recognizable by the three slashes.
-        // It will be shown when the user is asked to
-        // confirm a transaction.
+        // 아래의 것은 소위 "natspec"이라고 불리우는 코멘트,
+        // 3개의 슬래시에 의해 알아볼 수 있습니다.
+        // 이것을 유저가 트렌젝션에 대한 확인을 요청 받을때
+        // 보여집니다.
 
-        /// Create a simple auction with `_biddingTime`
-        /// seconds bidding time on behalf of the
-        /// beneficiary address `_beneficiary`.
+        /// 수혜자의 주소를 대신하여 두번째 가격제시 기간 '_biddingTime'과
+        /// 수혜자의 주소 '_beneficiary' 를 포함하는
+        /// 간단한 옥션을 제작합니다.
         function SimpleAuction(
             uint _biddingTime,
             address _beneficiary
@@ -251,31 +247,31 @@ activate themselves.
             auctionEnd = now + _biddingTime;
         }
 
-        /// Bid on the auction with the value sent
-        /// together with this transaction.
-        /// The value will only be refunded if the
-        /// auction is not won.
+        /// 경매에 대한 가격제시와 값은
+        /// 이 transaction과 함께 보내집니다.
+        /// 값은 경매에서 이기지 못했을 경우만
+        /// 반환 받을 수 있습니다.
         function bid() public payable {
-            // No arguments are necessary, all
-            // information is already part of
-            // the transaction. The keyword payable
-            // is required for the function to
-            // be able to receive Ether.
+            // 어떤 인자도 필요하지 않음, 모든
+            // 모든 정보는 이미 트렌젝션의
+            // 일부이다. 'payable' 키워드는
+            // 이더를 지급는 것이 가능 하도록
+            // 하기 위하여 함수에게 요구됩니다. 
 
-            // Revert the call if the bidding
-            // period is over.
+            // 경매 기간이 끝났으면
+            // 되돌아 갑니다.
             require(now <= auctionEnd);
 
-            // If the bid is not higher, send the
-            // money back.
+            // 만약 이 가격제시가 더 높지 않다면, 돈을 
+            // 되돌려 보냅니다.
             require(msg.value > highestBid);
 
             if (highestBid != 0) {
-                // Sending back the money by simply using
-                // highestBidder.send(highestBid) is a security risk
-                // because it could execute an untrusted contract.
-                // It is always safer to let the recipients
-                // withdraw their money themselves.
+                // 간단히 highestBidder.send(highestBid)를 사용하여
+                // 돈을 돌려 보내는 것은 보안상의 리스크가 있습니다.
+                // 그것은 신뢰되지 않은 콘트렉트를 실행 시킬수 있기 때문입니다.
+                // 받는 사람이 그들의 돈을 그들 스스로 출금 하도록 하는 것이
+                // 항상 더 안전합니다.
                 pendingReturns[highestBidder] += highestBid;
             }
             highestBidder = msg.sender;
@@ -283,17 +279,17 @@ activate themselves.
             emit HighestBidIncreased(msg.sender, msg.value);
         }
 
-        /// Withdraw a bid that was overbid.
+        /// 비싸게 값이 불러진 가격제시 출금.
         function withdraw() public returns (bool) {
             uint amount = pendingReturns[msg.sender];
             if (amount > 0) {
-                // It is important to set this to zero because the recipient
-                // can call this function again as part of the receiving call
-                // before `send` returns.
+                // 받는 사람이 이 `send` 반환 이전에 받는 호출의 일부로써
+                // 이 함수를 다시 호출할 수 있기 때문에
+                // 이것을 0으로 설정하는 것은 중요하다.
                 pendingReturns[msg.sender] = 0;
 
                 if (!msg.sender.send(amount)) {
-                    // No need to call throw here, just reset the amount owing
+                    // 여기서 throw를 호출할 필요가 없습니다, 빚진 양만 초기화.
                     pendingReturns[msg.sender] = amount;
                     return false;
                 }
@@ -301,14 +297,15 @@ activate themselves.
             return true;
         }
 
-        /// End the auction and send the highest bid
-        /// to the beneficiary.
+        /// 이 경매를 끝내고 최고 가격 제시를 
+        /// 수혜자에게 송금.
         function auctionEnd() public {
-            // It is a good guideline to structure functions that interact
-            // with other contracts (i.e. they call functions or send Ether)
-            // into three phases:
-            // 1. checking conditions
-            // 2. performing actions (potentially changing conditions)
+
+            // 이것은 다른 콘트렉트와 상호작용하는 함수의 구조를 잡는 좋은 가이드 라인입니다. 
+            // (i.e. 그것들은 이더를 보내거나 함수를 호출합니다.)
+            // 3가지 단계:
+            // 1. 조건을 확인
+            // 2. 동작을 수행  (잠재적으로 변경되는 조건)
             // 3. interacting with other contracts
             // If these phases are mixed up, the other contract could call
             // back into the current contract and modify the state or cause
@@ -317,55 +314,49 @@ activate themselves.
             // contracts, they also have to be considered interaction with
             // external contracts.
 
-            // 1. Conditions
+            // 1. 조건
             require(now >= auctionEnd); // auction did not yet end
             require(!ended); // this function has already been called
 
-            // 2. Effects
+            // 2. 영향
             ended = true;
             emit AuctionEnded(highestBidder, highestBid);
 
-            // 3. Interaction
+            // 3. 상호작용
             beneficiary.transfer(highestBid);
         }
     }
 
-Blind Auction
+블라인드 경매
 =============
 
-The previous open auction is extended to a blind auction
-in the following. The advantage of a blind auction is
-that there is no time pressure towards the end of
-the bidding period. Creating a blind auction on a
-transparent computing platform might sound like a
-contradiction, but cryptography comes to the rescue.
+이전의 공개 경매는 블라인드 경매로 확장 되었습니다.
+블라인드 경매의 이점은 경매 기간 마감에 대한 시간 압박이
+없다는 것입니다. 블라인드 경매를 트렌젝션 컴퓨팅 플렛폼에 만드는
+것은 모순 되는 말 처럼 들릴지도 모르지만, 그러나 암호학이
+이를 구조했습니다. 
 
-During the **bidding period**, a bidder does not
-actually send her bid, but only a hashed version of it.
-Since it is currently considered practically impossible
-to find two (sufficiently long) values whose hash
-values are equal, the bidder commits to the bid by that.
-After the end of the bidding period, the bidders have
-to reveal their bids: They send their values
-unencrypted and the contract checks that the hash value
-is the same as the one provided during the bidding period.
 
-Another challenge is how to make the auction
-**binding and blind** at the same time: The only way to
-prevent the bidder from just not sending the money
-after he won the auction is to make her send it
-together with the bid. Since value transfers cannot
-be blinded in Ethereum, anyone can see the value.
+**경매 기간** 동안, 가격 제시자들은 실제로 그녀의 가격제시를
+보내는 것이 아니라, 그 버전의 해쉬 버전입니다.
+두 해쉬 값이 같은 두개의 (충분히 긴)값을 찾는 것은 현재 실용적으로
+불가능 하다고 여겨지기 때문에, 가격 제시자들은 그것에 의해 가격을 제시합니다.
+경매 기간이 끝난 후, 가격 제시자들은 그들이 가격을 제시한 것들을 드러내야만 
+합니다: 그들은 그들의 암호화되지 않은 값을 보내고 콘트렉트는 해쉬 값이 경매
+기간동안 제공되어진 것과 같은지 확인합니다.
 
-The following contract solves this problem by
-accepting any value that is larger than the highest
-bid. Since this can of course only be checked during
-the reveal phase, some bids might be **invalid**, and
-this is on purpose (it even provides an explicit
-flag to place invalid bids with high value transfers):
-Bidders can confuse competition by placing several
-high or low invalid bids.
+또다른 도전은 어떻게 경매를 **묶고 블라인드**로 동시에 만드는가 입니다
+: 가격 제시자를 그가 경매에서 이긴 후에 돈을 보내는 것을 막는
+유일한 방법은 그녀가 돈을 가격 제시와 함께 보내도록 하는 것입니다.
+값 전달이 이더리움 안에서 블라인드가 될 수 없기 때문에, 누구든 그
+값을 볼 수 있습니다.
 
+아래의 콘트렉트는 이 문제를 가장 큰 가격제시보다 더큰 어떤 값이든 수락
+함으로써 해결했습니다. 이것은 당연히 드러내는 단계에서만 확인되어 질 수 있기
+때문에, 몇몇 가격 제시는 **유효하지 않을**지도 모릅니다, 그리고 이것은 고의
+입니다. (그것은 심지어 높은 가치의 이전과 함께 유효하지 않은 입찰에 배치할 명시적인
+깃발을 제공합니다.): 가격 제시자들은 몇몇의 높고 낮은 유효하지 않은 가격 제시를
+함으로써 경쟁을 혼란 스럽게 할 수 있습니다.
 
 ::
 
@@ -387,15 +378,15 @@ high or low invalid bids.
         address public highestBidder;
         uint public highestBid;
 
-        // Allowed withdrawals of previous bids
+        // 이전 가격 제시의 허락된 출금
         mapping(address => uint) pendingReturns;
 
         event AuctionEnded(address winner, uint highestBid);
 
-        /// Modifiers are a convenient way to validate inputs to
-        /// functions. `onlyBefore` is applied to `bid` below:
-        /// The new function body is the modifier's body where
-        /// `_` is replaced by the old function body.
+        /// Modifier는 함수 입력값을 입증하는 편리한 방법입니다.
+        /// `onlyBefore`은 아래의 'bid'에 적용 되어 질 수 있습니다:
+        /// 이 새로운 함수 몸체는 `_`이 오래된 함수 몸체를 대체하는
+        /// Modifier의 몸체 입니다.
         modifier onlyBefore(uint _time) { require(now < _time); _; }
         modifier onlyAfter(uint _time) { require(now > _time); _; }
 
@@ -409,15 +400,14 @@ high or low invalid bids.
             revealEnd = biddingEnd + _revealTime;
         }
 
-        /// Place a blinded bid with `_blindedBid` = keccak256(value,
-        /// fake, secret).
-        /// The sent ether is only refunded if the bid is correctly
-        /// revealed in the revealing phase. The bid is valid if the
-        /// ether sent together with the bid is at least "value" and
-        /// "fake" is not true. Setting "fake" to true and sending
-        /// not the exact amount are ways to hide the real bid but
-        /// still make the required deposit. The same address can
-        /// place multiple bids.
+        /// `_blindedBid` = keccak256(value, fake, secret)와 함께
+        /// 가려진(blinded) 가격을 제시합니다.
+        /// 만약 가격 제시가 드러내는 단계에서 올바르게 보여진다면
+        /// 보내진 이더는 환급받을 수 만 있습니다. 
+        /// 가격 제시와 함께 보내진 이더는 적어도 "value"와"fake" 는 참입니다.
+        /// "fake"를 참으로 설정하고 정확하지 않은 양을 보내는 것은 진짜 가격 제시를
+        /// 숨기는 방법들입니다. 그러나 여전히 요구되는 출금을 합니다. 같은
+        /// 주소는 여러 가격 제시들을 둘 수 있습니다.
         function bid(bytes32 _blindedBid)
             public
             payable
@@ -432,6 +422,9 @@ high or low invalid bids.
         /// Reveal your blinded bids. You will get a refund for all
         /// correctly blinded invalid bids and for all bids except for
         /// the totally highest.
+        /// 가려진 가격 제시를 드러냅니다. 너는 알맞게 가려진 유효하지 않은
+        /// 가격 제시들을 되돌려 받을 것입니다. 그리고 가장 높은 가격 제시를 제외하고
+        /// 모든 가격 제시도 돌려 받을 것입니다.
         function reveal(
             uint[] _values,
             bool[] _fake,
@@ -452,7 +445,7 @@ high or low invalid bids.
                 var (value, fake, secret) =
                         (_values[i], _fake[i], _secret[i]);
                 if (bid.blindedBid != keccak256(value, fake, secret)) {
-                    // Bid was not actually revealed.
+                    // 가격 제시는 실제로 드러나지 않습니다.
                     // Do not refund deposit.
                     continue;
                 }
@@ -468,9 +461,9 @@ high or low invalid bids.
             msg.sender.transfer(refund);
         }
 
-        // This is an "internal" function which means that it
-        // can only be called from the contract itself (or from
-        // derived contracts).
+        // 이것은 이 함수가 이 콘트렉트 안에서 이것 스스로만 호출 될 수
+        // 있다는 의미를 가지는 "internal" 함수입니다.
+        // (혹은 파생된 콘트렉트들에서)
         function placeBid(address bidder, uint value) internal
                 returns (bool success)
         {
@@ -478,7 +471,7 @@ high or low invalid bids.
                 return false;
             }
             if (highestBidder != 0) {
-                // Refund the previously highest bidder.
+                // 이전에 가장 높은 가격 제시를 환급
                 pendingReturns[highestBidder] += highestBid;
             }
             highestBid = value;
@@ -500,8 +493,8 @@ high or low invalid bids.
             }
         }
 
-        /// End the auction and send the highest bid
-        /// to the beneficiary.
+        /// 경매를 끝내고 가장 높은 가격 제시를 수혜자에게
+        /// 송금합니다.
         function auctionEnd()
             public
             onlyAfter(revealEnd)
@@ -531,9 +524,9 @@ Safe Remote Purchase
         enum State { Created, Locked, Inactive }
         State public state;
 
-        // Ensure that `msg.value` is an even number.
-        // Division will truncate if it is an odd number.
-        // Check via multiplication that it wasn't an odd number.
+        // `msg.value`가 짝수임을 확실히 하세요.
+        // 만약 홀수라면 분할은 길이를 줄일 것입니다. 
+        // 곱셈을 통해 이것이 홀수가 아닌지 확인하세요.
         function Purchase() public payable {
             seller = msg.sender;
             value = msg.value / 2;
@@ -564,9 +557,9 @@ Safe Remote Purchase
         event PurchaseConfirmed();
         event ItemReceived();
 
-        /// Abort the purchase and reclaim the ether.
-        /// Can only be called by the seller before
-        /// the contract is locked.
+        /// 구매를 중단하고 이더를 회수합니다.
+        /// 콘트렉트가 잠기기 전에 판매자에 의해서만
+        /// 호출 되어 질 수 있습니다.
         function abort()
             public
             onlySeller
@@ -577,10 +570,10 @@ Safe Remote Purchase
             seller.transfer(this.balance);
         }
 
-        /// Confirm the purchase as buyer.
-        /// Transaction has to include `2 * value` ether.
-        /// The ether will be locked until confirmReceived
-        /// is called.
+        /// 구매자로서 구매를 확정합니다.
+        /// 트렌젝션은 `2 * value` ether 을 포함해야 한다.
+        /// 이 이더는 confirmReceived()가 호출 될때까지
+        /// 잠길것입니다.
         function confirmPurchase()
             public
             inState(State.Created)
@@ -592,8 +585,8 @@ Safe Remote Purchase
             state = State.Locked;
         }
 
-        /// Confirm that you (the buyer) received the item.
-        /// This will release the locked ether.
+        /// 구매자가 아이템을 받았다고 확인.
+        /// 이것은 잠긴 이더를 풀어줄것입니다.
         function confirmReceived()
             public
             onlyBuyer
@@ -603,10 +596,13 @@ Safe Remote Purchase
             // It is important to change the state first because
             // otherwise, the contracts called using `send` below
             // can call in again here.
+            // 먼저 상태를 변경하는 것이 중요합니다.
+            // 그렇지 않으면, `send`를 사용하며 호출된 콘트렉트는
+            // 다시 여기를 호출할 수 있기 때문입니다.
             state = State.Inactive;
 
-            // NOTE: This actually allows both the buyer and the seller to
-            // block the refund - the withdraw pattern should be used.
+            // NOTE: 이것은 실제로 구매자와 판매자 둘다 환급 하는 것을 막을 수 
+            // 있도록 합니다. - 출금 패턴이 사용되어야만 합니다.
 
             buyer.transfer(value);
             seller.transfer(this.balance);
@@ -617,4 +613,4 @@ Safe Remote Purchase
 Micropayment Channel
 ********************
 
-To be written.
+앞으로 쓰여질 예정
