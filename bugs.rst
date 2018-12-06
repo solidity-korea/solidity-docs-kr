@@ -9,8 +9,8 @@
 아래를 확인해보면, Solidity 컴파일러에서 알려진 보안 관련 버그의 JSON 포맷형식 리스트를 찾을
 수 있습니다. 파일 자체는 `Github repository 
 <https://github.com/ethereum/solidity/blob/develop/docs/bugs.json>`_ 에서 호스팅되었습니다.
-이 리스트는 0.3.3 버전까지 거슬러 올라가며, 이전의 버전에서만 나타난 것으로 
-알려진 버그는 리스트에 넣지 않았습니다.
+이 리스트는 0.3.3 버전까지 거슬러 올라가며, 그 이전의 버전에서 존재했으나 지금은 사라진
+알려진 버그들은 리스트에 넣지 않았습니다.
 
 `bugs_by_version.json 
 <https://github.com/ethereum/solidity/blob/develop/docs/bugs_by_version.json>`_
