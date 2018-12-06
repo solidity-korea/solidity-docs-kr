@@ -3,59 +3,60 @@
 .. _known_bugs:
 
 ##################
-List of Known Bugs
+알려진 버그 리스트
 ##################
 
-Below, you can find a JSON-formatted list of some of the known security-relevant bugs in the
-Solidity compiler. The file itself is hosted in the `Github repository
-<https://github.com/ethereum/solidity/blob/develop/docs/bugs.json>`_.
-The list stretches back as far as version 0.3.0, bugs known to be present only
-in versions preceding that are not listed.
+아래를 확인해보면, Solidity 컴파일러에서 알려진 보안 관련 버그의 JSON 포맷형식 리스트를 찾을
+수 있습니다. 파일 자체는 `Github repository 
+<https://github.com/ethereum/solidity/blob/develop/docs/bugs.json>`_ 에서 호스팅되었습니다.
+이 리스트는 0.3.3 버전까지 거슬러 올라가며, 그 이전의 버전에서 존재했으나 지금은 사라진
+알려진 버그들은 리스트에 넣지 않았습니다.
 
-There is another file called `bugs_by_version.json
-<https://github.com/ethereum/solidity/blob/develop/docs/bugs_by_version.json>`_,
-which can be used to check which bugs affect a specific version of the compiler.
+`bugs_by_version.json 
+<https://github.com/ethereum/solidity/blob/develop/docs/bugs_by_version.json>`_
+라고 불리는 다른 파일이 존재하며, 이는 특정 컴파일러 버전에 영향을 주는 버그를
+확인하는데 사용할 수 있습니다.
 
-Contract source verification tools and also other tools interacting with
-contracts should consult this list according to the following criteria:
 
- - It is mildly suspicious if a contract was compiled with a nightly
-   compiler version instead of a released version. This list does not keep
-   track of unreleased or nightly versions.
- - It is also mildly suspicious if a contract was compiled with a version that was
-   not the most recent at the time the contract was created. For contracts
-   created from other contracts, you have to follow the creation chain
-   back to a transaction and use the date of that transaction as creation date.
- - It is highly suspicious if a contract was compiled with a compiler that
-   contains a known bug and the contract was created at a time where a newer
-   compiler version containing a fix was already released.
 
-The JSON file of known bugs below is an array of objects, one for each bug,
-with the following keys:
 
-name
-    Unique name given to the bug
-summary
-    Short description of the bug
-description
-    Detailed description of the bug
-link
-    URL of a website with more detailed information, optional
-introduced
-    The first published compiler version that contained the bug, optional
-fixed
-    The first published compiler version that did not contain the bug anymore
-publish
-    The date at which the bug became known publicly, optional
-severity
-    Severity of the bug: very low, low, medium, high. Takes into account
-    discoverability in contract tests, likelihood of occurrence and
-    potential damage by exploits.
-conditions
-    Conditions that have to be met to trigger the bug. Currently, this
-    is an object that can contain a boolean value ``optimizer``, which
-    means that the optimizer has to be switched on to enable the bug.
-    If no conditions are given, assume that the bug is present.
+컨트랙트 소스 확인 툴과 컨트랙트와 상호작용하는 툴들은 다음 기준에 따라
+다음 리스트를 참조해야 합니다.
 
+ - 컨트랙트가 릴리즈된 버전이 아닌 알파테스트 컴파일러 버전(Nightly compiler version)
+   으로 컴파일 된 경우 다소 의심스럽습니다. 이 리스트는 릴리즈 되지 않았거나
+   알파테스트 버전을 트래킹하지 않습니다.
+ - 또한 컨트랙트를 작성한 시점에서 가장 최신 버전이 아닌 컴파일러로 컴파일 되었다면
+   다소 의심스럽습니다. 다른 컨트랙트들에 의해 만들어진 컨트랙트의 경우, 트랜젝션으로
+   돌아가 생성체인을 따르고 그 트렌젝션의 날짜를 생성 날짜로써 사용해야 합니다.
+ - 알려진 버그를 포함하고 있는 컴파일러로 컨트랙트를 컴파일 했을 경우, 그리고
+   수정본이 포함된 최신 컴파일러 버전이 이미 릴리즈 된 시점에서 컨트랙트가 만들어졌을
+   경우, 매우 의심스럽습니다.
+
+아래에 나열된 알려진 버그가 있는 JSON 파일은 각 버그마다 하나씩 다음 키가 있는
+객체 배열입니다.
+
+이름
+    버그에 부여된 고유한 이름    
+요약
+    버그에 대한 짧은 설명
+설명
+    버그에 대한 자세한 설명
+링크
+    더 자세한 정보가 있는 웹사이트의 URL, 선택사항
+도입성
+    버그가 포함된 최초의 컴파일러 버전, 선택사항
+고정된(fixed)
+    어떠한 버그도 포함되지 않은 최초의 컴파일러 버전
+퍼블리쉬
+    버그가 공개적으로 알려지게 된 날짜, 선택사항
+심각도
+    버그의 심각도: 매우 낮음, 낮음, 보통, 높음. 컨트랙트 테스트에서의
+    발견가능성과 발생 확률, 악용으로 인한 잠재적 손상들을 고려합니다.
+조건
+    버그를 유발하는 조건. 현재 이 객체는 부울값 ``optimizer`` 를 포함
+    할 수 있습니다. 즉, 버그를 활성화하려면 optimizer를 켜야 합니다.
+    조건이 주어지지 않으면, 버그가 있다고 간주됩니다.
+    
 .. literalinclude:: bugs.json
    :language: js
