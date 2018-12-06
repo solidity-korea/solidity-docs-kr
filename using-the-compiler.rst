@@ -303,8 +303,8 @@ import 문에서 허용됩니다, 그러나 다른 모든 것들은 거절됩니
 6. "DeclarationError" : 유효하지 않거나 혹은 의결 할수 없는(unresolvable),  식별자 이름충돌입니다. 예시 "identifier not found" 식별자가 발견되지 않음
 7. "TypeError" : 유효하지 않은 타입 변경, 유효하지 않은 할당(assignment) 등과 같은 type system내의 에러입니다.
 8. "UnimplementedFeatureError" : 기능이 컴파일러에 의해 지원되지 않습니다. 하지만 미래 번전에서는 지원될 것으로 예상됩니다.
-9 "internalCompilerError" : 컴파일러에 의해 촉발되는 내부의 버그 - 이것은 문제로서 보고되어져야 합니다.
-10 "Exception" : 컴파일러 도중에 알려지지 않은 실패 - 이것은 문제로서 보고되어야 합니다.
+9. "internalCompilerError" : 컴파일러에 의해 촉발되는 내부의 버그 - 이것은 문제로서 보고되어져야 합니다.
+10. "Exception" : 컴파일러 도중에 알려지지 않은 실패 - 이것은 문제로서 보고되어야 합니다.
 11. "CompilerError" : 유효하지 않은 컴파일러 스택의 사용 - 이것은 문제로서 되어야 합니다.
 12. "FatalError" : 치명적 오류가 바르게 처리되지 않음 - 이는 문제로서 기록되어야 합니다.
 13. "Warning" : 단순 경고, 컴파일러를 중단 하지는 않지만, 가능하다면 다뤄져야 합니다.
