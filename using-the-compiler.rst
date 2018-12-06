@@ -1,50 +1,57 @@
 ******************
-Using the compiler
+컴파일러 사용하기
 ******************
 
 .. index:: ! commandline compiler, compiler;commandline, ! solc, ! linker
 
 .. _commandline-compiler:
 
-Using the Commandline Compiler
+명령줄 컴파일러 사용하기
 ******************************
 
 .. note::
-    This section doesn't apply to :ref:`solcjs <solcjs>`.
+    이 섹션은  :ref:`solcjs <solcjs>`에 적용 되지 않습니다.
 
-One of the build targets of the Solidity repository is ``solc``, the solidity commandline compiler.
-Using ``solc --help`` provides you with an explanation of all options. The compiler can produce various outputs, ranging from simple binaries and assembly over an abstract syntax tree (parse tree) to estimations of gas usage.
-If you only want to compile a single file, you run it as ``solc --bin sourceFile.sol`` and it will print the binary. Before you deploy your contract, activate the optimizer while compiling using ``solc --optimize --bin sourceFile.sol``. If you want to get some of the more advanced output variants of ``solc``, it is probably better to tell it to output everything to separate files using ``solc -o outputDirectory --bin --ast --asm sourceFile.sol``.
+Solidity 저장소의 빌드 대상 중 하나는 Solidity 명령줄 컴파일러인 ``solc``입니다,
+``solc --help``를 사용하면 모든 옵션에 대한 설명을 제공합니다. 컴파일러는 간단한 구문 트리 (구문 분석 트리)를 통한 간단한 바이너리 및 어셈블리부터 가스 사용량 평가에 이르기까지 다양한 출력을 생성 할 수 있습니다.
+만약 단일 파일만 컴파일 하기를 원한다면, ``solc --bin sourceFile.sol``를 실행하세요. 바이너리가 출력 될 것입니다. 당신의 컨트렉트를 
+배치(deploy)하기전에 ``solc --optimize --bin sourceFile.sol``를 이용하여 컴파일하는 동안 최적화기(Optimizer)를 활성화 시키세요.
+만약 조금더 진보된 다른 형태의 ``solc``의 결과를 얻기를 원한다면, 아마도 ``solc -o outputDirectory --bin --ast --asm sourceFile.sol``
+를 사용하여 분할 파일들을 모두 출력하도록 명령하는 것이 나을것 입니다.
 
-The commandline compiler will automatically read imported files from the filesystem, but
-it is also possible to provide path redirects using ``prefix=path`` in the following way:
+명령줄 컴파일러는 자동적으로 파일 시스템으로 부터 수입된(imported) 파일들을 읽습니다. 그러나
+아래의 방법으로 ``prefix=path``를 사용해 리다이렉트할 경로를 제공하는 것 또한 가능합니다.
+
+
 
 ::
 
     solc github.com/ethereum/dapp-bin/=/usr/local/lib/dapp-bin/ =/usr/local/lib/fallback file.sol
 
-This essentially instructs the compiler to search for anything starting with
-``github.com/ethereum/dapp-bin/`` under ``/usr/local/lib/dapp-bin`` and if it does not
-find the file there, it will look at ``/usr/local/lib/fallback`` (the empty prefix
-always matches). ``solc`` will not read files from the filesystem that lie outside of
-the remapping targets and outside of the directories where explicitly specified source
-files reside, so things like ``import "/etc/passwd";`` only work if you add ``=/`` as a remapping.
+이것은 본질적으로 ``/usr/local/lib/dapp-bin``아래에 있는 ``github.com/ethereum/dapp-bin/``로 시작하는 것을 검색하라고 컴파일러에게
+지시합니다. 그리고 만약 거기에 있는 파일을 찾지 못한다면, 컴파일러는 ``/usr/local/lib/fallback``를 살펴 볼것입니다. (공백의 접두사는 항상 일치한다.)
+``solc``은 외부에 재 맵핑 대상 외부와 명시적으로 소스파일 위치가 명시된 디렉터리 외부에 있는 파일 시스템으로 부터 
+파일 시스템로 부터 파일들을 읽지 않습니다. 그러므로 ``import "/etc/passwd";``와 같은 것들은 오직 재맵핑(remapping)으로서 ``=/`` 추가하는 경우에만
+작동합니다.
 
-If there are multiple matches due to remappings, the one with the longest common prefix is selected.
+만약 재맵핑으로 인해 여러 일치 항목이 있는 경우 가장 긴 공통 접두사가 있는 항목이 선택됩니다.
 
-For security reasons the compiler has restrictions what directories it can access. Paths (and their subdirectories) of source files specified on the commandline and paths defined by remappings are allowed for import statements, but everything else is rejected. Additional paths (and their subdirectories) can be allowed via the ``--allow-paths /sample/path,/another/sample/path`` switch.
+보안상의 이유들로 컴파일러는 액세스 할 수 있는 디렉터리를 제한합니다. 명령 줄에 명시된 소스파일 경로(및 해당 하위 디렉터리)와 재맵핑에 의해 정의 된 경로들은 
+import 문에서 허용됩니다, 그러나 다른 모든 것들은 거절됩니다. 추가적인 경로(및 그것의 하위 디렉터리)는 ``--allow-paths /sample/path,/another/sample/path`` 스위치를 통해 허용 될 수 있습니다.
 
-If your contracts use :ref:`libraries <libraries>`, you will notice that the bytecode contains substrings of the form ``__LibraryName______``. You can use ``solc`` as a linker meaning that it will insert the library addresses for you at those points:
+만약 컨트렉트가 :ref:`libraries <libraries>`를 사용한다면, 바이트코드가 ``__LibraryName______``의 하위 문자열(substrings)를 포함한다는 것을 알아야합니다.
+그 지점에 당신의 라이브러리 주소가 삽입될것을 의미하는 링커로써 ``solc``을 사용 할 수 있습니다.
 
-Either add ``--libraries "Math:0x12345678901234567890 Heap:0xabcdef0123456"`` to your command to provide an address for each library or store the string in a file (one library per line) and run ``solc`` using ``--libraries fileName``.
+각각의 라이브러리 주소를 제공하기 위해서 커맨드에 ``--libraries "Math:0x12345678901234567890 Heap:0xabcdef0123456"``를 추가하던지 파일(한줄에 하나의 라이브러리)에 문자열을 저장하고 ``--libraries fileName``를 사용하여 ``solc``를 실행하세요
 
-If ``solc`` is called with the option ``--link``, all input files are interpreted to be unlinked binaries (hex-encoded) in the ``__LibraryName____``-format given above and are linked in-place (if the input is read from stdin, it is written to stdout). All options except ``--libraries`` are ignored (including ``-o``) in this case.
+만약 ``solc``가 ``--link``옵션과 함께 호출 된다면, 모든 입력 파일 들은 주어진 ``__LibraryName____`` 형식의 연결(link)되지 않은 (16진수로 인코드 된)바이더리들로 해석되어 현재 위치에 연결 됩니다(만약 입력이 stdin으로 부터 읽어온것이라면, 그것은 stdout으로 쓰여집니다). ``--libraries``를 제외한 모든 옵션 
+은 이 경우에 무시됩니다(``-o`` 포함)
 
-If ``solc`` is called with the option ``--standard-json``, it will expect a JSON input (as explained below) on the standard input, and return a JSON output on the standard output.
+만약 ``solc``가 옵션 ``--standard-json``과 함께 호출 되었다면, 그것은 표준 입력에서 JSON 입력(아래에 설명)을 기대합니다 그리고 표준출력의 JSON출력을 반환합니다..
 
 .. _compiler-api:
 
-Compiler Input and Output JSON Description
+컴파일러 입력과 출력 JSON 설명
 ******************************************
 
 These JSON formats are used by the compiler API as well as are available through ``solc``. These are subject to change,
