@@ -1,15 +1,13 @@
-> If the issue you want to register is a `translate` issue, register the issue according to the template below.
+> 만약 번역과 관련된 이슈를 남기실 예정이라면 아래 템플릿에 따라 이슈를 남겨주시기 바랍니다.
 
-## Translation Issue
-### :clipboard: Section
-- (Docs section)
-- (File name)
-
-
-### :date: Due Date
-- (yy.mm.dd)
+## 번역 이슈
+### :clipboard: 섹션
+- (문서상 섹션명)
+- (파일명)
 
 
-#### :speech_balloon: et cetera
+### :date: 마감일
+- (년도.월.일)
 
 
+#### :speech_balloon: 추가 내용
