@@ -39,7 +39,7 @@ issue 양식은 아래와 같습니다.
 
 - 현재 [이미 진행된 번역본과 통합](https://github.com/solidity-korea/solidity-docs-kr/issues/10) 이슈에 따라 https://ggs134.gitbooks.io/solidityguide/content/ 와 통합하는 과정을 진행하고 있습니다. 완전히 통합이 완료되기 전 까지는 위 [링크](https://ggs134.gitbooks.io/solidityguide/content/) 에서 번역 유무 확인하셔서 이미 번역이 진행된 부분을 피해서 진행해 주시면 중복 번역을 최소화 할 수 있을 것 같습니다.
 
-- 2018년 12월 7일 기준 0.5.1번 버전과의 통합을 진행하고 있습니다. #41 이슈에서 자세한 사항을 확인할 수 있습니다.
+- 2018년 12월 7일 기준 0.5.1번 버전과의 통합을 진행하고 있습니다. [41번 이슈](https://github.com/solidity-korea/solidity-docs-kr/issues/41)에서 자세한 사항을 확인할 수 있습니다.
 
 ## Communication 
 Solidity Korea Slack 채널을 운영하고 있습니다. 보다 활성화된 커뮤니케이션이 필요하신 분은 해당 [링크](https://join.slack.com/t/solidity-korea/shared_invite/enQtMzMyNjA0MDMxNTU4LTM2NTI2MjgzNTQ5MDQ5OGM2ZjkzMjc3OTM1NzVkODI4MTFkZTcwZTQxNGRjZTg5N2M2MWQzZWNjZTBmZDEzNDU) 를 통해 참여하실 수 있습니다.
