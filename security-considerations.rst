@@ -84,7 +84,7 @@ Ether의 전송은 항상 코드의 실행을 포함하기에, 수신자는 반�
 
 재진입 공격은 Ether 전송에서 뿐만 아니라 함수를 호출하는 어떤 상황에서도 수행될 수 있습니다. 나아가, 여러분은 하나의 계정에 많은 컨트랙트를 가질 수도 있을 텐데요, 이 때, 하나의 컨트랙트가 다른 컨트랙트를 호출할 수 있다는 것도 알아둬야합니다.
 
-Gas Limit and Loops
+가스 제한 및 루프
 ===================
 
 Loops that do not have a fixed number of iterations, for example, loops that depend on storage values, have to be used carefully:
@@ -94,7 +94,7 @@ contract to be stalled at a certain point. This may not apply to ``constant`` fu
 to read data from the blockchain. Still, such functions may be called by other contracts as part of on-chain operations
 and stall those. Please be explicit about such cases in the documentation of your contracts.
 
-Sending and Receiving Ether
+Ether 보내고 받기
 ===========================
 
 - Neither contracts nor "external accounts" are currently able to prevent that someone sends them Ether.
@@ -131,7 +131,7 @@ Sending and Receiving Ether
      means for the recipient to block progress in the sending contract. Again, the best practice here is to use
      a :ref:`"withdraw" pattern instead of a "send" pattern <withdrawal_pattern>`.
 
-Callstack Depth
+콜스택 깊이
 ===============
 
 External function calls can fail any time because they exceed the maximum
