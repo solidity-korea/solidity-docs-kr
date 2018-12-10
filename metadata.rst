@@ -1,146 +1,152 @@
 #################
-Contract Metadata
+컨트랙트 메타데이터
 #################
 
 .. index:: metadata, contract verification
 
-The Solidity compiler automatically generates a JSON file, the
-contract metadata, that contains information about the current contract.
-It can be used to query the compiler version, the sources used, the ABI
-and NatSpec documentation in order to more safely interact with the contract
-and to verify its source code.
+Solidity 컴파일러는 현재 컨트랙트에 대한 정보를 포함하고 있는 컨트랙트 
+메타데이터 JSON파일을 자동적으로 생성합니다. 이 파일을 사용하여 컴파일러 
+버전, 사용된 소스, ABI와 NatSpec 문서를 질의하여 보다 안전하게 컨트랙트와 
+상호작용하고 소스코드를 검증 할 수 있습니다.
 
-The compiler appends a Swarm hash of the metadata file to the end of the
-bytecode (for details, see below) of each contract, so that you can retrieve
-the file in an authenticated way without having to resort to a centralized
-data provider.
+이 컴파일러는 메타데이터 파일의 Swarm 해시를 각 컨트랙트의 byte코드
+(자세한 내용은 아래를 참조) 끝에 추가하므로 중앙 집중식 데이터 공급자가 
+없어도 인증된 방식으로 파일을 검색 할 수 있습니다.
 
-Of course, you have to publish the metadata file to Swarm (or some other service)
-so that others can access it. The file can be output by using ``solc --metadata``
-and the file will be called ``ContractName_meta.json``.
-It will contain Swarm references to the source code, so you have to upload
-all source files and the metadata file.
+다른 사용자가 액세스 할 수 있도록 Swarm(또는 다른 서비스)에 메타데이터 파일을 
+게시해야 합니다. ``ContractName_meta.Json`` 라 불리는 파일을 생성하는 
+``solc --metadata`` 명령어를 사용하여 파일을 만듭니다. 이 파일에는 소스코드에 
+대한 Swarm 참조가 포함되어 있으므로, 모든 소스파일과 메타데이터 파일을 업로드
+해야 합니다.
 
-The metadata file has the following format. The example below is presented in a
-human-readable way. Properly formatted metadata should use quotes correctly,
-reduce whitespace to a minimum and sort the keys of all objects to arrive at a
-unique formatting.
-Comments are of course also not permitted and used here only for explanatory purposes.
+메타데이터 파일은 다음과 같은 형식을 가집니다. 아래의 예제는 사람이 읽을 수 있는 
+방식으로 제공됩니다. 적절한 형식의 메타데이터는 따옴표를 올바르게 사용해야 하고, 
+공백을 최소한으로 줄이며 모든 객체의 키를 고유한 형식으로 정렬해야 합니다. 주석은 
+사용할 수 없습니다. 여기서는 오로지 설명의 목적으로 사용되었습니다.
 
 .. code-block:: none
 
     {
-      // Required: The version of the metadata format
+      // 필수 : 메타데이터 형식의 버전
       version: "1",
-      // Required: Source code language, basically selects a "sub-version"
-      // of the specification
+      // 필수 : 소스코드 언어는 기본적으로 사양의
+      // "하위 버전(sub-version)"을 선택합니다.
       language: "Solidity",
-      // Required: Details about the compiler, contents are specific
-      // to the language.
+      // 필수 : 컴파일러에 대한 세부사항, 내용은
+      // 언어에 따라 다릅니다.
       compiler: {
-        // Required for Solidity: Version of the compiler
+        // Solidity에 필수 : 컴파일러의 버전
         version: "0.4.6+commit.2dabbdf0.Emscripten.clang",
-        // Optional: Hash of the compiler binary which produced this output
+        // 선택 사항 : 이 출력을 생성한 컴파일러 바이너리의 해시
         keccak256: "0x123..."
       },
-      // Required: Compilation source files/source units, keys are file names
+      // 필수 : 컴파일 소스 파일 / 소스 유닛, 키는 파일 이름입니다.
       sources:
       {
         "myFile.sol": {
-          // Required: keccak256 hash of the source file
+          // 필수 : 소스 파일의 keccak256 해시
           "keccak256": "0x123...",
-          // Required (unless "content" is used, see below): Sorted URL(s)
-          // to the source file, protocol is more or less arbitrary, but a
-          // Swarm URL is recommended
+          // 필수 ("content"를 사용하지 않는 한 아래를 참조) : 소스파일에 
+          // 정렬된 URL, 프로토콜은 다소 제멋대로지만, Swarm URL을
+          // 권장합니다.
           "urls": [ "bzzr://56ab..." ]
         },
         "mortal": {
-          // Required: keccak256 hash of the source file
+          // 필수 : 소스 파일의 keccak256 해시
           "keccak256": "0x234...",
-          // Required (unless "url" is used): literal contents of the source file
+          // 필수("url"을 사용하지 않는 한) : 소스 파일의 literal 내용 // TODO : Review needed
           "content": "contract mortal is owned { function kill() { if (msg.sender == owner) selfdestruct(owner); } }"
         }
       },
-      // Required: Compiler settings
+      // 필수 : 컴파일러 세팅
       settings:
       {
-        // Required for Solidity: Sorted list of remappings
+        // Solidity에 필수 : 재맵핑의 정렬된 목록 // TODO : Review needed
         remappings: [ ":g/dir" ],
-        // Optional: Optimizer settings (enabled defaults to false)
+        // 선택 사항 : 최적화 설정 (기본값 : false) 
         optimizer: {
           enabled: true,
           runs: 500
         },
-        // Required for Solidity: File and name of the contract or library this
-        // metadata is created for.
+        // Solidity에 필수 : 이 메타데이터가 작성된
+        // 컨트랙트나 라이브러리의 파일과 이름 
         compilationTarget: {
           "myFile.sol": "MyContract"
         },
-        // Required for Solidity: Addresses for libraries used
+        // Solidity에 필수 : 사용된 라이브러리의 주소
         libraries: {
           "MyLib": "0x123123..."
         }
       },
-      // Required: Generated information about the contract.
+      // 필수 : 컨트랙트에 대한 생성된 정보
       output:
       {
-        // Required: ABI definition of the contract
+        // 필수 : 컨트랙트의 ABI 정의
         abi: [ ... ],
-        // Required: NatSpec user documentation of the contract
+        // 필수 : 컨트랙트의 NatSpec 사용자 문서
         userdoc: [ ... ],
-        // Required: NatSpec developer documentation of the contract
+        // 필수 : 컨트랙트의 NatSpec 개발자 문서
         devdoc: [ ... ],
       }
     }
 
-.. note::
-    Note the ABI definition above has no fixed order. It can change with compiler versions.
+.. 경고::
+  최종 컨트랙트의 byte코드에는 메타데이터 해시가 포함되기 때문에,
+  메타데이터를 변경하면, 바이트 코드가 변경됩니다. 이는 파일이름이나 
+  경로의 변경도 반영되며, 메타데이터에 사용된 모든 소스의 해시가 
+  포함됩니다. 그래서 공백 하나만 변경하더라도 다른 메타데이터를 가지게 
+  되고, 이는 byte코다가 달라지게 만듭니다.
 
-.. note::
-    Since the bytecode of the resulting contract contains the metadata hash, any change to
-    the metadata will result in a change of the bytecode. Furthermore, since the metadata
-    includes a hash of all the sources used, a single whitespace change in any of the source
-    codes will result in a different metadata, and subsequently a different bytecode.
+.. 알아 둘 것::
+    위의 ABI 정의에는 고정된 주문이 없습니다. 이는 컴파일러 버전에 따라 변경 될 수 있습니다.
 
-Encoding of the Metadata Hash in the Bytecode
+Byte코드에서 메타데이터 해시의 인코딩
 =============================================
 
-Because we might support other ways to retrieve the metadata file in the future,
-the mapping ``{"bzzr0": <Swarm hash>}`` is stored
-`CBOR <https://tools.ietf.org/html/rfc7049>`_-encoded. Since the beginning of that
-encoding is not easy to find, its length is added in a two-byte big-endian
-encoding. The current version of the Solidity compiler thus adds the following
-to the end of the deployed bytecode::
+앞으로 메타데이터 파일을 검색하는 다른 방법을 지원할 수 있기 때문에,
+매핑 ``{"bzzr0": <Swarm hash>}`` 는 
+`CBOR <https://tools.ietf.org/html/rfc7049>` 인코딩으로 저장됩니다.
+인코딩의 시작부분을 찾기가 쉽지 않기 때문에, 길이가 2 바이트 빅엔디안 
+인코딩으로 추가됩니다. Solidity 컴파일러의 현재 버전은 배포된 byte코드의 
+끝에 다음을 추가합니다::
 
     0xa1 0x65 'b' 'z' 'z' 'r' '0' 0x58 0x20 <32 bytes swarm hash> 0x00 0x29
 
-So in order to retrieve the data, the end of the deployed bytecode can be checked
-to match that pattern and use the Swarm hash to retrieve the file.
+따라서 데이터를 검색하기 위해, 배치된 byte코드의 끝을 검사하여 위의 패턴과 일치시키고 
+Swarm 해시를 사용하여 파일을 검색 할 수 있습니다.
 
-Usage for Automatic Interface Generation and NatSpec
+.. 알아 둘 것::
+  컴파일러는 현재 메타데이터의 "Swarm version 0" 해시를 사용하지만, 향후 
+  번경될 소지가 있으므로, 이 시퀀스가 ``0xa1 0x65 'b' 'z' 'z' 'r' '0'`` 
+  로 시작되어도 너무 신용하진 마십시오. 또한, 이 CBOR 구조체에 추가 데이터를 
+  추가 할 수 있으므로, 올바른 CBOR 파서를 사용하는것이 가장 좋습니다.
+
+
+자동 인터페이스 생성 및 NatSpec의 사용
 ====================================================
 
-The metadata is used in the following way: A component that wants to interact
-with a contract (e.g. Mist) retrieves the code of the contract, from that
-the Swarm hash of a file which is then retrieved.
-That file is JSON-decoded into a structure like above.
+메타데이터는 다음과 같은 방식으로 사용됩니다: 컨트랙트와 상호작용하려는 
+구성요소(예:Mist 혹은 지갑)는 검색된 파일의 Swarm 해시에서 컨트랙트의 코드를 
+검색합니다.
+이 파일은 위와 같은 구조로 JSON으로 디코딩 됩니다.
 
-The component can then use the ABI to automatically generate a rudimentary
-user interface for the contract.
+구성요소는 ABI를 사용하여 컨트랙트에 대한 기본 사용자 인터페이스를 자동으로
+생성 할 수 있습니다.
 
-Furthermore, Mist can use the userdoc to display a confirmation message to the user
-whenever they interact with the contract.
+또한, Wallet은 NatSpec 사용자 문서를 사용하여 컨트랙트와 상호작용 할 때마다 트랜잭션 서명에 대한 승인 요청과 
+함께 사용자에게 확인 메세지를 표시 할 수 있습니다.
 
-Additional information about Ethereum Natural Specification (NatSpec) can be found `here <https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format>`_. 
+이더리움 Natural Specification (NatSpec) 에 대한 추가정보는 
+`여기 <https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format>`_
+에서 찾을 수 있습니다.
 
-Usage for Source Code Verification
+소스코드 검증 사용법
 ==================================
 
-In order to verify the compilation, sources can be retrieved from Swarm
-via the link in the metadata file.
-The compiler of the correct version (which is checked to be part of the "official" compilers)
-is invoked on that input with the specified settings. The resulting
-bytecode is compared to the data of the creation transaction or ``CREATE`` opcode data.
-This automatically verifies the metadata since its hash is part of the bytecode.
-Excess data corresponds to the constructor input data, which should be decoded
-according to the interface and presented to the user.
+컴파일을 확인하기 위해, 메타데이터 파일의 링크를 통해 Swarm에서 소스를 
+검색 할 수 있습니다. 올바른 버전의 컴파일러("공식" 컴파일러의 일부로 확인 됨)
+는 특별한 설정으로 해당 입력에서 호출됩니다. 결과 byte코드는 작성 트랜잭션 
+또는 ``CREATE`` opcode 데이터의 데이터와 비교됩니다. 이는 해시가 byte코드의 
+일부이기 때문에 메타데이터가 자동으로 증명됩니다. 잉여데이터는 생성자 
+입력데이터와 동일해야하며, 이는 인터페이스에 따라 디코딩되어 
+사용자에게 제공되어야 합니다.

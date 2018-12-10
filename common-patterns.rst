@@ -12,7 +12,7 @@
 
 Effect 이후 기금송금에 있어 가장 권장되는 방법은
 출금 패턴을 사용하는 것입니다. Effect의 결과로 Ether를 송금하는
-가장 직관적인 방법은 직접 ``send`` 를 호출하는 것이겠지만,
+가장 직관적인 방법은 직접 ``transfer`` 를 호출하는 것이겠지만,
 잠재적인 보안위협을 초래 할 수 있으므로 권장하지 않습니다.
 :ref:`security_consideration` 페이지에서 보안에 대해 더 알아 볼 수 있습니다. 
 
@@ -26,7 +26,7 @@ Effect 이후 기금송금에 있어 가장 권장되는 방법은
 
 ::
 
-    pragma solidity ^0.4.11;
+    pragma solidity >0.4.99 <0.6.0
 
     contract WithdrawalContract {
         address public richest;
@@ -34,7 +34,7 @@ Effect 이후 기금송금에 있어 가장 권장되는 방법은
 
         mapping (address => uint) pendingWithdrawals;
 
-        function WithdrawalContract() public payable {
+        constructor() public payable {
             richest = msg.sender;
             mostSent = msg.value;
         }
@@ -63,13 +63,13 @@ Effect 이후 기금송금에 있어 가장 권장되는 방법은
 
 ::
 
-    pragma solidity ^0.4.11;
+    pragma solidity >0.4.99 <0.6.0;
 
     contract SendContract {
-        address public richest;
+        address payable public richest;
         uint public mostSent;
 
-        function SendContract() public payable {
+        constructor() public payable {
             richest = msg.sender;
             mostSent = msg.value;
         }
@@ -90,7 +90,7 @@ Effect 이후 기금송금에 있어 가장 권장되는 방법은
 본 예제에서, 반드시 알아둬야 할 것은, 공격자가 실패
 fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 컨트랙트를 할 수 없는 상태로 만들 수 있다는 점입니다.
-(예를들어 ``revert()`` 를 사용하거나 단순히 2300개 이상의 가스를 소비시킴으로써)
+(예를들어 ``revert()`` 를 사용하거나 단순히 2300 이상의 가스를 그들에게 전송 시켜 소비함으로써)
 그렇게하면, "poisoned" 컨트랙트에 기금을 ``transfer`` 하기위해 송금이
 요청 될 때마다 컨트랙트와 더불어 ``becomeRichest`` 도 실패 할
 것이고, 이는 컨트랙트가 영원히 진행되지 않게 만들 것입니다.
@@ -128,7 +128,7 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 
 ::
 
-    pragma solidity ^0.4.11;
+    pragma solidity >=0.4.22 <0.6.0;
 
     contract AccessRestriction {
         // 이것들은 건설단계에서 할당됩니다.
@@ -145,7 +145,10 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
         // 추가됩니다.
         modifier onlyBy(address _account)
         {
-            require(msg.sender == _account);
+            require(
+                msg.sender == _account,
+                "Sender not authorized."
+            );
             // "_;" 를 깜빡하지 마세요! 수정자가
             // 사용 될 때, "_;"가 실제 함수
             // 본문으로 대체됩니다.
@@ -162,7 +165,10 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
         }
 
         modifier onlyAfter(uint _time) {
-            require(now >= _time);
+            require(
+                now >= _time,
+                "Function called too early."
+            );
             _;
         }
 
@@ -181,23 +187,27 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
         // 특정 요금을 요구합니다.
         // 호출자가 너무 많은 금액을 송금했을시, 
         // 함수 본문 이후에만 환급이 됩니다.
-        // 이는 솔리디티 0.4.0 이전의 버전에서는 위험하였습니다.
+        // 이는 Solidity 0.4.0 이전의 버전에서는 위험하였습니다.
         // `_;` 이후의 부분은 스킵될 가능성이 있습니다.
         modifier costs(uint _amount) {
-            require(msg.value >= _amount);
+            require(
+                msg.value >= _amount,
+                "Not enough Ether provided."
+            );
             _;
             if (msg.value > _amount)
-                msg.sender.send(msg.value - _amount);
+                msg.sender.transfer(msg.value - _amount);
         }
 
         function forceOwnerChange(address _newOwner)
             public
+            payable
             costs(200 ether)
         {
             owner = _newOwner;
             // 몇 가지의 예제 조건
             if (uint(owner) & 0 == 1)
-                // 이는 솔리디티 0.4.0 이전의
+                // 이는 Solidity 0.4.0 이전의
                 // 버전에서는 환불되지 않았습니다.
                 return;
             // 초과 요금에 대한 환불
@@ -252,7 +262,7 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 
 .. 알아두기::
     **수정자는 스킵 될 수 있습니다**.
-    이는 솔리디티 0.4.0 이전 버전에서만 적용됩니다:
+    이는 Solidity 0.4.0 이전 버전에서만 적용됩니다:
     수정자는 단순히 코드를 교체하고 함수 호출을 사용하지
     않음으로써 적용되므로, 함수 자체에서 return을
     사용하면, transitionNext 수정자의 코드를 스킵
@@ -263,7 +273,7 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
 
 ::
 
-    pragma solidity ^0.4.11;
+    pragma solidity >=0.4.22 <0.6.0; 
 
     contract StateMachine {
         enum Stages {
@@ -280,7 +290,10 @@ fallback함수를 가진 컨트랙트 주소를 ``richest`` 로 만들어
         uint public creationTime = now;
 
         modifier atStage(Stages _stage) {
-            require(stage == _stage);
+            require(
+                stage == _stage,
+                "Function cannot be called at this time."
+            );
             _;
         }
 
