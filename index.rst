@@ -162,10 +162,11 @@ Contents
    solidity-by-example.rst
    solidity-in-depth.rst
    security-considerations.rst
+   resource.rst
    using-the-compiler.rst
    metadata.rst
    abi-spec.rst
-   julia.rst
+   yul.rst
    style-guide.rst
    common-patterns.rst
    bugs.rst
