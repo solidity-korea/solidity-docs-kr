@@ -1,18 +1,19 @@
-#################################################
-Joyfully Universal Language for (Inline) Assembly
-#################################################
+###
+Yul
+###
 
-.. _julia:
+.. _yul:
 
-.. index:: ! assembly, ! asm, ! evmasm, ! julia
+.. index:: ! assembly, ! asm, ! evmasm, ! yul, julia, iulia
 
-JULIA is an intermediate language that can compile to various different backends
+Yul (previously also called JULIA or IULIA) is an intermediate language that can
+compile to various different backends
 (EVM 1.0, EVM 1.5 and eWASM are planned).
 Because of that, it is designed to be a usable common denominator of all three
 platforms.
 It can already be used for "inline assembly" inside Solidity and
-future versions of the Solidity compiler will even use JULIA as intermediate
-language. It should also be easy to build high-level optimizer stages for JULIA.
+future versions of the Solidity compiler will even use Yul as intermediate
+language. It should also be easy to build high-level optimizer stages for Yul.
 
 .. note::
 
@@ -21,14 +22,14 @@ language. It should also be easy to build high-level optimizer stages for JULIA.
     to the EVM opcodes. Please resort to the inline assembly documentation
     for details.
 
-The core components of JULIA are functions, blocks, variables, literals,
+The core components of Yul are functions, blocks, variables, literals,
 for-loops, if-statements, switch-statements, expressions and assignments to variables.
 
-JULIA is typed, both variables and literals must specify the type with postfix
+Yul is typed, both variables and literals must specify the type with postfix
 notation. The supported types are ``bool``, ``u8``, ``s8``, ``u32``, ``s32``,
 ``u64``, ``s64``, ``u128``, ``s128``, ``u256`` and ``s256``.
 
-JULIA in itself does not even provide operators. If the EVM is targeted,
+Yul in itself does not even provide operators. If the EVM is targeted,
 opcodes will be available as built-in functions, but they can be reimplemented
 if the backend changes. For a list of mandatory built-in functions, see the section below.
 
@@ -43,7 +44,7 @@ and ``mod`` are available either natively or as functions and computes exponenti
             switch exponent
             case 0:u256 { result := 1:u256 }
             case 1:u256 { result := base }
-            default:
+            default
             {
                 result := power(mul(base, base), div(exponent, 2:u256))
                 switch mod(exponent, 2:u256)
@@ -69,10 +70,10 @@ and ``add`` to be available.
         }
     }
 
-Specification of JULIA
-======================
+Specification of Yul
+====================
 
-JULIA code is described in this chapter. JULIA code is usually placed into a JULIA object, which is described in the following chapter.
+This chapter describes Yul code. It is usually placed inside a Yul object, which is described in the following chapter.
 
 Grammar::
 
@@ -82,6 +83,7 @@ Grammar::
         FunctionDefinition |
         VariableDeclaration |
         Assignment |
+        If |
         Expression |
         Switch |
         ForLoop |
@@ -98,16 +100,18 @@ Grammar::
     If =
         'if' Expression Block
     Switch =
-        'switch' Expression Case* ( 'default' Block )?
+        'switch' Expression ( Case+ Default? | Default )
     Case =
         'case' Literal Block
+    Default =
+        'default' Block
     ForLoop =
         'for' Block Expression Block Block
     BreakContinue =
         'break' | 'continue'
     FunctionCall =
         Identifier '(' ( Expression ( ',' Expression )* )? ')'
-    Identifier = [a-zA-Z_$] [a-zA-Z_0-9]*
+    Identifier = [a-zA-Z_$] [a-zA-Z_$0-9]*
     IdentifierList = Identifier ( ',' Identifier)*
     TypeName = Identifier | BuiltinTypeName
     BuiltinTypeName = 'bool' | [us] ( '8' | '32' | '64' | '128' | '256' )
@@ -156,7 +160,7 @@ Literals cannot be larger than the their type. The largest type defined is 256-b
 Scoping Rules
 -------------
 
-Scopes in JULIA are tied to Blocks (exceptions are functions and the for loop
+Scopes in Yul are tied to Blocks (exceptions are functions and the for loop
 as explained below) and all declarations
 (``FunctionDefinition``, ``VariableDeclaration``)
 introduce new identifiers into these scopes.
@@ -186,7 +190,7 @@ outside of that function.
 Formal Specification
 --------------------
 
-We formally specify JULIA by providing an evaluation function E overloaded
+We formally specify Yul by providing an evaluation function E overloaded
 on the various nodes of the AST. Any functions can have side effects, so
 E takes two state objects and the AST node and returns two new
 state objects and a variable number of other values.
@@ -303,15 +307,23 @@ We will use a destructuring notation for the AST nodes.
 Type Conversion Functions
 -------------------------
 
-JULIA has no support for implicit type conversion and therefore functions exists to provide explicit conversion.
+Yul has no support for implicit type conversion and therefore functions exist to provide explicit conversion.
 When converting a larger type to a shorter type a runtime exception can occur in case of an overflow.
 
-The following type conversion functions must be available:
-- ``u32tobool(x:u32) -> y:bool``
-- ``booltou32(x:bool) -> y:u32``
-- ``u32tou64(x:u32) -> y:u64``
-- ``u64tou32(x:u64) -> y:u32``
-- etc. (TBD)
+Truncating conversions are supported between the following types:
+ - ``bool``
+ - ``u32``
+ - ``u64``
+ - ``u256``
+ - ``s256``
+
+For each of these a type conversion function exists having the prototype in the form of ``<input_type>to<output_type>(x:<input_type>) -> y:<output_type>``,
+such as ``u32tobool(x:u32) -> y:bool``, ``u256tou32(x:u256) -> y:u32`` or ``s256tou256(x:s256) -> y:u256``.
+
+.. note::
+
+    ``u32tobool(x:u32) -> y:bool`` can be implemented as ``y := not(iszerou256(x))`` and
+    ``booltou32(x:bool) -> y:u32`` can be implemented as ``switch x case true:bool { y := 1:u32 } case false:bool { y := 0:u32 }``
 
 Low-level Functions
 -------------------
@@ -319,7 +331,17 @@ Low-level Functions
 The following functions must be available:
 
 +---------------------------------------------------------------------------------------------------------------+
-| *Arithmetics*                                                                                                 |
+| *Logic*                                                                                                       |
++---------------------------------------------+-----------------------------------------------------------------+
+| not(x:bool) -> z:bool                       | logical not                                                     |
++---------------------------------------------+-----------------------------------------------------------------+
+| and(x:bool, y:bool) -> z:bool               | logical and                                                     |
++---------------------------------------------+-----------------------------------------------------------------+
+| or(x:bool, y:bool) -> z:bool                | logical or                                                      |
++---------------------------------------------+-----------------------------------------------------------------+
+| xor(x:bool, y:bool) -> z:bool               | xor                                                             |
++---------------------------------------------+-----------------------------------------------------------------+
+| *Arithmetic*                                                                                                  |
 +---------------------------------------------+-----------------------------------------------------------------+
 | addu256(x:u256, y:u256) -> z:u256           | x + y                                                           |
 +---------------------------------------------+-----------------------------------------------------------------+
@@ -339,19 +361,23 @@ The following functions must be available:
 +---------------------------------------------+-----------------------------------------------------------------+
 | expu256(x:u256, y:u256) -> z:u256           | x to the power of y                                             |
 +---------------------------------------------+-----------------------------------------------------------------+
-| addmodu256(x:u256, y:u256, m:u256) -> z:u256| (x + y) % m with arbitrary precision arithmetics                |
+| addmodu256(x:u256, y:u256, m:u256) -> z:u256| (x + y) % m with arbitrary precision arithmetic                 |
 +---------------------------------------------+-----------------------------------------------------------------+
-| mulmodu256(x:u256, y:u256, m:u256) -> z:u256| (x * y) % m with arbitrary precision arithmetics                |
+| mulmodu256(x:u256, y:u256, m:u256) -> z:u256| (x * y) % m with arbitrary precision arithmetic                 |
 +---------------------------------------------+-----------------------------------------------------------------+
-| ltu256(x:u256, y:u256) -> z:bool            | 1 if x < y, 0 otherwise                                         |
+| ltu256(x:u256, y:u256) -> z:bool            | true if x < y, false otherwise                                  |
 +---------------------------------------------+-----------------------------------------------------------------+
-| gtu256(x:u256, y:u256) -> z:bool            | 1 if x > y, 0 otherwise                                         |
+| gtu256(x:u256, y:u256) -> z:bool            | true if x > y, false otherwise                                  |
 +---------------------------------------------+-----------------------------------------------------------------+
-| sltu256(x:s256, y:s256) -> z:bool           | 1 if x < y, 0 otherwise, for signed numbers in two's complement |
+| sltu256(x:s256, y:s256) -> z:bool           | true if x < y, false otherwise                                  |
+|                                             | (for signed numbers in two's complement)                        |
 +---------------------------------------------+-----------------------------------------------------------------+
-| sgtu256(x:s256, y:s256) -> z:bool           | 1 if x > y, 0 otherwise, for signed numbers in two's complement |
+| sgtu256(x:s256, y:s256) -> z:bool           | true if x > y, false otherwise                                  |
+|                                             | (for signed numbers in two's complement)                        |
 +---------------------------------------------+-----------------------------------------------------------------+
-| equ256(x:u256, y:u256) -> z:bool            | 1 if x == y, 0 otherwise                                        |
+| equ256(x:u256, y:u256) -> z:bool            | true if x == y, false otherwise                                 |
++---------------------------------------------+-----------------------------------------------------------------+
+| iszerou256(x:u256) -> z:bool                | true if x == 0, false otherwise                                 |
 +---------------------------------------------+-----------------------------------------------------------------+
 | notu256(x:u256) -> z:u256                   | ~x, every bit of x is negated                                   |
 +---------------------------------------------+-----------------------------------------------------------------+
@@ -389,8 +415,14 @@ The following functions must be available:
 +---------------------------------------------+-----------------------------------------------------------------+
 | *Execution control*                                                                                           |
 +---------------------------------------------+-----------------------------------------------------------------+
-| create(v:u256, p:u256, s:u256)              | create new contract with code mem[p..(p+s)) and send v wei      |
+| create(v:u256, p:u256, n:u256)              | create new contract with code mem[p..(p+n)) and send v wei      |
 |                                             | and return the new address                                      |
++---------------------------------------------+-----------------------------------------------------------------+
+| create2(v:u256, p:u256, n:u256, s:u256)     | create new contract with code mem[p...(p+n)) at address         |
+|                                             | keccak256(0xff . this . s . keccak256(mem[p...(p+n)))           |
+|                                             | and send v wei and return the new address, where ``0xff`` is a  |
+|                                             | 8 byte value, ``this`` is the current contract's address        |
+|                                             | as a 20 byte value and ``s`` is a big-endian 256-bit value      |
 +---------------------------------------------+-----------------------------------------------------------------+
 | call(g:u256, a:u256, v:u256, in:u256,       | call contract at address a with input mem[in..(in+insize))      |
 | insize:u256, out:u256,                      | providing g gas and v wei and output area                       |
@@ -404,10 +436,6 @@ The following functions must be available:
 | delegatecall(g:u256, a:u256, in:u256,       | identical to ``callcode``,                                      |
 | insize:u256, out:u256,                      | but also keep ``caller``                                        |
 | outsize:u256) -> r:u256                     | and ``callvalue``                                               |
-+---------------------------------------------+-----------------------------------------------------------------+
-| stop()                                      | stop execution, identical to return(0,0)                        |
-|                                             | Perhaps it would make sense retiring this as it equals to       |
-|                                             | return(0,0). It can be an optimisation by the EVM backend.      |
 +---------------------------------------------+-----------------------------------------------------------------+
 | abort()                                     | abort (equals to invalid instruction on EVM)                    |
 +---------------------------------------------+-----------------------------------------------------------------+
@@ -471,23 +499,27 @@ The following functions must be available:
 +---------------------------------------------+-----------------------------------------------------------------+
 | extcodecopy(a:u256, t:u256, f:u256, s:u256) | like codecopy(t, f, s) but take code at address a               |
 +---------------------------------------------+-----------------------------------------------------------------+
+| extcodehash(a:u256)                         | code hash of address a                                          |
++---------------------------------------------+-----------------------------------------------------------------+
 | *Others*                                                                                                      |
++---------------------------------------------+-----------------------------------------------------------------+
+| discard(unused:bool)                        | discard value                                                   |
 +---------------------------------------------+-----------------------------------------------------------------+
 | discardu256(unused:u256)                    | discard value                                                   |
 +---------------------------------------------+-----------------------------------------------------------------+
 | splitu256tou64(x:u256) -> (x1:u64, x2:u64,  | split u256 to four u64's                                        |
-|                            x3:u64, x4:u64)  |                                                                 |
+| x3:u64, x4:u64)                             |                                                                 |
 +---------------------------------------------+-----------------------------------------------------------------+
 | combineu64tou256(x1:u64, x2:u64, x3:u64,    | combine four u64's into a single u256                           |
-|                  x4:u64) -> (x:u256)        |                                                                 |
+| x4:u64) -> (x:u256)                         |                                                                 |
 +---------------------------------------------+-----------------------------------------------------------------+
-| sha3(p:u256, s:u256) -> v:u256              | keccak(mem[p...(p+s)))                                          |
+| keccak256(p:u256, s:u256) -> v:u256         | keccak(mem[p...(p+s)))                                          |
 +---------------------------------------------+-----------------------------------------------------------------+
 
 Backends
 --------
 
-Backends or targets are the translators from JULIA to a specific bytecode. Each of the backends can expose functions
+Backends or targets are the translators from Yul to a specific bytecode. Each of the backends can expose functions
 prefixed with the name of the backend. We reserve ``evm_`` and ``ewasm_`` prefixes for the two proposed backends.
 
 Backend: EVM
@@ -505,8 +537,8 @@ Backend: eWASM
 
 TBD
 
-Specification of JULIA Object
-=============================
+Specification of Yul Object
+===========================
 
 Grammar::
 
@@ -517,11 +549,11 @@ Grammar::
     HexLiteral = 'hex' ('"' ([0-9a-fA-F]{2})* '"' | '\'' ([0-9a-fA-F]{2})* '\'')
     StringLiteral = '"' ([^"\r\n\\] | '\\' .)* '"'
 
-Above, ``Block`` refers to ``Block`` in the JULIA code grammar explained in the previous chapter.
+Above, ``Block`` refers to ``Block`` in the Yul code grammar explained in the previous chapter.
 
-An example JULIA Object is shown below:
+An example Yul Object is shown below:
 
-..code::
+.. code::
 
     // Code consists of a single object. A single "code" node is the code of the object.
     // Every (other) named object or data section is serialized and
