@@ -3,37 +3,36 @@
 .. _ABI:
 
 ******************************************
-Application Binary Interface Specification
+어플리케이션 바이너리 인터페이스 설명
 ******************************************
 
-Basic Design
+기본 디자인
 ============
 
-The Application Binary Interface is the standard way to interact with contracts in the Ethereum ecosystem, both
-from outside the blockchain and for contract-to-contract interaction. Data is encoded according to its type,
-as described in this specification.  The encoding is not self describing and thus requires a schema in order to decode.
+어플리케이션 바이너리 인터페이스는 블럭체인 밖에서든 컨트렉트 대 컨트렉트 상호작용이든, 이더리움 생태계에서 컨트렉트들과 상호작용 하는 표준 방법 입니다.
+이 설명에 나와있는 것 같이, 타입에 따라 데이터는 인코딩 되어 집니다.
+인코딩은 스스로 설명하지 않기때문에 디코드 하기 위해 스키마를 요구합니다.
 
-We assume the interface functions of a contract are strongly typed, known at compilation time and static. No introspection mechanism will be provided. We assume that all contracts will have the interface definitions of any contracts they call available at compile-time.
+컨트렉트의 인터페이스 함수는 컴파일 타임 및 정적으로 알려진 강력한 형식이라고 가정합니다. 내성 메커니즘은 제공되지 않습니다.
+모든 컨트렉트에는 컴파일 타임에 사용할 수있는 모든 컨트렉트의 인터페이스 정의가 있다고 가정합니다.
 
-This specification does not address contracts whose interface is dynamic or otherwise known only at run-time. Should these cases become important they can be adequately handled as facilities built within the Ethereum ecosystem.
+이 설명은 인터페이스가 동적이거나 달리 런타임에만 알려져있는 계약을 다루지 않습니다. 이러한 사례가 중요 해지면 Ethereum 생태계 내에 구축 된 시설로 적절하게 처리 할 수 있습니다.
 
 .. _abi_function_selector:
 
-Function Selector
+함수 선택자
 =================
 
-The first four bytes of the call data for a function call specifies the function to be called. It is the
-first (left, high-order in big-endian) four bytes of the Keccak (SHA-3) hash of the signature of the function. The signature is defined as the canonical expression of the basic prototype, i.e.
-the function name with the parenthesised list of parameter types. Parameter types are split by a single comma - no spaces are used.
+함수 호출을 위한 호출 데이터의 첫 4바이트는 호출될 함수를 지정합니다. 그것은 함수 시그니쳐의 Keccak (SHA-3) 해시의 첫 번째(빅 엔디안)에서 4바이트 입니다. 이 시그니쳐는 기본 프로토콜의 정식 표현으로써 정의됩니다.
+매개변수 타입의 괄호로 묶인 목록이  있는 함수 이름. 매개 변수 타입은 공백을 사용하지 않고 단일 쉼표로 구분합니다.
 
 .. note::
-    The return type of a function is not part of this signature. In :ref:`Solidity's function overloading <overload-function>` return types are not considered. The reason is to keep function call resolution context-independent.
-    The JSON description of the ABI however contains both inputs and outputs. See (the :ref:`JSON ABI <abi_json>`)
+    함수의 반환 타입은 이 시그니쳐의 일부분이 아닙니다. :ref:`솔리디티 함수 오버로딩 <overload-function>`에서 반환타입은 고려하지 않습니다. 그이유는 함수 호출 해결을 컨텍스트 독립적으로 유지하기 위해서 입니다. 그러나 ABI에 대한 JSON 설명에는 입력과 출력이 모두 들어 있습니다. (the :ref:`JSON ABI <abi_json>`)를 확인하세요.
 
-Argument Encoding
+인자 인코딩
 =================
 
-Starting from the fifth byte, the encoded arguments follow. This encoding is also used in other places, e.g. the return values and also event arguments are encoded in the same way, without the four bytes specifying the function.
+다섯 번째 바이트부터 인코딩 된 인수가옵니다. 이 인코딩은 다른 장소에서도 사용됩니다 (예 : 반환 값과 이벤트 인수는 함수를 지정하는 4 바이트가없는 동일한 방식으로 인코딩됩니다.
 
 Types
 =====
