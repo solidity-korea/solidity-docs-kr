@@ -90,13 +90,13 @@ the same as the number of output parameters.
 
 .. _function-calls:
 
-Function Calls
+함수 호출
 ==============
 
-Internal Function Calls
+내부 함수 호출
 -----------------------
 
-예제에서 처럼 현재 contract의 함수는 직접적으로(내부적으로) 또는 재귀적으로 호출 될 수 있다.::
+예제에서 처럼 현재 contract의 함수는 직접적으로(내부적으로) 또는 재귀적으로 호출 될 수 있습니다.::
 
     pragma solidity >=0.4.16 <0.6.0;
 
@@ -105,23 +105,23 @@ Internal Function Calls
         function f() internal pure returns (uint ret) { return g(7) + f(); }
     }
 
-이런 함수 calls은 EVM 내부의 간단한 jumps로 번역 될 수 있다. 이것은 현재 돈이 정리되지 않았을 때 내부적으로 호출된 함수에 대한 메모리 참조 변환이 매우 효과적이다. 같은 contract 함수에 대해서만 내부적으로 호출 될 수 있다.
+이런 함수 calls은 EVM 내부의 간단한 jumps로 번역 될 수 있습니다. 이것은 현재 돈이 정리되지 않았을 때 내부적으로 호출된 함수에 대한 메모리 참조 변환이 매우 효과적이다. 같은 contract 함수에 대해서만 내부적으로 호출 될 수 있습니다.
 
 You should still avoid excessive recursion, as every internal function call
 uses up at least one stack slot and there are at most 1024 slots available.
 
-External Function Calls
+외부 함수 호출
 -----------------------
 
-표현식 ``this.g(8);`` 와 ``c.g(2);`` (g는 contract 인스턴스이다)은 유효한 함수 calls이다. 그러나 함수는 jumps가 아닌 메시지 call을 통해 외부에서 불려진다. 실제 contrat가 아직 생성되지 않았기 때문에 생성자에서 함수 calls은 사용 될 수 없다.
+표현식 ``this.g(8);`` 와 ``c.g(2);`` (g는 contract 인스턴스)은 유효한 함수 calls입니다. 그러나 함수는 jumps가 아닌 메시지 call을 통해 외부에서 불려집니다. 실제 contrat가 아직 생성되지 않았기 때문에 생성자에서 함수 calls은 사용 될 수 없습니다.
 
-다른 contracts의 함수는 외부적으로 호출되어야 한다. 외부 호출을 위해 모든 함수 arguments는 메모리에 복사되어야 한다.
+다른 contracts의 함수는 외부적으로 호출되어야 합니다. 외부 호출을 위해 모든 함수 arguments는 메모리에 복사되어야 합니다.
 
 .. note::
     A function call from one contract to another does not create its own transaction,
     it is a message call as part of the overall transaction.
 
-다른 contracts의 함수를 부를 때, call과 함께 보내진 Wei와 gas는 각각 ``.value()`` 와 ``.gas()`` 로 명시될 수 있다.::
+다른 contracts의 함수를 부를 때, call과 함께 보내진 Wei와 gas는 각각 ``.value()`` 와 ``.gas()`` 로 명시될 수 있습니다.::
 
     pragma solidity >=0.4.0 <0.6.0;
 
@@ -141,7 +141,7 @@ otherwise, the ``.value()`` option would not be available.
 .. warning::
   Be careful that ``feed.info.value(10).gas(800)`` only locally sets the ``value`` and amount of ``gas`` sent with the function call, and the parentheses at the end perform the actual call. So in this case, the function is not called.
 
-함수 calls은 호출된 contract가 존재하지 않거나(계좌가 코드를 포함하지 않는 다는 점에서), 호출된 contract가 스스로 예외처리를 하거나 gas가 없으면 예외를 발생시킨다.
+함수 호출은 호출된 contract가 존재하지 않거나(계좌가 코드를 포함하지 않는 다는 점에서), 호출된 contract가 스스로 예외처리를 하거나 gas가 없으면 예외를 발생시킵니다.
 
 .. warning::
     Any interaction with another contract imposes a potential danger, especially
@@ -158,10 +158,10 @@ otherwise, the ``.value()`` option would not be available.
     external functions happen after any changes to state variables in your contract
     so your contract is not vulnerable to a reentrancy exploit.
 
-Named Calls and Anonymous Function Parameters
+지정 호출과 익명 함수 parameters
 ---------------------------------------------
 
-다음의 예에서 볼 수 있는 것처럼 ``{`` ``}`` 로 묶여 있다면, 함수 호출 arguments는 순서와 상관없이 이름으로 지정 될 수 있다. argument list는 함수 선언에서 parameters 리스트와 이름이 일치해야 하지만 순서는 일치 되지 않을 수 있다.
+다음의 예에서 볼 수 있는 것처럼 ``{`` ``}`` 로 묶여 있다면, 함수 호출 arguments는 순서와 상관없이 이름으로 지정 될 수 있습니다. argument list는 함수 선언에서 parameters 리스트와 이름이 일치해야 하지만 순서는 일치 되지 않을 수 있습니다.
 
 ::
 
@@ -180,10 +180,10 @@ Named Calls and Anonymous Function Parameters
 
     }
 
-Omitted Function Parameter Names
+제거된 함수 parameter 이름
 --------------------------------
 
-사용되지 않을 parameters(특히 반환 parameters)의 이름은 제거될 수 있다. 이런 parameters의 이름은 스택에 존재하지만 접근할 수 없다.
+사용되지 않을 parameters(특히 반환 parameters)의 이름은 제거될 수 있습니다. 이런 parameters의 이름은 스택에 존재하지만 접근할 수 없습니다.
 
 ::
 
