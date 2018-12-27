@@ -200,6 +200,12 @@ htmlhelp_basename = 'Soliditydoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
+        # Additional stuff for the LaTeX preamble.
+        'preamble': "".join((
+        '\usepackage[utf8x]{inputenc}',
+        '\documentclass{article}',
+        '\usepackage{kotex}',
+        ))
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
