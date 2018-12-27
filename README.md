@@ -36,10 +36,6 @@ issue 양식은 아래와 같습니다.
 💬 추가 내용
 ```
 
-#### Project Management
-[여기](https://github.com/solidity-korea/solidity-docs-kr/projects/1)를 통해 Check List에서 본인이 번역을 진행하고 있는 문서를 In Progress로 이동시켜 주시기 바랍니다. 또한 내용 수정을 통해 관련 Issue Number를 추가해 주시기 바랍니다. 번역이 완료되고, Merge가 된 후에는 In progress 에서 Done으로 이동시켜 주시기 바랍니다.
-
-
 자세한 내용는 해당 [문서](https://github.com/solidity-korea/solidity-docs-kr/wiki/%EA%B8%B0%EC%97%AC%ED%95%98%EA%B8%B0)를 참고해주세요.
 
 - 현재 [이미 진행된 번역본과 통합](https://github.com/solidity-korea/solidity-docs-kr/issues/10) 이슈에 따라 https://ggs134.gitbooks.io/solidityguide/content/ 와 통합하는 과정을 진행하고 있습니다. 완전히 통합이 완료되기 전 까지는 위 [링크](https://ggs134.gitbooks.io/solidityguide/content/) 에서 번역 유무 확인하셔서 이미 번역이 진행된 부분을 피해서 진행해 주시면 중복 번역을 최소화 할 수 있을 것 같습니다.
@@ -49,6 +45,11 @@ issue 양식은 아래와 같습니다.
 - 2018년 12월 19일 기준 0.5.1 버전과의 통합이 완료되었습니다. [51번 이슈](https://github.com/solidity-korea/solidity-docs-kr/issues/51)를 통해 자세한 사항을 확인 할 수 있습니다.
 
 - Project의 Check List에 존재하는 모든 문서는 번역이 진행되지 않은 문서이거나, 0.4.2 버전을 기반으로 번역된 문서이므로, 업데이트가 필요합니다. [이 사이트](https://www.diffchecker.com/cblLjeFw)를 통하여, 0.4.2 버전 원본문서와 0.5.1 버전의 문서를 비교하여, 업데이트가 된 부분을 수정 부탁드립니다.
+
+
+## Project Management
+[여기](https://github.com/solidity-korea/solidity-docs-kr/projects/1)를 통해 Check List에서 본인이 번역을 진행하고 있는 문서를 In Progress로 이동시켜 주시기 바랍니다. 또한 내용 수정을 통해 관련 Issue Number를 추가해 주시기 바랍니다. 번역이 완료되고, Merge가 된 후에는 In progress 에서 Done으로 이동시켜 주시기 바랍니다.
+
 
 ## Communication 
 Solidity Korea Slack 채널을 운영하고 있습니다. 보다 활성화된 커뮤니케이션이 필요하신 분은 해당 [링크](https://join.slack.com/t/solidity-korea/shared_invite/enQtMzMyNjA0MDMxNTU4LTM2NTI2MjgzNTQ5MDQ5OGM2ZjkzMjc3OTM1NzVkODI4MTFkZTcwZTQxNGRjZTg5N2M2MWQzZWNjZTBmZDEzNDU) 를 통해 참여하실 수 있습니다.
