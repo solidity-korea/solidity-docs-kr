@@ -44,7 +44,7 @@ issue 양식은 아래와 같습니다.
 
 - 2018년 12월 19일 기준 0.5.1 버전과의 통합이 완료되었습니다. [51번 이슈](https://github.com/solidity-korea/solidity-docs-kr/issues/51)를 통해 자세한 사항을 확인 할 수 있습니다.
 
-- Project의 Check List에 존재하는 모든 문서는 번역이 진행되지 않은 문서이거나, 0.4.2 버전을 기반으로 번역된 문서이므로, 업데이트가 필요합니다. [이 사이트](https://www.diffchecker.com/cblLjeFw)를 통하여, 0.4.2 버전 원본문서와 0.5.1 버전의 문서를 비교하여, 업데이트가 된 부분을 수정 부탁드립니다.
+- Project의 Check List에 존재하는 모든 문서는 번역이 진행되지 않은 문서이거나, 0.4.2 버전을 기반으로 번역된 문서이므로, 업데이트가 필요합니다. [이 사이트](https://www.diffchecker.com/)를 통하여, 0.4.2 버전 원본문서와 0.5.1 버전의 문서를 비교하여, 업데이트가 된 부분을 수정 부탁드립니다.
 
 
 ## Project Management
