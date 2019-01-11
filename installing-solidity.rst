@@ -203,10 +203,10 @@ Visual Studio 2017이 모든 setup을 쉽게 해 줄 수 있는 선택이 될 �
 .. _Visual Studio 2017: https://www.visualstudio.com/vs/
 .. _Visual Studio 2017 Build Tools: https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017
 
-저장소에서 Clone
+저장소 복제
 --------------------
 
-소스코드를 Clone 하기 위해서는, 다음 명령어를 수행하세요:
+소스코드를 복제하기 위해서는, 아래의 명령어를 실행하세요:
 
 .. code-block:: bash
 
@@ -214,7 +214,7 @@ Visual Studio 2017이 모든 setup을 쉽게 해 줄 수 있는 선택이 될 �
     cd solidity
 
 Solidity 개발을 돕고싶다면,
-Solidity를 포크하고, 자신의 포크를 second 원격으로 추가하세요:
+Solidity 프로젝트를 포크하고, 두 번째 원격 저장소로 자신의 저장소를 추가하세요:
 
 .. code-block:: bash
 
@@ -330,9 +330,9 @@ pre-release 예: ``0.4.9-nightly.2017.1.17+commit.6ecb4aa3.Emscripten.clang``
 버전 관리에 대한 중요한 정보
 ======================================
 
-릴리즈가 일어난 후에, 패치 버전은 변경된다.
-변경사항이 합쳐질 때, 버전은 semver와 변경 정도에 따라 변경된다.
-따라서, 배포는 항상 ``prerelease`` 태그를 제외한 현재의 nightly build버전으로 이루어진다.
+릴리즈가 일어난 후에, 패치 버전은 변경됩니다.
+변경사항이 합쳐질 때, 버전은 semver와 변경 정도에 따라 변경됩니다.
+따라서, 배포는 항상 ``prerelease`` 태그를 제외한 현재의 nightly build버전으로 이루어집니다.
 
 예:
 
