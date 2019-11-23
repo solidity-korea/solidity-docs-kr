@@ -445,6 +445,8 @@ Modifier들은 컨트랙트의 상속가능한 부분이고, 유도된 컨트랙
         // `owned` and applies it to the `close` function, which
         // causes that calls to `close` only have an effect if
         // they are made by the stored owner.
+        // 이 컨트랙트는 `owned`로부터 `onlyOwner` modifier를 상속 받고, `close` 함수에 그것을 적용 시킵니다.
+        // 이를 통해, 저장된 owner로부터 만들어진 호출들로부터 발생한 `close`만이 영향을 주게 됩니다.
         function close() public onlyOwner {
             selfdestruct(owner);
         }
@@ -452,6 +454,7 @@ Modifier들은 컨트랙트의 상속가능한 부분이고, 유도된 컨트랙
 
     contract priced {
         // Modifiers can receive arguments:
+        // Modifier는 인자를 받을 수 있습니다.
         modifier costs(uint price) {
             if (msg.value >= price) {
                 _;
@@ -468,6 +471,8 @@ Modifier들은 컨트랙트의 상속가능한 부분이고, 유도된 컨트랙
         // It is important to also provide the
         // `payable` keyword here, otherwise the function will
         // automatically reject all Ether sent to it.
+        // `payable` 키워드를 여기에 넣는 것은 중요합니다.
+        // 그렇지 않으면 모든 컨트랙트에 보낸 이더리움 전송을 자동으로 함수가 거절할 것이기 떄문입니다.
         function register() public payable costs(price) {
             registeredAddresses[msg.sender] = true;
         }
@@ -493,6 +498,8 @@ Modifier들은 컨트랙트의 상속가능한 부분이고, 유도된 컨트랙
         /// reentrant calls from within `msg.sender.call` cannot call `f` again.
         /// The `return 7` statement assigns 7 to the return value but still
         /// executes the statement `locked = false` in the modifier.
+        // 이 함수는 뮤택스로부터 보호받을 것입니다. 이는 `msg.sender.call`이내의 재진입 호출이 `f`를 다시 호출 할 수 없다는 뜻입니다.
+        // `rureun 7` 스테이트먼트는 7을 리턴 밸류로 할당하겠지만 아직 modifier 속의 `locked = false`를 실행 시킬 것입니다.
         function f() public noReentrancy returns (uint) {
             (bool success,) = msg.sender.call("");
             require(success);
@@ -502,24 +509,30 @@ Modifier들은 컨트랙트의 상속가능한 부분이고, 유도된 컨트랙
 
 Multiple modifiers are applied to a function by specifying them in a
 whitespace-separated list and are evaluated in the order presented.
+공백으로 분리되고, 주어진 순서대로 평가되어지는 여러 개의 modifier들이 함수에 적용 될 수 있습니다.
 
 .. warning::
     In an earlier version of Solidity, ``return`` statements in functions
     having modifiers behaved differently.
+    솔리디티 초창기 버전에서는 modifiers를 갖고 있는 함수 안의 ``return`` 선언은 다르게 작동하였습니다.
 
 Explicit returns from a modifier or function body only leave the current
 modifier or function body. Return variables are assigned and
 control flow continues after the "_" in the preceding modifier.
+modifier나 함수 바디의 명백한 리턴은 현재의 modifier나 함수 몸체만을 남깁니다.
+리턴 변수는 앞선 modifier의 "_" 이후에 할당 되고 컨트롤 플로우가 지속 됩니다.
 
 Arbitrary expressions are allowed for modifier arguments and in this context,
 all symbols visible from the function are visible in the modifier. Symbols
 introduced in the modifier are not visible in the function (as they might
 change by overriding).
+modifier 인자에 대해 임의적인 표현이 허용되고, 이런 면에서 함수에서 접근가능한 모든 심볼들은 modifier에게도 접근 가능합니다.
+modifier에서 도입된 심볼들은 함수에게는 (그들이 오버라이딩을 통해 바뀔 수 있기에) 접근 가능하지 않습니다.
 
 .. index:: ! constant
 
 ************************
-Constant State Variables
+상수 상태의 변수들
 ************************
 
 State variables can be declared as ``constant``. In this case, they have to be
@@ -531,16 +544,25 @@ that might have a side-effect on memory allocation are allowed, but those that
 might have a side-effect on other memory objects are not. The built-in functions
 ``keccak256``, ``sha256``, ``ripemd160``, ``ecrecover``, ``addmod`` and ``mulmod``
 are allowed (even though they do call external contracts).
+상태 변수들은 ``constant``(상수)로 정의될 수 있습니다. 이러한 상황에서, 그들은 컴파일 타임에 상수인 표현식이 되어야합니다.
+어떠한 표션식도 스토리지에 접근하거나, 블록체인 데이터에 접근하거나(e.g. ``now``, ``address(this).balance`` 혹은 ``block.number``)
+혹은 데이터를 실행하거나 (``msg.value`` or ``gasleft()``) 혹은 외부 컨트랙트에 호출을 하는 것은 모두 허가되지 않습니다.
+메모리 할당에 사이드 이팩트를 갖을 수 있는 포현식은 허가 됩니다. 그러나, 이러한 사이드 이팩트가 다른 메모리 오브젝트에 영향을 준다면 그렇지 않습니다.
+내장 함수인 ``keccak256``, ``sha256``, ``ripemd160``, ``ecrecover``, ``addmod``, 그리고 ``mulmod`` 는 허가 됩니다. (심지어 그것들이 외부 컨트랙트를 호출한다고 하더라도요)
 
 The reason behind allowing side-effects on the memory allocator is that it
 should be possible to construct complex objects like e.g. lookup-tables.
 This feature is not yet fully usable.
+메모리 할당자에 대한 사이드 이팩트를 허용하는 이유는 룩업 데이블과 같은 복잡한 오브젝트들을 구축하는데 도움이 되기 때문입니다.
+이러한 기능들은 완벽하게 사용할 수 있지는 않습니다.
 
 The compiler does not reserve a storage slot for these variables, and every occurrence is
 replaced by the respective constant expression (which might be computed to a single value by the optimizer).
+컴파일러는 이러한 변수들을 위해 스토리지 슬롯을 예약하지 않습니다. 그리고 (옵티마이저에 의해 하나의 값으로 계산되어질) 각각의 모든 상수 표현식으로 치환될 것입니다.
 
 Not all types for constants are implemented at this time. The only supported types are
 value types and strings.
+상수들에 대한 모든 타입들이 적용된 것은 아닙니다. 값 타입과 문자열 타입만 지원됩니다.
 
 ::
 
@@ -557,7 +579,7 @@ value types and strings.
 .. _functions:
 
 *********
-Functions
+함수
 *********
 
 .. index:: ! view function, function;view
@@ -568,6 +590,7 @@ View Functions
 ==============
 
 Functions can be declared ``view`` in which case they promise not to modify the state.
+함수는 state를 변화하지 않는다는 걸 약속하는 `view`로 선언 될 수 있습니다.
 
 .. note::
   If the compiler's EVM target is Byzantium or newer (default) the opcode
@@ -577,8 +600,12 @@ Functions can be declared ``view`` in which case they promise not to modify the 
   This means library ``view`` functions do not have run-time checks that prevent state
   modifications. This should not impact security negatively because library code is
   usually known at compile-time and the static checker performs compile-time checks.
+  만약 컴파일러의 EVM 타겟이 비잔티움 혹은 그보다 최신이라면, ``STATICCALL`` opcode가 EVM 실행시 상태가 변화하지 않도록 강제하도록 ``view`` 함수들을 위해서 사용 될 것입니다.
+  ``DELEGATECALL`` 사용되면, 라이브러리에게 ``view`` 함수들은 상태 변경을 막기 위한 런타임 확인을 시행하지 않습니다. 이것은 보안적으로 부정적인 영향을 미치지는 않습니다.
+  라이브러리 코드들은 정적 분석기가 컴파일 타임에 확인을 하고, 그 이후에도 알 수 있기 떄문입니다.
 
 The following statements are considered modifying the state:
+다음과 같은 선언은 상태를 바꾼다고 가정합니다.
 
 #. Writing to state variables.
 #. :ref:`Emitting events <events>`.
@@ -588,6 +615,14 @@ The following statements are considered modifying the state:
 #. Calling any function not marked ``view`` or ``pure``.
 #. Using low-level calls.
 #. Using inline assembly that contains certain opcodes.
+#. 상태 변수에 쓰는 것
+#. :ref:`Emitting events <events>`.
+#. :ref:`Creating other contracts <creating-contracts>`.
+#. ``selfdestruct``를 사용하는 것
+#. 호출을 통해 이더리움을 보내는 것
+#. ``view``나 ``pure``라고 적히지 않은 어떠한 함수를 쓰는 것
+#. 저 수준 호출을 하는 것
+#. 특정한 opcode를 포함하고 있는 인라인 어셈블리를 사용하는 것  
 
 ::
 
@@ -601,9 +636,11 @@ The following statements are considered modifying the state:
 
 .. note::
   ``constant`` on functions used to be an alias to ``view``, but this was dropped in version 0.5.0.
+  함수의에 ``constant``를 사용하는 것은 ``view``를 지칭하는 것이였지만, 0.5.0 버전부터는 제외 되었습니다.
 
 .. note::
   Getter methods are automatically marked ``view``.
+  Getter 메소드들은 자동으로 ``view``로 마킹됩니다.
 
 .. note::
   Prior to version 0.5.0, the compiler did not use the ``STATICCALL`` opcode
@@ -612,27 +649,40 @@ The following statements are considered modifying the state:
   invalid explicit type conversions.
   By using  ``STATICCALL`` for ``view`` functions, modifications to the
   state are prevented on the level of the EVM.
+  0.5.0 이전에는 컴파일러가 ``STATICALL`` opcode를 ``view`` 함수에 사용하지 않았습니다.
+  이는 ``view`` 함수에게 잘못된 명시적 타입 변경을 통해 상태를 변경할 수 있게 하였습니다.
+  ``STATICALL``을 ``view`` 함수들에 쓰게 되면서, EVM 수준에서 상태를 변경하는 것을 막을 수 있었습니다.
 
 .. index:: ! pure function, function;pure
 
 .. _pure-functions:
 
-Pure Functions
+순수 함수
 ==============
 
 Functions can be declared ``pure`` in which case they promise not to read from or modify the state.
+``pure``로 선언되어지는 함수들은 상태를 읽거나 수정할 수 없음을 약속합니다.
 
 .. note::
   If the compiler's EVM target is Byzantium or newer (default) the opcode ``STATICCALL`` is used,
   which does not guarantee that the state is not read, but at least that it is not modified.
+  만약 컴파일러의 EVM 타겟이 비잔티움 혹은 그 이후라면, (기본) 오피코드인 수정 되지 않는 것을 보장하지만,
+  상태가 읽히지 않을 것이라는 것을 보장하지는 않는 ``STATICALL``이 사용됩니다.
 
 In addition to the list of state modifying statements explained above, the following are considered reading from the state:
+추가적으로 상태를 수정하는 상태들의 집합이 위에 설명되었습니다. 다음의 것들은 상태로부터 읽는 것으로 간주됩니다.
 
 #. Reading from state variables.
 #. Accessing ``address(this).balance`` or ``<address>.balance``.
 #. Accessing any of the members of ``block``, ``tx``, ``msg`` (with the exception of ``msg.sig`` and ``msg.data``).
 #. Calling any function not marked ``pure``.
 #. Using inline assembly that contains certain opcodes.
+
+#. 상태변수로부터 읽기
+#. ``address(this).balance`` 혹은 ``address.balance``에 접근하기
+#. ``block``, ``tx``, ``msg`` (``msg.sig`` 와 ``msg.data``라는 예외가 존재함) 의 멤버에 접근하는 것들
+#. ``pure``라고 적히지 않은 함수들 호출하기
+#. 특정 opcode를 포함하고 있는 인라인 어셈블리를 사용하기
 
 ::
 
@@ -651,11 +701,16 @@ In addition to the list of state modifying statements explained above, the follo
   invalid explicit type conversions.
   By using  ``STATICCALL`` for ``pure`` functions, modifications to the
   state are prevented on the level of the EVM.
+  0.5.0 버전 이전에는, 컴파일러는 ``STATICCALL`` opcode를 ``pure`` 함수에 사용하지 않았습니다.
+  이것은 ``pure`` 함수가 잘못된 명시적 타입 변환을 통해 상태를 수정할 수 있게 합니다.
+  ``STATICALL``을 ``pure`` 함수에게 사용함으로써, EVM 수준에서 상태의 변경이 막히게 됩니다.
 
 .. warning::
   It is not possible to prevent functions from reading the state at the level
   of the EVM, it is only possible to prevent them from writing to the state
   (i.e. only ``view`` can be enforced at the EVM level, ``pure`` can not).
+  함수가 EVM 수준에서 상태를 읽는 것을 막지는 못합니다. 단순히 상태를 쓰지 못하는 것을 막을 뿐입니다.
+  (i.e. 오직 ``view``만이 EVM 수준에서 강제할 수 있습니다. ``pure``는 그렇지 못 합니다.)
 
 .. warning::
   Before version 0.4.17 the compiler did not enforce that ``pure`` is not reading the state.
@@ -663,6 +718,9 @@ In addition to the list of state modifying statements explained above, the follo
   between contract types, because the compiler can verify that the type of the contract does
   not do state-changing operations, but it cannot check that the contract that will be called
   at runtime is actually of that type.
+  0.4.17 이전에는 컴파일러가 ``pure``가 상태를 읽지 못하도록 강제하지 않았습니다. 이것은 컴파일 시간의 타입 체크이고,
+  컨트랙트 타입 사이에서 잘못된 명시적 변환을 통해 우회할 수 있었습니다. 컴파일러가 컨트랙트가 상태 변경 오퍼레이션을 하지 않는다는
+  것만 확인했기 떄문입니다. 그리고 그것은 컨트랙트가 그 타입으로 명확하게 런타임에서 호출될 것이라는 것을 체크하지는 못합니다.
 
 .. index:: ! fallback function, function;fallback
 
@@ -676,33 +734,52 @@ arguments, cannot return anything and has to have ``external`` visibility.
 It is executed on a call to the contract if none of the other
 functions match the given function identifier (or if no data was supplied at
 all).
+함수는 명확하게 하나의 이름이 없는 함수를 갖을 수 있습니다. 이러한 함수는 인자를 가질 수 없고, 어떤 것도 반환할 수 없으며,
+``external`` 접근이 가능해야합니다. 이것은 주어진 함수 식별자가 어떠한 다른 함수들에게도 맞지 않을 경우에 실행됩니다. 
+(혹은 어떠한 데이터도 주어지지 않았을 때)
 
 Furthermore, this function is executed whenever the contract receives plain
 Ether (without data). Additionally, in order to receive Ether, the fallback function
 must be marked ``payable``. If no such function exists, the contract cannot receive
 Ether through regular transactions.
+게다가 이 함수는 단순히 (데이터 없이) 이더리움을 받았을 때도 실행됩니다. 이더리움을 받기 위해, fallback 함수는 
+``payable``이라고 명시가 되어야합니다. 만약 이러한 함수가 존재하지 않는다면, 일반적인 트랜젝션을 통해 
+컴트랙트는 이더리움을 받을 수 없습니다.
 
 In the worst case, the fallback function can only rely on 2300 gas being
 available (for example when `send` or `transfer` is used), leaving little
 room to perform other operations except basic logging. The following operations
 will consume more gas than the 2300 gas stipend:
+최악의 상황에서는 fallback 함수는 기본적인 로깅을 제외한 다른 작업을 할 수 없을 정도의 작은 수준의 2300가스만 사용이 가능한 상황에 놓여질 수 있습니다. (예를 들어 `send`나 `transfer`가 사용될 때)
+다음의 작업은 2300 가스 이상 사용이 될 것입니다.
+
 
 - Writing to storage
 - Creating a contract
 - Calling an external function which consumes a large amount of gas
 - Sending Ether
 
+- 스토리지에 쓰기
+- 컨트랙트 생성
+- 엄청난 양의 가스를 소비하는 외부 함수 부르기
+- 이더리움 전송
+
 Like any function, the fallback function can execute complex operations as long as there is enough gas passed on to it.
+다른 어떠한 함수와 같이, fallback 함수는 가스가 들어오는 만큼 복잡한 작업을 할 수 있습니다.
 
 .. note::
     Even though the fallback function cannot have arguments, one can still use ``msg.data`` to retrieve
     any payload supplied with the call.
+    fallback 함수가 인자를 갖을 수 없다고 하지만, ``msg.data``를 이용하여 호출에서 제공하는 어떠한 페이로드라도 회수 할 수 있습니다.
 
 .. warning::
     The fallback function is also executed if the caller meant to call
     a function that is not available. If you want to implement the fallback
     function only to receive ether, you should add a check
     like ``require(msg.data.length == 0)`` to prevent invalid calls.
+    fallback 함수가 실행 되었다는 것은 존재하지 않는 함수를 호출하려고 했다는 것을 의미합니다.
+    이더리움을 받으려고 fallback 함수를 쓴다면, ``require(msg.data.length == 0)``를 이용하여
+    잘못된 콜들을 막으십시오.
 
 .. warning::
     Contracts that receive Ether directly (without a function call, i.e. using ``send`` or ``transfer``)
@@ -710,14 +787,20 @@ Like any function, the fallback function can execute complex operations as long 
     throw an exception, sending back the Ether (this was different
     before Solidity v0.4.0). So if you want your contract to receive Ether,
     you have to implement a payable fallback function.
+    컨트랙트가 (함수 콜 없이 ``send`` 또는 ``transfer``를 이용하여) 직접적으로 이더리움을 받을 경우, fallback 함수가 없으면 
+    예외를 발생시키고 이더리움을 다시 되돌려 보냅니다. (이것은 솔리디티 버전 0.4.0 이전에는 다릅니다)
+    그렇기에 만약에 이더리움을 받기 원한다면, payable fallback function을 이용하십시오.
 
 .. warning::
     A contract without a payable fallback function can receive Ether as a recipient of a `coinbase transaction` (aka `miner block reward`)
     or as a destination of a ``selfdestruct``.
+    payable fallback 함수가 없는 컨트랙트도 이더리움을 `coinbase transcation` (aka `miner block reward`) 혹은 ``selfdestruct``의 목적지로써 받을 수 있습니다.
 
     A contract cannot react to such Ether transfers and thus also cannot reject them. This is a design choice of the EVM and Solidity cannot work around it.
+    이러한 이더리움 전송을 대응할 수 없고, 그것을 거부 할 수도 없습니다. 이 EVM과 솔리디티의 디자인에 있어서 피할 수 없었던 부분입니다.
 
     It also means that ``address(this).balance`` can be higher than the sum of some manual accounting implemented in a contract (i.e. having a counter updated in the fallback function).
+    이것은 ``address(this).balance``가 수동으로 정산 기능이 도입된 컨트랙트 내에서의 값보다 크게 나올 수 있다는 것입니다. (i.e. fallback function이 발동 될 때마다 카운터가 올라가는 구조) 
 
 ::
 
@@ -729,6 +812,9 @@ Like any function, the fallback function can execute complex operations as long 
         // Sending Ether to this contract will cause an exception,
         // because the fallback function does not have the `payable`
         // modifier.
+        // 이 함수는 이 컨트랙트에 전송된 모든 메세지에 의해 호출 된다. (다른 함수가 없기 떄문이다)
+        // 이더리움을 이 컨트랙트에 보내는 것은 익셉션을 발생시킨다.
+        // 왜냐하면 이 함수는 `payable` modifier가 존재하지 않기 때문이다.
         function() external { x = 1; }
         uint x;
     }
@@ -736,6 +822,7 @@ Like any function, the fallback function can execute complex operations as long 
 
     // This contract keeps all Ether sent to it with no way
     // to get it back.
+    // 이 컨트랙트는 모든 이더리움을 보관하지만, 이것을 다시 돌려 받을 방법은 없다.
     contract Sink {
         function() external payable { }
     }
@@ -745,14 +832,18 @@ Like any function, the fallback function can execute complex operations as long 
             (bool success,) = address(test).call(abi.encodeWithSignature("nonExistingFunction()"));
             require(success);
             // results in test.x becoming == 1.
+            // test.x 가 1이 된다.
 
             // address(test) will not allow to call ``send`` directly, since ``test`` has no payable
             // fallback function. It has to be converted to the ``address payable`` type via an
             // intermediate conversion to ``uint160`` to even allow calling ``send`` on it.
+            // address(test)는 ``send``를 직접적으로 호출 할 수 없다. ``test``는 payable fallback 함수가 없기 때문이다.
+            // ``uint160``으로 직접적 변환을 통해 ``send``를 호출 할 수 있는 ``address payable`` 타입으로 변경할 필요가 있다.
             address payable testPayable = address(uint160(address(test)));
 
             // If someone sends ether to that contract,
             // the transfer will fail, i.e. this returns false here.
+            // 만약 이더리움을 그 컨트랙트로 보낸다면, 전송은 실패할 것이다. i.e. 이것은 false를 반환한다.
             return testPayable.send(2 ether);
         }
     }
@@ -761,7 +852,7 @@ Like any function, the fallback function can execute complex operations as long 
 
 .. _overload-function:
 
-Function Overloading
+함수 오버로딩
 ====================
 
 A contract can have multiple functions of the same name but with different parameter
@@ -769,6 +860,9 @@ types.
 This process is called "overloading" and also applies to inherited functions.
 The following example shows overloading of the function
 ``f`` in the scope of contract ``A``.
+컨트랙트는 다른 인자 타입을 갖는 여러개의 같은 이름을 갖는 함수를 가질 수 있다.
+이러한 방식은 "오버로딩"불리며, 상속 받은 함수에도 역시 적용 된다. 다음의 예는 ``A`` 컨트랙트의 스코프 안에 있는 ``f``에 대한 오버로딩에 대해서 보여준다.
+
 
 ::
 
@@ -787,6 +881,7 @@ The following example shows overloading of the function
 
 Overloaded functions are also present in the external interface. It is an error if two
 externally visible functions differ by their Solidity types but not by their external types.
+오버로딩된 함수는 외부 인터페이스에 역시나 보인다. 두 외부에 접근 가능한 함수가 외부 타입이 아니라 그것의 솔리디티 타입이 다르다면 에러가 발생한다.
 
 ::
 
@@ -809,6 +904,7 @@ externally visible functions differ by their Solidity types but not by their ext
 
 Both ``f`` function overloads above end up accepting the address type for the ABI although
 they are considered different inside Solidity.
+두 ``f`` 함수가 ABI에서는 어드레스 타입을 둘 다 받아들이는 것으로 오버로딩이 되었지만, 솔리디티 상에서는 다르게 취급이 된다.
 
 Overload resolution and Argument matching
 -----------------------------------------
@@ -817,6 +913,7 @@ Overloaded functions are selected by matching the function declarations in the c
 to the arguments supplied in the function call. Functions are selected as overload candidates
 if all arguments can be implicitly converted to the expected types. If there is not exactly one
 candidate, resolution fails.
+
 
 .. note::
     Return parameters are not taken into account for overload resolution.
@@ -1731,4 +1828,4 @@ It is also possible to extend elementary types in that way::
 Note that all library calls are actual EVM function calls. This means that
 if you pass memory or value types, a copy will be performed, even of the
 ``self`` variable. The only situation where no copy will be performed
-is when storage reference variables are used.
+is when storage reference variables are used
