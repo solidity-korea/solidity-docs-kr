@@ -3,26 +3,24 @@
 .. _contract_structure:
 
 ***********************
-Structure of a Contract
+컨트랙트의 구조
 ***********************
 
-Contracts in Solidity are similar to classes in object-oriented languages.
-Each contract can contain declarations of :ref:`structure-state-variables`, :ref:`structure-functions`,
-:ref:`structure-function-modifiers`, :ref:`structure-events`, :ref:`structure-struct-types` and :ref:`structure-enum-types`.
-Furthermore, contracts can inherit from other contracts.
+솔리디티의 컨트랙트는 객체-지향 언어의 클래스들와 유사합니다.
+각각의 컨트랙트는 :ref:`structure-state-variables`, :ref:`structure-functions`,
+:ref:`structure-function-modifiers`, :ref:`structure-events`, :ref:`structure-struct-types` and :ref:`structure-enum-types`의 선언들이 포함될 수 있습니다.
+또한, 다른 컨트랙트를 상속할 수도 있습니다.
 
-There are also special kinds of contracts called :ref:`libraries<libraries>` and :ref:`interfaces<interfaces>`.
+:ref:`libraries<libraries>`와 :ref:`interfaces<interfaces>`로 불리는 특별한 종류의 컨트랙트들도 있습니다.
 
-The section about :ref:`contracts<contracts>` contains more details than this section,
-which serves to provide a quick overview.
+이 섹션에서는 빠른 개요를 제공하며, :ref:`contracts<contracts>`섹션에서는 이보다 자세한 내용을 다룹니다.
 
 .. _structure-state-variables:
 
-State Variables
+상태 변수
 ===============
 
-State variables are variables whose values are permanently stored in contract
-storage.
+상태 변수는 값이 영구적으로 컨트랙트 스토리지에 저장되는 변수입니다.
 
 ::
 
@@ -33,16 +31,14 @@ storage.
         // ...
     }
 
-See the :ref:`types` section for valid state variable types and
-:ref:`visibility-and-getters` for possible choices for
-visibility.
+유효한 상태 변수의 타입은 :ref:`types`를, 선택 가능한 가시성(접근제어자)은 :ref:`visibility-and-getters`를 참고하십시오.
 
 .. _structure-functions:
 
-Functions
+함수
 =========
 
-Functions are the executable units of code within a contract.
+함수는 컨트랙트 내의 실행가능한 코드의 단위입니다.
 
 ::
 
@@ -54,17 +50,16 @@ Functions are the executable units of code within a contract.
         }
     }
 
-:ref:`function-calls` can happen internally or externally
-and have different levels of :ref:`visibility<visibility-and-getters>`
-towards other contracts.
+:ref:`function-calls`은 내부적으로 또는 외부적으로 발생할 수 있으며,
+계약 내부 호출인지, 외부호출인지에 따라 다른 :ref:`가시성<visibility-and-getters>`을 지닙니다.
 
 .. _structure-function-modifiers:
 
-Function Modifiers
+함수 수정자
 ==================
 
-Function modifiers can be used to amend the semantics of functions in a declarative way
-(see :ref:`modifiers` in the contracts section).
+함수 수정자는 선언 방식으로 함수의 의미를 변경하기 위해 사용할 수 있습니다.
+(컨트랙트 섹션의 :ref:`modifiers` 참고).
 
 ::
 
@@ -88,10 +83,10 @@ Function modifiers can be used to amend the semantics of functions in a declarat
 
 .. _structure-events:
 
-Events
+이벤트
 ======
 
-Events are convenience interfaces with the EVM logging facilities.
+이벤트는 편리한 EVM 로깅 기능과의 인터페이스입니다.
 
 ::
 
@@ -106,16 +101,14 @@ Events are convenience interfaces with the EVM logging facilities.
         }
     }
 
-See :ref:`events` in contracts section for information on how events are declared
-and can be used from within a dapp.
+이벤트의 선언과 dapp 내에서 사용되는 법에 대해서는 컨트랙트 섹션의 :ref:`events`를 참고하세요.
 
 .. _structure-struct-types:
 
-Struct Types
+구조체 타입
 =============
 
-Structs are custom defined types that can group several variables (see
-:ref:`structs` in types section).
+구조체는 여러 변수를 묶을 수 있는 사용자 정의 타입입니다. (타입 섹션의 :ref:`structs`를 참고).
 
 ::
 
@@ -132,11 +125,10 @@ Structs are custom defined types that can group several variables (see
 
 .. _structure-enum-types:
 
-Enum Types
+열거형(Enum) 타입
 ==========
 
-Enums can be used to create custom types with a finite set of 'constant values' (see
-:ref:`enums` in types section).
+열거형(Enum)은 사용자 정의 '상수 값'의 유한 집합을 만들 수 있습니다. (타입 섹션의 :ref:`enums`을 참고).
 
 ::
 
